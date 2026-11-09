@@ -24,23 +24,23 @@
   --bg:#111214; --ink:#EDEDEE; --muted:#A3A7AD; --faint:#8D9298; --line:#2A2C30; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);-webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding-block:64px 96px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+.wrap{max-width:720px;margin:0 auto;padding-block:40px 56px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
 h1{font-size:21px;font-weight:600;margin:0;letter-spacing:-.01em}
-.sub{font-size:17px;color:var(--muted);margin:14px 0 0;line-height:1.5}
-h2{font:400 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:72px 0 0;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.sub{font-size:15px;color:var(--muted);margin:6px 0 0;line-height:1.45}
+h2{font:400 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:36px 0 0;padding-bottom:10px;border-bottom:1px solid var(--line)}
 ul{list-style:none;margin:0;padding:0}
 li{border-bottom:1px solid var(--line)}
-li a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:6px;padding:22px 0;text-decoration:none;color:inherit}
-.t{font-size:17px;font-weight:500;line-height:1.35}
-.d{grid-column:1;font-size:15px;color:var(--muted);line-height:1.5}
-.k{grid-column:2;grid-row:1;font:400 13px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap;padding-top:2px}
+li a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:2px;padding:12px 0;text-decoration:none;color:inherit}
+.t{font-size:16px;font-weight:500;line-height:1.35}
+.d{grid-column:1;font-size:14px;color:var(--muted);line-height:1.45}
+.k{grid-column:2;grid-row:1;font:400 12px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap;padding-top:2px}
 li a:hover .t{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 li a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 @media (max-width:520px){
-  .wrap{padding-block:44px 64px}
-  h2{margin-top:52px}
+  .wrap{padding-block:28px 44px}
+  h2{margin-top:28px}
   li a{grid-template-columns:minmax(0,1fr)}
-  .k{grid-column:1;grid-row:auto;order:-1;font-size:12px;padding-top:0}
+  .k{display:none}
 }
 </style>
 </head>
