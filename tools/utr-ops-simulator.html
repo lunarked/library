@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tool: UTR Ops Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: lever rail on the left; verdict, chart and WBR/MBR/QBR/Year scorecard on the right. Stacks on phones. */
+:root{
+  --bg:#F2F4F3; --surface:#FFFFFF; --ink:#15211C; --muted:#5A6A63; --line:#D5DDD9;
+  --accent:#1F9D55; --accent-ink:#147A40; --soft:#E3F3E9;
+  --good:#1F8A4C; --bad:#C2362B; --base:#8A9892; --win:#E9F1EC; --goodfill:#1F7A45; --badfill:#B4302A;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1512; --surface:#16201C; --ink:#E5EDE9; --muted:#93A59D; --line:#2A3832;
+  --accent:#3CCB7A; --accent-ink:#5ADB91; --soft:#183324;
+  --good:#5ACB8A; --bad:#F0675B; --base:#6F8178; --win:#1A2A22; --goodfill:#1E5E3A; --badfill:#8E2A22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1512; --surface:#16201C; --ink:#E5EDE9; --muted:#93A59D; --line:#2A3832;
+  --accent:#3CCB7A; --accent-ink:#5ADB91; --soft:#183324;
+  --good:#5ACB8A; --bad:#F0675B; --base:#6F8178; --win:#1A2A22; --goodfill:#1E5E3A; --badfill:#8E2A22; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+.wrap{max-width:1560px;margin:0 auto;padding:28px 16px 48px}
+header{margin-bottom:20px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,38px);letter-spacing:-.01em;line-height:1.05;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:6px 0 0;color:var(--muted);max-width:75ch}
+h2{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:960px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.rail{padding:18px 18px 10px}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.chip,.seg button{font:500 12px var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 10px;border-radius:6px;cursor:pointer}
+.chip:hover,.seg button:hover{border-color:var(--accent)}
+.seg{display:flex;flex-wrap:wrap;gap:4px;grid-column:1/-1;margin-top:4px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-top:1px solid var(--line)}
+.ctl label{font-weight:500}
+.ctl output{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.ctl output.chg{color:var(--accent-ink)}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:4px 0 0}
+.ctl small{grid-column:1/-1;color:var(--muted);font-size:12px;line-height:1.35}
+details{margin-top:14px;border-top:2px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:4px 0 8px}
+.main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.layout{display:grid;grid-template-columns:minmax(210px,270px) minmax(220px,290px) minmax(0,1fr);gap:18px;align-items:start}
+.layout .step1 .ctlgrid{grid-template-columns:minmax(0,1fr)}
+.layout .verdict{grid-template-columns:minmax(0,1fr)}
+.layout .step1 .chip{width:100%;text-align:left;font-size:13px;padding:8px 12px}
+.layout .step1.side{padding:16px 16px 10px}
+.side{padding:16px 18px 10px;position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto}
+.side h3{margin:0;font:800 20px/1.1 var(--f-display)}
+.side>p{margin:2px 0 10px;color:var(--muted);font-size:13px}
+@media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}.side{order:3;position:static;max-height:none}.layout .step1{order:1}.main{order:2}.layout .step1 .chip{width:auto}.layout .step1 .ctlgrid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}}
+.stephead{display:flex;gap:12px;align-items:center}
+.stephead.out{margin-top:14px}
+.main>.stephead.out:first-child{margin-top:0}
+.stephead .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font:800 17px var(--f-display)}
+.stephead h3{margin:0;font:800 22px/1.1 var(--f-display)}
+.stephead p{margin:0;color:var(--muted);font-size:13px}
+.step1{padding:18px;display:flex;flex-direction:column;gap:14px}
+.step1 .presets{margin:0}
+.step1 .chip{font:600 14px var(--f-body);padding:10px 14px;border-radius:8px}
+.step1 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.fine{margin:0;border-top:1px solid var(--line);padding-top:6px}
+.fine summary{font-size:12px}
+.ctlgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0 24px}
+.kpis .hint{grid-column:1/-1;color:var(--muted);font-size:13px}
+.verdict{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2fr);overflow:hidden}
+@media (max-width:700px){.verdict{grid-template-columns:minmax(0,1fr)}}
+.hero{padding:20px 22px;background:var(--ink);color:var(--bg);display:flex;flex-direction:column;gap:6px;justify-content:center}
+.hero.good{background:var(--goodfill);color:#fff}.hero.bad{background:var(--badfill);color:#fff}
+.hero .k{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;opacity:.8}
+.hero .vd{display:flex;align-items:center;gap:12px}
+.hero .ic{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.18);display:grid;place-items:center;font:800 26px/1 var(--f-body)}
+.hero .vt{font:800 clamp(24px,3vw,32px)/1.05 var(--f-display);letter-spacing:-.01em;text-wrap:balance}
+.hero .d{font:700 20px var(--f-mono);font-variant-numeric:tabular-nums;margin-top:6px}
+.hero .s{font:400 12px var(--f-mono);opacity:.8}
+.story{padding:18px 22px}
+.story p{margin:0 0 8px;max-width:70ch}
+.sigs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.sig{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:center;padding:7px 10px;border-radius:8px;background:var(--bg)}
+.sig .i{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font:800 15px/1 var(--f-body);color:#fff;background:var(--base)}
+.sig.good .i{background:var(--good)}.sig.bad .i{background:var(--bad)}
+.sig b{display:block;font:700 15px/1.25 var(--f-body)}
+.sig small{display:block;font-size:12px;color:var(--muted);line-height:1.3}
+.story .what{font:500 13px var(--f-mono);color:var(--accent-ink);margin-bottom:10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+@media (max-width:560px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{border:1px solid var(--line);border-top:4px solid var(--base);border-radius:8px;padding:8px 10px}
+.kpi.good{border-top-color:var(--good)}.kpi.bad{border-top-color:var(--bad)}
+.kpi .l{font-size:11px;color:var(--muted);line-height:1.25}
+.kpi .v{color:var(--ink);font:600 18px var(--f-mono);font-variant-numeric:tabular-nums}
+.kpi .dl{font:600 12.5px var(--f-body)}
+.good{color:var(--good)} .bad{color:var(--bad)} .flat{color:var(--muted)}
+.chartcard{padding:16px 18px}
+.charthead{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-bottom:6px}
+.charthead .seg{grid-column:auto;margin:0}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:18px;height:0;border-top:2.5px solid var(--accent);vertical-align:middle;margin-right:5px}
+.legend i.b{border-top:2px dashed var(--base)}
+.legend i.w{border:0;height:10px;width:14px;background:var(--win);border:1px solid var(--line)}
+#chart{width:100%;height:auto;display:block;touch-action:none}
+#chart text{font:11px var(--f-mono);fill:var(--muted)}
+.readout{font:500 12px var(--f-mono);color:var(--muted);min-height:18px;margin-top:4px}
+.tablecard{padding:16px 18px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:680px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+thead th{font:700 11px var(--f-display);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--line)}
+thead th small{display:block;font:400 11px var(--f-mono);letter-spacing:0;text-transform:none}
+tr.grp td{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);padding-top:14px;background:transparent}
+td .v{font:500 14px var(--f-mono)}
+td .dl{font:500 11px var(--f-mono);display:block}
+td.m{font-weight:500}
+td.m small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.note{color:var(--muted);font-size:12px;margin:10px 0 0;max-width:90ch}
+.how{padding:16px 18px;font-size:13px;color:var(--muted)}
+.how b{color:var(--ink)}
+.how ul{margin:6px 0 0;padding-left:18px}
+@media (max-width:700px){table{min-width:0;font-size:12px}th,td{padding:6px 4px}td .v{font-size:12px}td .dl{font-size:10px}td.m small{display:none}.tablecard{padding:12px 10px}}
+</style>
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Under-the-roof <span>ops simulator</span></h1>
+    <p class="lede">An e-scooter repair warehouse, modelled week by week for one year. Pull the levers an ops manager controls (headcount, shifts, overtime, productivity, parts) and see how the change rolls up from next week's WBR to the MBR, QBR and the full-year number leadership is judged on.</p>
+  </header>
+
+  <div class="layout">
+  <aside class="card side" aria-label="Site setup">
+    <h3>Baseline</h3>
+    <p>Your site's normal plan. Every change is compared to this.</p>
+    <div id="planCtl"></div>
+  </aside>
+      <aside class="card step1 side" aria-label="Pick a change">
+        <div class="stephead"><span class="num">1</span><div><h3>Pick a change</h3><p>Tap a scenario, or fine-tune the levers below it.</p></div></div>
+        <div class="presets" id="presets"></div>
+        <details class="fine" open>
+          <summary>Fine-tune the change</summary>
+          <div class="ctlgrid" id="scnCtl"></div>
+        </details>
+      </aside>
+  <main class="main">
+      <div class="stephead out"><span class="num">2</span><div><h3>Business review scorecard</h3><p>The same change as it shows up in the WBR, MBR, QBR and full year.</p></div></div>
+      <section class="card tablecard">
+        <table>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <p class="note">Each cell shows the scenario value, with the change vs plan underneath (green is better, red is worse, "same" means no change). Calendar uses a 4-4-5 retail calendar: 13-week quarters, 52-week year. Backlog and parts are end-of-period counts; availability and turnaround are period averages; everything else is a period total.</p>
+      </section>
+
+      <div class="stephead out"><span class="num">3</span><div><h3>Week by week</h3><p>When the change hits and how long it lasts.</p></div></div>
+      <section class="card chartcard">
+        <div class="charthead">
+          <h2 style="margin:0">Plan vs scenario</h2>
+          <div class="seg" id="metricSeg"></div>
+        </div>
+        <div class="legend"><span><i></i>Scenario</span><span><i class="b"></i>Plan</span><span><i class="w"></i>Change window</span></div>
+        <svg id="chart" viewBox="0 0 900 280" role="img" aria-label="Weekly trend chart"></svg>
+        <div class="readout" id="readout">Hover the chart to read a week.</div>
+      </section>
+      <div class="stephead out"><span class="num">4</span><div><h3>What happens</h3><p>Full-year result against the plan.</p></div></div>
+      <section class="card verdict" aria-live="polite">
+        <div class="hero" id="hero">
+          <div class="k">Verdict for the full year</div>
+          <div class="vd"><span class="ic" id="heroIc" aria-hidden="true">–</span><span class="vt" id="heroPill">No change</span></div>
+          <div class="d" id="heroNet">$0</div>
+          <div class="s" id="heroSub">net impact vs plan: cost savings minus lost ride revenue</div>
+        </div>
+        <div class="story">
+          <div class="what" id="what"></div>
+          <ul class="sigs" id="storyText"></ul>
+          <div class="kpis" id="kpis"></div>
+        </div>
+      </section>
+
+
+
+      <section class="card how">
+        <h2>How the model works</h2>
+        <ul>
+          <li><b>Inflow:</b> fleet × weekly damage rate × seasonality (summer peak), plus rework coming back from last week's repairs.</li>
+          <li><b>Parts:</b> repairs whose part is out of stock (1 − fill rate) sit in "awaiting parts" for the lead time, then join the repair queue.</li>
+          <li><b>Capacity:</b> techs × shifts × days × hours × (1 − absenteeism) × UPH. Overtime is only worked when the queue needs it. New hires run at 50% UPH for their first 3 weeks.</li>
+          <li><b>Under the roof (UTR):</b> every scooter in the building, queued or waiting on parts, is off the street. Availability = 1 − UTR ÷ fleet; turnaround uses Little's law (UTR ÷ daily output).</li>
+          <li><b>Money:</b> paid labor (OT at 1.5×) + parts + site overhead. Lost ride revenue = scooter-days off the street × revenue per scooter-day.</li>
+        </ul>
+      </section>
+  </main>
+  </div>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const W=52;
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const monthOf=w=>{const q=Math.floor(w/13),r=w%13;return q*3+(r<4?0:r<8?1:2)};
+const qOf=w=>Math.floor(w/13);
+
+// ---- Operating plan (baseline) ----
+const PLAN_DEF=[
+  {k:"fleet",l:"Fleet size",min:2000,max:15000,step:500,v:6000,f:v=>fmt(v)+" scooters"},
+  {k:"dmg",l:"Weekly damage rate",min:2,max:12,step:.5,v:7,f:v=>v+"% of fleet",h:"Share of the fleet that comes in for repair each week."},
+  {k:"season",l:"Summer seasonality",min:0,max:40,step:5,v:25,f:v=>"±"+v+"%",h:"Inflow peaks in late June, lowest in December."},
+  {k:"techs",l:"Techs per shift",min:2,max:15,step:1,v:6,f:v=>v},
+  {k:"shifts",l:"Shifts per day",min:1,max:3,step:1,v:2,f:v=>v},
+  {k:"days",l:"Operating days per week",min:5,max:7,step:1,v:6,f:v=>v},
+  {k:"hrs",l:"Hours per shift",min:6,max:12,step:1,v:8,f:v=>v+" h"},
+  {k:"uph",l:"Repairs per tech-hour (UPH)",min:.4,max:1.5,step:.05,v:.9,f:v=>v.toFixed(2)},
+  {k:"absent",l:"Absenteeism",min:0,max:25,step:1,v:8,f:v=>v+"%"},
+  {k:"rework",l:"Rework / repeat repair",min:0,max:15,step:1,v:5,f:v=>v+"%",h:"Share of repairs that come back the next week."},
+  {k:"fill",l:"Parts fill rate",min:50,max:100,step:1,v:92,f:v=>v+"%"},
+  {k:"lead",l:"Parts lead time",min:1,max:6,step:1,v:2,f:v=>v+" wk"},
+  {k:"rate",l:"Tech wage",min:16,max:40,step:1,v:24,f:v=>"$"+v+"/h"},
+  {k:"parts",l:"Parts cost per repair",min:10,max:120,step:2,v:38,f:v=>"$"+v},
+  {k:"ovh",l:"Site overhead",min:0,max:30000,step:1000,v:9000,f:v=>"$"+fmt(v)+"/wk"},
+  {k:"rev",l:"Ride revenue per scooter-day",min:4,max:30,step:1,v:12,f:v=>"$"+v},
+  {k:"start",l:"Backlog on Jan 1",min:0,max:1500,step:50,v:250,f:v=>fmt(v)+" units"}
+];
+// ---- Scenario levers (deltas / overrides) ----
+const SCN_DEF=[
+  {k:"dHead",l:"Techs per shift (change)",min:-4,max:4,step:1,v:0,f:v=>(v>0?"+":"")+v,h:"Applies to every shift in the window."},
+  {k:"dShifts",l:"Shifts per day (change)",min:-1,max:1,step:1,v:0,f:v=>(v>0?"+":"")+v},
+  {k:"ot",l:"Overtime allowed",min:0,max:12,step:1,v:0,f:v=>v+" h/tech/wk",h:"Only worked if the queue needs it."},
+  {k:"dUph",l:"Productivity (UPH change)",min:-30,max:30,step:5,v:0,f:v=>(v>0?"+":"")+v+"%",h:"E.g. kitting, better diagnostics, or a new-hire learning curve."},
+  {k:"absent",l:"Absenteeism",min:0,max:25,step:1,plan:"absent",f:v=>v+"%"},
+  {k:"fill",l:"Parts fill rate",min:50,max:100,step:1,plan:"fill",f:v=>v+"%"},
+  {k:"lead",l:"Parts lead time",min:1,max:6,step:1,plan:"lead",f:v=>v+" wk"},
+  {k:"dIn",l:"Incoming volume (change)",min:-30,max:60,step:5,v:0,f:v=>(v>0?"+":"")+v+"%",h:"Demand shock: heat wave, vandalism spike, new market launch."},
+  {k:"sw",l:"Change starts in week",min:1,max:52,step:1,v:21,f:v=>"Wk "+v+" · "+MONTHS[monthOf(v-1)]},
+  {k:"dur",type:"seg",l:"Change lasts",opts:[["shift","1 shift"],["1","1 wk"],["4","4 wk"],["13","1 qtr"],["rest","Rest of yr"]],v:"rest"},
+  {k:"rw",l:"WBR week to review",min:1,max:52,step:1,v:21,f:v=>"Wk "+v+" · "+MONTHS[monthOf(v-1)]+" · Q"+(qOf(v-1)+1),h:"MBR, QBR columns follow this week's month and quarter."}
+];
+const plan={},scn={};
+PLAN_DEF.forEach(d=>plan[d.k]=d.v);
+function resetScn(){SCN_DEF.forEach(d=>scn[d.k]=d.plan?plan[d.plan]:d.v)}
+resetScn();
+
+const PRESETS=[
+  ["−1 tech, next shift",{dHead:-1,dur:"shift"}],
+  ["−1 tech per shift, rest of year",{dHead:-1,dur:"rest"}],
+  ["+1 tech per shift, rest of year",{dHead:1,dur:"rest"}],
+  ["+6h OT for 4 weeks",{ot:6,dur:"4"}],
+  ["Parts shortage, 1 quarter",{fill:72,lead:4,dur:"13"}],
+  ["Add night shift for summer",{dShifts:1,sw:22,rw:22,dur:"13"}],
+  ["Heat wave +30% inflow, 4 wk",{dIn:30,sw:26,rw:26,dur:"4"}],
+  ["+15% UPH (process fix)",{dUph:15,dur:"rest"}],
+  ["Reset",{}]
+];
+
+// ---- Formatting ----
+function fmt(n,d=0){return Number(n).toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d})}
+function money(n,short=true){const s=n<0?"−":"";n=Math.abs(n);
+  if(short&&n>=1e6)return s+"$"+(n/1e6).toFixed(n>=1e7?1:2)+"M";
+  if(short&&n>=1e4)return s+"$"+(n/1e3).toFixed(0)+"k";
+  return s+"$"+fmt(n)}
+function signed(n,f){if(Math.abs(n)<1e-9)return "±0";return (n>0?"+":"−")+f(Math.abs(n))}
+
+// ---- Simulation ----
+function sim(useScn){
+  const sw=scn.sw-1;
+  const out=[];
+  let ready=plan.start*0.85, rework=0;
+  const wop=new Array(W+12).fill(0);
+  for(let i=0;i<plan.lead;i++)wop[i]=plan.start*0.15/plan.lead;
+  for(let w=0;w<W;w++){
+    // f = share of the week the scenario applies
+    let f=0;
+    if(useScn){
+      if(scn.dur==="shift")f=(w===sw)?1/(plan.shifts*plan.days):0;
+      else{const n=scn.dur==="rest"?W:+scn.dur;f=(w>=sw&&w<sw+n)?1:0}
+    }
+    const b=(p,s)=>p+f*(s-p);
+    const shifts=Math.max(1,Math.min(3,plan.shifts+f*scn.dShifts));
+    const techs=Math.max(1,plan.techs+f*scn.dHead);
+    const absent=b(plan.absent,scn.absent)/100;
+    const fill=b(plan.fill,scn.fill)/100;
+    const lead=Math.round(f>=.5?scn.lead:plan.lead);
+    const uph=plan.uph*(1+f*scn.dUph/100);
+    const otCap=f*scn.ot;
+    const inMult=1+f*scn.dIn/100;
+    const season=1+plan.season/100*Math.sin(2*Math.PI*(w-13)/52);
+    // new hires ramp at 50% for 3 weeks
+    const ramp=(f>0&&scn.dHead>0&&w-sw<3&&scn.dur!=="shift")?0.5:1;
+
+    const utrStart=ready+wop.slice(w).reduce((a,c)=>a+c,0);
+    const fresh=plan.fleet*plan.dmg/100*season*inMult;
+    const inflow=fresh+rework;
+    ready+=wop[w];
+    const toParts=fresh*(1-fill);
+    wop[w+lead]+=toParts;
+    ready+=inflow-toParts;
+
+    const heads=techs*shifts;
+    const schedHrs=heads*plan.days*plan.hrs;
+    const regAvail=schedHrs*(1-absent);
+    const prodFactor=(plan.techs*shifts+(techs-plan.techs)*shifts*ramp)/heads; // ramp-weighted
+    const effUph=uph*prodFactor;
+    const needHrs=ready/effUph;
+    const otHrs=Math.min(heads*otCap,Math.max(0,needHrs-regAvail));
+    const cap=(regAvail+otHrs)*effUph;
+    const done=Math.min(cap,ready);
+    ready-=done;
+    rework=done*plan.rework/100;
+    const awaitParts=wop.slice(w+1).reduce((a,c)=>a+c,0);
+    const utr=ready+awaitParts;
+    const workHrs=done/effUph;
+    const laborCost=schedHrs*plan.rate+otHrs*plan.rate*1.5;
+    const totalCost=laborCost+done*plan.parts+plan.ovh;
+    const avgUtr=(utrStart+utr)/2;
+    out.push({w,f,inflow,done,ready,awaitParts,utr,avgUtr,
+      avail:1-avgUtr/plan.fleet, tat:done>0?avgUtr/(done/7):99,
+      paidHrs:schedHrs+otHrs, workedHrs:regAvail+otHrs, otHrs, workHrs, heads,
+      util:workHrs/(regAvail+otHrs), laborCost, totalCost,
+      lostRev:avgUtr*7*plan.rev, cpr:done>0?totalCost/done:0});
+  }
+  return out;
+}
+
+function agg(rows){
+  const n=rows.length,S=k=>rows.reduce((a,r)=>a+r[k],0),last=rows[n-1];
+  const done=S("done"),avgUtr=S("avgUtr")/n;
+  return {inflow:S("inflow"),done,utr:last.utr,awaitParts:last.awaitParts,
+    avail:1-avgUtr/plan.fleet, tat:done>0?avgUtr/(done/(7*n)):99,
+    paidHrs:S("paidHrs"),otHrs:S("otHrs"),otPct:S("otHrs")/S("paidHrs"),
+    util:S("workHrs")/S("workedHrs"), uphA:done/S("workedHrs"), heads:S("heads")/n,
+    laborCost:S("laborCost"),totalCost:S("totalCost"),cpr:done>0?S("totalCost")/done:0,
+    lostRev:S("lostRev"), avgUtr};
+}
+
+// ---- Scorecard rows: [key, label, sub, formatter, deltaFormatter, higherIsBetter] ----
+const ROWS=[
+  {g:"Output · ops manager"},
+  {k:"done",l:"Repairs completed",s:"throughput",f:v=>fmt(v),d:v=>fmt(v),up:true},
+  {k:"inflow",l:"Scooters in for repair",s:"incl. rework",f:v=>fmt(v),d:v=>fmt(v),up:null},
+  {k:"utr",l:"Under-the-roof backlog",s:"end of period",f:v=>fmt(v),d:v=>fmt(v),up:false},
+  {k:"awaitParts",l:"…of which awaiting parts",s:"end of period",f:v=>fmt(v),d:v=>fmt(v),up:false},
+  {k:"tat",l:"Turnaround time",s:"days in building",f:v=>v.toFixed(1)+" d",d:v=>v.toFixed(1)+" d",up:false},
+  {g:"Labor · site lead"},
+  {k:"heads",l:"Techs scheduled",s:"all shifts, avg",f:v=>fmt(v,1),d:v=>fmt(v,1),up:null},
+  {k:"paidHrs",l:"Paid labor hours",s:"incl. OT",f:v=>fmt(v),d:v=>fmt(v),up:null},
+  {k:"otPct",l:"Overtime share",s:"of paid hours",f:v=>(v*100).toFixed(1)+"%",d:v=>(v*100).toFixed(1)+" pts",up:false},
+  {k:"uphA",l:"Actual UPH",s:"repairs per worked hour",f:v=>v.toFixed(2),d:v=>v.toFixed(2),up:true},
+  {k:"util",l:"Labor utilization",s:"busy ÷ available hours",f:v=>(v*100).toFixed(0)+"%",d:v=>(v*100).toFixed(1)+" pts",up:null},
+  {g:"Fleet & money · leadership"},
+  {k:"avail",l:"Fleet availability",s:"share of fleet on street",f:v=>(v*100).toFixed(1)+"%",d:v=>(v*100).toFixed(1)+" pts",up:true},
+  {k:"cpr",l:"Cost per repair",s:"labor + parts + overhead",f:v=>"$"+v.toFixed(2),d:v=>"$"+v.toFixed(2),up:false},
+  {k:"totalCost",l:"Total ops cost",s:"",f:v=>money(v),d:v=>money(v),up:false},
+  {k:"lostRev",l:"Lost ride revenue",s:"scooters off the street",f:v=>money(v),d:v=>money(v),up:false},
+];
+
+// ---- Controls ----
+function ctl(def,store,host,isScn){
+  const wrap=document.createElement("div");wrap.className="ctl";
+  const id=(isScn?"s_":"p_")+def.k;
+  if(def.type==="seg"){
+    wrap.innerHTML=`<label>${def.l}</label><output></output><div class="seg" role="group" aria-label="${def.l}">${def.opts.map(o=>`<button type="button" data-v="${o[0]}">${o[1]}</button>`).join("")}</div>`;
+    wrap.querySelectorAll("button").forEach(b=>b.onclick=()=>{store[def.k]=b.dataset.v;sync();run()});
+  }else{
+    wrap.innerHTML=`<label for="${id}">${def.l}</label><output></output><input type="range" id="${id}" min="${def.min}" max="${def.max}" step="${def.step}">${def.h?`<small>${def.h}</small>`:""}`;
+    const inp=wrap.querySelector("input");
+    inp.oninput=()=>{
+      const old=store[def.k];store[def.k]=+inp.value;
+      if(!isScn){SCN_DEF.forEach(s=>{if(s.plan===def.k&&scn[s.k]===old)scn[s.k]=store[def.k]})}
+      if(isScn&&def.k==="sw")scn.rw=scn.sw;
+      sync();run();
+    };
+  }
+  wrap._def=def;wrap._store=store;wrap._isScn=isScn;
+  host.appendChild(wrap);
+}
+SCN_DEF.forEach(d=>ctl(d,scn,$("scnCtl"),true));
+PLAN_DEF.forEach(d=>ctl(d,plan,$("planCtl"),false));
+function sync(){
+  document.querySelectorAll(".ctl").forEach(c=>{
+    const d=c._def,v=c._store[d.k],o=c.querySelector("output");
+    if(d.type==="seg"){c.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));o.textContent="";return}
+    c.querySelector("input").value=v;o.textContent=d.f(v);
+    const changed=c._isScn&&d.k!=="sw"&&d.k!=="rw"&&(d.plan?v!==plan[d.plan]:v!==d.v);
+    o.classList.toggle("chg",changed);
+  });
+}
+PRESETS.forEach(([name,p])=>{
+  const b=document.createElement("button");b.className="chip";b.type="button";b.textContent=name;
+  b.onclick=()=>{resetScn();Object.assign(scn,p);if(p.sw&&!p.rw)scn.rw=p.sw;sync();run();
+    document.querySelectorAll("#presets .chip").forEach(c=>c.setAttribute("aria-pressed",c===b&&name!=="Reset"))};
+  $("presets").appendChild(b);
+});
+
+// ---- Chart ----
+const METRICS=[["utr","Backlog (UTR)",v=>fmt(v)],["avail","Availability",v=>(v*100).toFixed(1)+"%"],["done","Repairs / wk",v=>fmt(v)],["tat","Turnaround",v=>v.toFixed(1)+" d"],["cpr","Cost / repair",v=>"$"+v.toFixed(2)],["lostRev","Lost revenue / wk",v=>money(v)]];
+let metric="utr";
+$("metricSeg").innerHTML=METRICS.map(m=>`<button type="button" data-m="${m[0]}">${m[1]}</button>`).join("");
+$("metricSeg").querySelectorAll("button").forEach(b=>b.onclick=()=>{metric=b.dataset.m;run()});
+
+let last={};
+function drawChart(base,sc){
+  const svg=$("chart"),VW=900,VH=280,L=58,R=12,T=14,B=30,pw=VW-L-R,ph=VH-T-B;
+  const m=METRICS.find(x=>x[0]===metric);
+  const all=base.map(r=>r[metric]).concat(sc.map(r=>r[metric]));
+  let lo=Math.min(...all),hi=Math.max(...all);
+  if(metric!=="avail"&&metric!=="cpr"&&metric!=="tat")lo=Math.min(0,lo);
+  if(hi-lo<1e-9){hi+=1;lo-=1}
+  const pad=(hi-lo)*.08;hi+=pad;if(lo!==0)lo-=pad;
+  const x=w=>L+pw*(w+.5)/W,y=v=>T+ph*(1-(v-lo)/(hi-lo));
+  const css=getComputedStyle(document.documentElement),c=n=>css.getPropertyValue(n).trim();
+  let s="";
+  // change window
+  const fw=sc.filter(r=>r.f>0);
+  if(fw.length){const a=fw[0].w,z=fw[fw.length-1].w;s+=`<rect x="${L+pw*a/W}" y="${T}" width="${Math.max(3,pw*(z-a+1)/W)}" height="${ph}" fill="${c("--win")}"/>`}
+  // grid
+  for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,yy=y(v);s+=`<line x1="${L}" x2="${VW-R}" y1="${yy}" y2="${yy}" stroke="${c("--line")}"/><text x="${L-6}" y="${yy+4}" text-anchor="end">${m[2](v)}</text>`}
+  for(let q=0;q<4;q++){const xx=L+pw*q*13/W;s+=`<line x1="${xx}" x2="${xx}" y1="${T}" y2="${T+ph}" stroke="${c("--line")}"/><text x="${xx+pw*6.5/W}" y="${VH-10}" text-anchor="middle">Q${q+1}</text>`}
+  // review week marker
+  const rw=scn.rw-1;s+=`<line x1="${x(rw)}" x2="${x(rw)}" y1="${T}" y2="${T+ph}" stroke="${c("--ink")}" stroke-width="1" stroke-dasharray="2 3"/><text x="${x(rw)}" y="${T+10}" text-anchor="${rw>44?"end":"start"}" dx="${rw>44?-4:4}" style="fill:${c("--ink")}">WBR wk ${scn.rw}</text>`;
+  const path=rows=>rows.map((r,i)=>(i?"L":"M")+x(r.w).toFixed(1)+","+y(r[metric]).toFixed(1)).join("");
+  s+=`<path d="${path(base)}" fill="none" stroke="${c("--base")}" stroke-width="2" stroke-dasharray="5 4"/>`;
+  s+=`<path d="${path(sc)}" fill="none" stroke="${c("--accent")}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  s+=`<g id="hov" style="display:none"><line id="hl" y1="${T}" y2="${T+ph}" stroke="${c("--muted")}"/><circle id="hc" r="4" fill="${c("--accent")}" stroke="${c("--surface")}" stroke-width="2"/></g>`;
+  s+=`<rect id="hit" x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/>`;
+  svg.innerHTML=s;
+  const hit=$("hit");
+  const move=e=>{
+    const pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+    const w=Math.max(0,Math.min(W-1,Math.floor((p.x-L)/pw*W)));
+    $("hov").style.display="";$("hl").setAttribute("x1",x(w));$("hl").setAttribute("x2",x(w));
+    $("hc").setAttribute("cx",x(w));$("hc").setAttribute("cy",y(sc[w][metric]));
+    $("readout").textContent=`Week ${w+1} (${MONTHS[monthOf(w)]}) · ${m[1]}: scenario ${m[2](sc[w][metric])} · plan ${m[2](base[w][metric])}`;
+  };
+  hit.addEventListener("pointermove",move);hit.addEventListener("pointerdown",move);
+  hit.addEventListener("pointerleave",()=>{$("hov").style.display="none"});
+  $("metricSeg").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===metric));
+}
+
+// ---- Render ----
+function describe(){
+  const p=[];
+  if(scn.dHead)p.push((scn.dHead>0?"+":"−")+Math.abs(scn.dHead)+" tech"+(Math.abs(scn.dHead)>1?"s":"")+" per shift");
+  if(scn.dShifts)p.push((scn.dShifts>0?"+1 shift":"−1 shift")+" per day");
+  if(scn.ot)p.push("up to "+scn.ot+"h OT per tech");
+  if(scn.dUph)p.push((scn.dUph>0?"+":"−")+Math.abs(scn.dUph)+"% UPH");
+  if(scn.absent!==plan.absent)p.push("absenteeism "+scn.absent+"%");
+  if(scn.fill!==plan.fill)p.push("parts fill "+scn.fill+"%");
+  if(scn.lead!==plan.lead)p.push("parts lead "+scn.lead+" wk");
+  if(scn.dIn)p.push((scn.dIn>0?"+":"−")+Math.abs(scn.dIn)+"% inflow");
+  if(!p.length)return null;
+  const sw=scn.sw;let when;
+  if(scn.dur==="shift")when="for one shift in week "+sw;
+  else if(scn.dur==="rest")when="from week "+sw+" to year end";
+  else{const e=Math.min(52,sw+(+scn.dur)-1);when=e===sw?"in week "+sw:"weeks "+sw+"–"+e}
+  return p.join(", ")+" · "+when;
+}
+
+function cell(sv,bv,r){
+  const d=sv-bv;let cls="flat";
+  const tiny=/^[^1-9]*$/.test(r.d(Math.abs(d)));
+  if(!tiny&&r.up!==null)cls=((d>0)===r.up)?"good":"bad";
+  return `<td><span class="v">${r.f(sv)}</span><span class="dl ${cls}">${tiny?"same":signed(d,r.d)}</span></td>`;
+}
+
+function run(){
+  const base=sim(false),sc=sim(true);
+  const rw=scn.rw-1,mo=monthOf(rw),q=qOf(rw);
+  const pick=(rows,fn)=>rows.filter(r=>fn(r.w));
+  const periods=[
+    ["WBR","Week "+scn.rw,w=>w===rw],
+    ["MBR",MONTHS[mo],w=>monthOf(w)===mo],
+    ["QBR","Q"+(q+1),w=>qOf(w)===q],
+    ["Year","52 weeks",()=>true]
+  ];
+  const A=periods.map(p=>({b:agg(pick(base,p[2])),s:agg(pick(sc,p[2]))}));
+  $("thead").innerHTML=`<th>Metric</th>`+periods.map(p=>`<th>${p[0]}<small>${p[1]}</small></th>`).join("");
+  $("tbody").innerHTML=ROWS.map(r=>r.g?`<tr class="grp"><td colspan="5">${r.g}</td></tr>`:
+    `<tr><td class="m">${r.l}${r.s?`<small>${r.s}</small>`:""}</td>${A.map(a=>cell(a.s[r.k],a.b[r.k],r)).join("")}</tr>`).join("");
+
+  // Verdict
+  const Y=A[3],Q=A[2],Wk=A[0];
+  const costSave=Y.b.totalCost-Y.s.totalCost,revSave=Y.b.lostRev-Y.s.lostRev,net=costSave+revSave;
+  const desc=describe();
+  $("what").textContent=desc?"Scenario: "+desc:"No change yet. Pick a scenario in step 1.";
+  $("heroNet").textContent=desc?signed(net,v=>money(v)):"$0";
+  const vk=!desc||Math.abs(net)<1000?"":net>0?"good":"bad";
+  $("hero").className="hero "+vk;
+  $("heroIc").textContent=vk==="good"?"✓":vk==="bad"?"✕":"–";
+  $("heroPill").textContent=!desc?"No change":!vk?"Roughly neutral":vk==="good"?"Worth doing":"Costs more than it saves";
+
+  const sig=[]; // [class, headline, detail]
+  if(desc){
+    const peakS=Math.max(...sc.map(r=>r.utr)),peakB=Math.max(...base.map(r=>r.utr));
+    const peakW=sc.findIndex(r=>r.utr===peakS)+1;
+    const dUtr=Y.s.avgUtr-Y.b.avgUtr;
+    sig.push(Math.abs(costSave)<500?["","Ops cost about flat","no real change to the cost line"]:
+      costSave>0?["good","Saves "+money(costSave)+" in ops cost","labor, parts and overhead for the year"]:["bad","Adds "+money(-costSave)+" in ops cost","labor, parts and overhead for the year"]);
+    sig.push(Math.abs(dUtr)<0.5?["","Fleet on the street unchanged","no extra scooters waiting for repair"]:
+      revSave<0?["bad","Loses "+money(-revSave)+" in ride revenue",fmt(dUtr)+" more scooters off the street on average"]:["good","Earns "+money(revSave)+" more ride revenue",fmt(-dUtr)+" fewer scooters off the street on average"]);
+    if(Math.abs(peakS-peakB)>5){const r=peakS/Math.max(1,peakB);
+      sig.push([peakS>peakB?"bad":"good",peakS>peakB?(r>=1.5?"Backlog peaks "+r.toFixed(1).replace(/\.0$/,"")+"× plan":"Backlog peaks higher than plan"):"Backlog peaks lower than plan",fmt(peakS)+" in week "+peakW+" vs "+fmt(peakB)+" in plan"])}
+    const fw=sc.filter(r=>r.f>0);
+    if(fw.length&&scn.dur!=="rest"){
+      const end=fw[fw.length-1].w;
+      let rec=-1;
+      for(let w=end+1;w<W;w++){if(Math.abs(sc[w].utr-base[w].utr)<=Math.max(5,base[w].utr*0.02)){rec=w;break}}
+      const gap=Math.abs(sc[end].utr-base[end].utr);
+      if(gap>5)sig.push(rec>=0?["","Back to plan by week "+(rec+1),"after the change ends"]:["bad","Never recovers this year","backlog stays off plan to year end"]);
+    }
+  }else sig.push(["","Running the operating plan","Pick a quick scenario or move a lever to test a change."]);
+  $("storyText").innerHTML=sig.map(([c,h,d])=>`<li class="sig ${c}"><span class="i" aria-hidden="true">${c==="good"?"✓":c==="bad"?"✕":"–"}</span><div><b>${h}</b><small>${d}</small></div></li>`).join("");
+
+  const K=[
+    ["Scooters waiting for repair, week "+scn.rw,Wk.s.utr,Wk.b.utr,v=>fmt(v),false],
+    ["Fleet out on the street, Q"+(q+1),Q.s.avail,Q.b.avail,v=>(v*100).toFixed(1)+"%",true,v=>(v*100).toFixed(1)+" pts"],
+    ["Cost per repair, full year",Y.s.cpr,Y.b.cpr,v=>"$"+v.toFixed(2),false],
+    ["Days a scooter is in the shop",Y.s.tat,Y.b.tat,v=>v.toFixed(1)+" d",false]
+  ];
+  $("kpis").innerHTML=K.map(([l,s,b,f,up,df])=>{const d=s-b,tiny=/^[^1-9]*$/.test((df||f)(Math.abs(d)));
+    const cls=tiny?"flat":((d>0)===up?"good":"bad");
+    return `<div class="kpi ${cls}"><div class="l">${l}</div><div class="v">${f(s)}</div><div class="dl ${cls}">${cls==="good"?"✓ Better: "+signed(d,df||f):cls==="bad"?"✕ Worse: "+signed(d,df||f):"Same as plan"}</div></div>`}).join("");
+  if(!desc)$("kpis").innerHTML=`<div class="hint">Pick a change in step 1 to see how backlog, fleet, cost and repair time move.</div>`;
+
+  drawChart(base,sc);
+}
+sync();run();
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",run);
+})();
+</script>
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

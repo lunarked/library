@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Story: Tesla Grünheide power outage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: long-form scroll story. Night-time opener, then chapters. In each scrolly chapter a diagram stays pinned while text cards scroll past and change it. On phones the diagram pins to the top half and cards slide over the bottom. */
+:root{
+  --bg:#F4F5F6; --paper:#FFFFFF; --ink:#15181C; --muted:#5C636B; --line:#D5D9DD; --soft:#E6E9EC;
+  --volt:#E5A000; --voltsoft:#FCE9B8; --bad:#C2372D; --badsoft:#F8DEDA; --good:#1F7D47; --goodsoft:#DDF0E4; --wire:#7A828A;
+  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-text:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1215; --paper:#171B20; --ink:#E9EBEC; --muted:#9BA2A9; --line:#2D333A; --soft:#22272D;
+  --volt:#FFC233; --voltsoft:#3A3014; --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; --wire:#6B737B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1215; --paper:#171B20; --ink:#E9EBEC; --muted:#9BA2A9; --line:#2D333A; --soft:#22272D;
+  --volt:#FFC233; --voltsoft:#3A3014; --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; --wire:#6B737B; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+.g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+.col{max-width:680px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--volt)}
+sup{font:600 .6em var(--f-mono);color:var(--muted)}
+p{margin:0 0 1em}
+b,strong{font-weight:600}
+.est{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:2px;white-space:nowrap}
+
+/* Opener */
+.open{background:#0D1014;color:#EDEBE4;padding-block:60px 50px;position:relative;overflow:hidden}
+.open .glow{position:absolute;right:-120px;top:-80px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,40,.35),rgba(255,140,40,0) 65%);pointer-events:none}
+.open .kick{color:#FFC233}
+.open h1{font-weight:900;font-size:clamp(40px,7.4vw,92px);line-height:.96;letter-spacing:-.015em;margin:16px 0 22px;max-width:14ch;position:relative}
+.open h1 em{font-style:normal;color:#FFC233}
+.dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C8CBC6;margin:0;position:relative}
+.by{margin-top:26px;font:500 13px var(--f-mono);color:#8D9296;letter-spacing:.04em;position:relative}
+.cue{margin-top:34px;font:600 13px var(--f-mono);color:#FFC233;letter-spacing:.08em;text-transform:uppercase}
+.cue::after{content:" ↓"}
+
+/* Prose chapter */
+.chap{padding-block:64px 24px}
+.chap h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 22px;letter-spacing:-.01em}
+.chap .lead::first-letter{font:900 3.3em/0.8 var(--f-head);float:left;margin:6px 10px 0 0;color:var(--volt)}
+.pull{font:800 clamp(24px,3.3vw,34px)/1.2 var(--f-head);border-left:5px solid var(--volt);padding:4px 0 4px 18px;margin:30px 0}
+
+/* Scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.fig svg{width:100%;height:auto;max-height:68vh;display:block}
+.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
+.steps{padding-block:20vh 30vh}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.step:last-child{margin-bottom:10vh}
+.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--volt);display:block;margin-bottom:6px}
+.step p:last-child{margin:0}
+@media (max-width:860px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
+  .fig svg{max-height:42vh}
+  .steps{padding-block:4vh 10vh;position:relative;z-index:3}
+  .step{margin-bottom:45vh;opacity:1;font-size:17px}
+}
+
+/* Diagram */
+.wire{stroke:var(--wire);stroke-width:3;fill:none}
+.flow{stroke:var(--volt);stroke-width:4;fill:none;stroke-dasharray:10 12;opacity:0;transition:opacity .4s}
+.flow.on{opacity:1;animation:run 1.2s linear infinite}
+@keyframes run{to{stroke-dashoffset:-22}}
+.zone{fill:var(--soft);stroke:var(--line);stroke-width:1.5;transition:fill .4s}
+.zone.on{fill:var(--voltsoft);stroke:var(--volt)}
+.house{fill:var(--soft);stroke:var(--wire);stroke-width:1.5;transition:fill .4s}
+.house.on{fill:var(--voltsoft)}
+.lbl{font:600 13px var(--f-mono);fill:var(--muted)}
+.lblb{font:800 15px var(--f-head);fill:var(--ink)}
+.zl{font:600 11.5px var(--f-mono);fill:var(--muted)}
+.opt{opacity:0;transition:opacity .4s}
+.opt.on{opacity:1}
+.fire.on{animation:flick .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center bottom}
+@keyframes flick{from{transform:scale(.92)}to{transform:scale(1.08)}}
+
+/* Cost visual */
+.days{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.day{border:1px solid var(--line);background:var(--paper);border-radius:4px;padding:6px 4px;text-align:center;font:600 11.5px var(--f-mono);color:var(--muted);transition:background .3s,color .3s}
+.day b{display:block;font:800 18px var(--f-head);color:var(--ink)}
+.day.dark{background:#1C2126;color:#9CA3A9;border-color:#1C2126}
+.day.dark b{color:#fff}
+.day.back{background:var(--goodsoft);border-color:var(--good)}
+.cars{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;margin-top:12px}
+.car{aspect-ratio:1.7;border-radius:2px;background:var(--soft);transition:background .25s}
+.car.lost{background:var(--bad)}
+.counters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.ctr .n{font:900 clamp(32px,4.6vw,52px)/1 var(--f-head);color:var(--bad);font-variant-numeric:tabular-nums}
+.ctr .k{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* Scorecard in options chapter */
+.score{display:grid;gap:6px;margin-top:4px}
+.sc{display:grid;grid-template-columns:110px minmax(0,1fr) 64px;gap:8px;align-items:center;font:600 12.5px var(--f-mono);color:var(--muted);transition:opacity .3s}
+.sc .bar{height:12px;background:var(--soft);border-radius:6px;overflow:hidden}
+.sc .bar i{display:block;height:100%;background:var(--good);border-radius:6px}
+.sc.dim{opacity:.35}
+.sc .v{text-align:right;color:var(--ink)}
+
+/* Calculator */
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;margin-top:10px}
+.ctrls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 28px;margin-bottom:18px}
+@media (max-width:760px){.ctrls{grid-template-columns:minmax(0,1fr)}}
+.ml{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.seg button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--volt);outline-offset:2px}
+.exp{font-size:17px;margin:0 0 14px}
+.exp b{color:var(--bad);font-family:var(--f-head)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
+.card.win{border-top-color:var(--good)}
+.card.best{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
+.chip{align-self:flex-start;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--badsoft);color:var(--bad)}
+.win .chip,.best .chip{background:var(--goodsoft);color:var(--good)}
+.card h3{font-size:18px}
+.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;margin:0;font:500 12.5px var(--f-mono)}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.pay{font:600 12.5px var(--f-mono);border-top:1px dashed var(--line);padding-top:7px;margin-top:auto}
+
+/* Decision */
+.verdict{background:var(--ink);color:var(--bg);border-radius:8px;padding:26px 24px;margin:10px 0 26px}
+.verdict .kick{color:var(--volt)}
+.verdict h3{font-weight:900;font-size:clamp(24px,3.4vw,36px);line-height:1.12;margin-top:8px}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:26px}
+@media (max-width:860px){.three{grid-template-columns:minmax(0,1fr)}}
+.three div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
+.three b{display:block;font:800 18px var(--f-head);margin-bottom:4px}
+.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+@media (max-width:860px){.paths{grid-template-columns:minmax(0,1fr)}}
+.paths div{padding:16px 18px;font-size:16.5px;line-height:1.5;border-right:1px solid var(--line)}
+.paths div:last-child{border-right:0}
+@media (max-width:860px){.paths div{border-right:0;border-bottom:1px solid var(--line)}.paths div:last-child{border-bottom:0}}
+.paths .ml{display:block;margin-bottom:4px;color:var(--volt)}
+.paths h3{font-size:18px;margin-bottom:4px}
+
+
+/* Question reveal: tall section, pinned dark panel, lines light up as you scroll */
+.reveal{height:300vh;background:#0D1014;position:relative}
+.rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+.rv-in{width:100%}
+.rv-l{font:800 clamp(24px,3.6vw,40px)/1.2 var(--f-head);color:#EDEBE4;margin:0 0 14px;opacity:.18;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rv-q{font-weight:900;font-size:clamp(36px,6.6vw,84px);line-height:1.02;letter-spacing:-.015em;color:#EDEBE4;margin-top:28px;max-width:17ch;opacity:.18;transform:translateY(12px);transition:opacity .6s,transform .6s}
+.rv-q em{font-style:normal;color:#FFC233}
+.rv-l.on,.rv-q.on{opacity:1;transform:none}
+.rv-l.on[data-at="2"]{color:#FFC233}
+@media (prefers-reduced-motion: reduce){.rv-l,.rv-q{opacity:1;transform:none}}
+
+/* Sources */
+.src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
+.src ul{padding-left:20px;margin:8px 0 14px}
+.src a{color:var(--ink)}
+details summary{cursor:pointer;font:600 15px var(--f-head);color:var(--ink)}
+details p{margin-top:8px}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="open g">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="in">
+    <div class="kick">Decision story · Supply chain risk</div>
+    <h1>The power tower that stopped a <em>gigafactory</em></h1>
+    <p class="dek">In March 2024 a fire under one power line cut Tesla's Berlin plant off the grid for eight days. Here is what happened, what it cost, and what the plant could have done instead.</p>
+    <div class="by">A supply chain case study · Sources at the end</div>
+    <div class="cue">Scroll to start</div>
+  </div>
+</header>
+
+<!-- Chapter 1 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 1 · The night</div>
+    <h2>Tuesday, 5 March, before dawn</h2>
+    <p class="lead">Tesla's plant in Grünheide, east of Berlin, builds the Model Y. On a normal day about 1,000 cars leave the line. Like most factories, it gets its power from a single high-voltage line running across open fields.</p>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in scrolly" data-chart="grid">
+    <figure class="fig" style="margin:0">
+      <div class="figcap" id="gridCap">Normal operation</div>
+      <svg viewBox="0 0 600 400" role="img" aria-label="Diagram of the grid feed to the plant">
+        <!-- substation A -->
+        <rect x="24" y="180" width="70" height="44" rx="4" fill="var(--paper)" stroke="var(--wire)" stroke-width="2"/>
+        <text x="59" y="246" text-anchor="middle" class="lbl">Substation</text>
+        <!-- line A -->
+        <path class="wire" d="M94 202 H250 H400"/>
+        <path class="flow" id="fA1" d="M94 202 H250"/>
+        <path class="flow" id="fA2" d="M250 202 H400"/>
+        <!-- homes branch -->
+        <path class="wire" d="M250 202 V96 H330"/>
+        <path class="flow" id="fH" d="M250 202 V96 H330"/>
+        <g id="homes">
+          <path class="house" d="M336 100 l12 -12 l12 12 v14 h-24z"/>
+          <path class="house" d="M366 100 l12 -12 l12 12 v14 h-24z"/>
+          <path class="house" d="M396 100 l12 -12 l12 12 v14 h-24z"/>
+        </g>
+        <text x="378" y="76" text-anchor="middle" class="lbl">Homes nearby</text>
+        <!-- power tower -->
+        <path d="M250 150 L236 214 M250 150 L264 214 M234 166 H266 M238 182 H262 M240 196 L260 214 M260 196 L240 214" stroke="var(--ink)" stroke-width="2.5" fill="none"/>
+        <text x="250" y="236" text-anchor="middle" class="lbl">Power tower</text>
+        <!-- fire -->
+        <g class="opt fire" id="fire">
+          <circle cx="250" cy="170" r="34" fill="rgba(255,120,30,.25)"/>
+          <path d="M250 140 C262 156 268 166 262 182 C258 192 242 192 238 182 C232 168 242 160 250 140Z" fill="#F26B1D"/>
+          <path d="M250 160 C256 168 258 174 255 182 C252 188 247 188 245 182 C243 175 246 170 250 160Z" fill="#FFC233"/>
+        </g>
+        <!-- cut marker -->
+        <g class="opt" id="cut"><path d="M300 190 l14 24 M314 190 l-14 24" stroke="var(--bad)" stroke-width="4"/><text x="307" y="180" text-anchor="middle" class="lbl" style="fill:var(--bad)">cables cut</text></g>
+        <!-- spof ring -->
+        <g class="opt" id="spof"><circle cx="250" cy="182" r="46" fill="none" stroke="var(--bad)" stroke-width="3" stroke-dasharray="6 5"/><text x="250" y="132" text-anchor="middle" class="lblb" style="fill:var(--bad)">single point of failure</text></g>
+        <!-- plant -->
+        <rect x="400" y="150" width="176" height="120" rx="4" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+        <rect class="zone" id="zL" x="410" y="160" width="100" height="100" rx="2"/>
+        <text x="460" y="214" text-anchor="middle" class="zl">Assembly</text>
+        <rect class="zone" id="zP" x="516" y="160" width="50" height="48" rx="2"/>
+        <text x="541" y="188" text-anchor="middle" class="zl">Paint</text>
+        <rect class="zone" id="zC" x="516" y="212" width="50" height="48" rx="2"/>
+        <text x="541" y="234" text-anchor="middle" class="zl">Air</text><text x="541" y="248" text-anchor="middle" class="zl">+ IT</text>
+        <text x="488" y="290" text-anchor="middle" class="lblb">Gigafactory</text>
+        <!-- genset -->
+        <g class="opt" id="gen"><rect x="520" y="306" width="56" height="34" rx="3" fill="var(--paper)" stroke="var(--good)" stroke-width="2"/><text x="548" y="328" text-anchor="middle" class="zl" style="fill:var(--good)">GENSET</text><path d="M548 306 V270" stroke="var(--good)" stroke-width="3"/></g>
+        <!-- battery -->
+        <g class="opt" id="bess"><rect x="420" y="306" width="70" height="34" rx="3" fill="var(--paper)" stroke="var(--good)" stroke-width="2"/><rect x="426" y="312" width="30" height="22" fill="var(--good)"/><text x="474" y="328" text-anchor="middle" class="zl" style="fill:var(--good)">4h</text><path d="M455 306 V270" stroke="var(--good)" stroke-width="3"/></g>
+        <!-- second feed -->
+        <g class="opt" id="feedB">
+          <rect x="60" y="330" width="70" height="44" rx="4" fill="var(--paper)" stroke="var(--good)" stroke-width="2"/>
+          <text x="95" y="392" text-anchor="middle" class="lbl" style="fill:var(--good)">2nd substation</text>
+          <path d="M130 352 H360 V250 H400" stroke="var(--good)" stroke-width="3" fill="none"/>
+          <path class="flow on" d="M130 352 H360 V250 H400" style="stroke:var(--good)"/>
+          <text x="245" y="342" text-anchor="middle" class="lbl" style="fill:var(--good)">separate route</text>
+        </g>
+      </svg>
+      <div class="score opt" id="score" aria-label="Share of the loss each option avoids">
+        <div class="sc" data-k="gen"><span>Gensets</span><span class="bar"><i style="width:14%"></i></span><span class="v">€57M</span></div>
+        <div class="sc" data-k="bess"><span>Battery</span><span class="bar"><i style="width:4%"></i></span><span class="v">€16M</span></div>
+        <div class="sc" data-k="feed"><span>2nd feed</span><span class="bar"><i style="width:90%"></i></span><span class="v">€360M</span></div>
+        <div class="figcap" style="min-height:0">Loss avoided in the real 8-day outage, of ~€400M <span class="est">estimate</span></div>
+      </div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="normal"><span class="t">Normal day</span><p>Power flows from the substation, over the power tower, into the plant. The same line also feeds villages nearby.</p></div>
+      <div class="step" data-s="fire"><span class="t">Around 5 a.m.</span><p>Someone sets fire to the power tower in a field near the plant. A far-left group called "Vulkangruppe" later claims the attack. The plant goes dark. So do tens of thousands of homes in Brandenburg and Berlin.</p></div>
+      <div class="step" data-s="backup"><span class="t">The backup fails</span><p>The plant has backup systems, but the fire cut the cables between the mast and the substation. Ventilation stops too. All 12,500 workers are sent home.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Chapter 2 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 2 · The cost</div>
+    <h2>Eight days of nothing</h2>
+    <p>A car plant doesn't pause cleanly. The paint shop has to be emptied and restarted. Parts keep arriving with nowhere to go. Every day dark is a day of cars that customers don't get.</p>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in scrolly" data-chart="cost">
+    <figure class="fig" style="margin:0">
+      <div class="figcap" id="costCap">March 2024</div>
+      <div class="days" id="days"></div>
+      <div class="cars" id="cars" aria-label="Each block is 100 cars not built"></div>
+      <div class="counters">
+        <div class="ctr"><div class="n" id="nCars">~1,000</div><div class="k">cars not built</div></div>
+        <div class="ctr"><div class="n" id="nEur">€57M</div><div class="k">estimated loss</div></div>
+      </div>
+      <div class="figcap" style="min-height:0">Each block = 100 cars <span class="est">estimate</span></div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-d="1"><span class="t">Day 1 · Tue 5 Mar</span><p>About 1,000 cars are lost on the first day. The paint shop and line start costing money just to bring back.</p></div>
+      <div class="step" data-d="2"><span class="t">Day 2 · Wed 6 Mar</span><p>Plant director André Thierig says the loss will be in the "high hundreds of millions" of euros. He doesn't expect a restart that week.</p></div>
+      <div class="step" data-d="7"><span class="t">Day 7 · Mon 11 Mar</span><p>The grid operator works in three shifts. Power comes back at 9:30 p.m. Repairing the power tower alone costs over €1M.</p></div>
+      <div class="step" data-d="9"><span class="t">Day 9 · Wed 13 Mar</span><p>The line runs again. In total about 8,000 cars were not built. The loss is later estimated at <strong>about €400M</strong>. In April, Tesla names the attack as one reason its Q1 output fell.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Chapter 3 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 3 · Why it happened</div>
+    <h2>A €5 billion plant, one line in a field</h2>
+    <p>The arson was the trigger. The weakness was older. The plant depended on one feed, through one power tower that anyone could walk up to. The threat was known: in 2021 a left-wing group claimed an arson attack on cables at the plant's construction site.</p>
+  </div>
+</section>
+
+<section class="reveal" id="reveal" aria-label="The supply chain question">
+  <div class="rv-pin g">
+    <div class="in rv-in">
+      <p class="rv-l" data-at="0">The fire was the trigger.</p>
+      <p class="rv-l" data-at="1">The weak spot was the design.</p>
+      <p class="rv-l" data-at="2">So for supply chain, the question is:</p>
+      <h2 class="rv-q" data-at="3">What is it worth to never depend on <em>one power tower</em> again?</h2>
+    </div>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in scrolly" data-chart="grid2">
+    <figure class="fig" style="margin:0">
+      <div class="figcap" id="grid2Cap"></div>
+      <div id="grid2Slot"></div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="spof"><span class="t">The weak spot</span><p>One line, one power tower. Nothing else could keep the plant running. The plant had four ways to protect itself.</p></div>
+      <div class="step" data-s="none"><span class="t">Option 0 · Do nothing</span><p>Accept the risk and rely on insurance. It costs nothing up front. Insurance may pay back part of the money, but it builds no cars. Customers still wait.</p></div>
+      <div class="step" data-s="gen"><span class="t">Option 1 · Diesel gensets</span><p>About 20 MW for ventilation, the paint shop and IT. Up in weeks, ~€2M a year. They don't run the line, but the plant shuts down safely and restarts about a day sooner. <strong>Saves ~€57M</strong> of the €400M.</p></div>
+      <div class="step" data-s="bess"><span class="t">Option 2 · Battery storage</span><p>About 400 MWh would run the whole plant for ~4 hours, at ~€4M a year after grid income. Great for short dips. In an 8-day cut it is empty by breakfast. <strong>Saves ~€16M.</strong></p></div>
+      <div class="step" data-s="feed"><span class="t">Option 3 · A second grid feed</span><p>A new line on a separate route, from a different substation. ~€50M one-off, shared with the grid operator, so ~€3M a year. It takes 2 to 4 years to permit and build. One burnt power tower no longer stops the plant. <strong>Saves ~€360M.</strong></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Chapter 4 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 4 · Running the numbers</div>
+    <h2>It depends on how often it happens</h2>
+    <p>Protection costs money every year. An outage costs money only when it happens. So each option is worth it if the loss it saves, times the chance per year, beats its yearly cost. Try it yourself.</p>
+  </div>
+  <div class="in calc">
+    <div class="ctrls">
+      <div><div class="ml">How long is the outage?</div><div class="seg" id="lenSeg" role="group" aria-label="Outage length"></div></div>
+      <div><div class="ml">How often does it happen?</div><div class="seg" id="freqSeg" role="group" aria-label="How often"></div></div>
+    </div>
+    <p class="exp" id="exp"></p>
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+
+<!-- Chapter 5 -->
+<section class="chap g" style="padding-bottom:60px">
+  <div class="col">
+    <div class="kick">Chapter 5 · The decision</div>
+    <h2>What I would have done</h2>
+  </div>
+  <div class="in">
+    <div class="verdict">
+      <div class="kick">My call</div>
+      <h3>Build a second, independent grid feed, and bridge the years it takes with backup for critical systems.</h3>
+    </div>
+    <div class="three">
+      <div><b>It covers the real event</b>The feed saves ~€360M of the €400M. No other option saves more than €57M in an 8-day cut.</div>
+      <div><b>It is cheap next to the risk</b>~€3M a year against ~€16M of expected loss a year at a 1-in-25 risk. It still pays off at 1 in 120 years.</div>
+      <div><b>It has a gap, so close it</b>A new line takes years. Gensets go in within weeks, give a safe shutdown, and stay as a second layer.</div>
+    </div>
+    <div class="col" style="max-width:none">
+      <div class="ml" style="margin-bottom:8px">The decisions that could have been made</div>
+    </div>
+    <div class="paths">
+      <div><span class="ml">Before · 2020</span><h3>Plan two feeds</h3>The plant was built from scratch. Adding a second route at the design stage is far cheaper than retrofitting one later.</div>
+      <div><span class="ml">During · March 2024</span><h3>Run a playbook</h3>Pause supplier call-offs, hold inbound trucks, tell customers new delivery dates on day 1. These need no grid, only preparation.</div>
+      <div><span class="ml">After · 2024 on</span><h3>Fix the weak spot</h3>Second feed, critical-load backup, and power tower monitoring with the grid operator. I found no public report of a new independent feed.</div>
+    </div>
+  </div>
+</section>
+
+<hr>
+<footer class="src g">
+  <div class="col">
+    <strong style="color:var(--ink);font-family:var(--f-head)">Sources</strong>
+    <ul>
+      <li><a href="https://www.electrive.com/2024/03/12/tesla-ramps-up-production-in-grunheide" target="_blank" rel="noopener">electrive, 12 Mar 2024</a>: power back 11 Mar 21:30, restart 13 Mar, ~€400M estimated loss</li>
+      <li><a href="https://fortune.com/2024/03/06/elon-musk-tesla-germany-gigafactory-fire-volcano-group-damages/amp/" target="_blank" rel="noopener">Fortune, 6 Mar 2024</a>: ~1,000 cars a day, "high hundreds of millions", backup failure, 12,500 sent home</li>
+      <li><a href="https://www.zfk.de/energie/strom/reparatur-von-strommast-nach-tesla-anschlag-kostete-ueber-eine-million" target="_blank" rel="noopener">ZfK (dpa)</a>: attack on 5 Mar, Vulkangruppe claim, repair over €1M</li>
+      <li><a href="https://www.electrive.com/2024/04/02/tesla-production-declines-in-the-first-quarter" target="_blank" rel="noopener">electrive, 2 Apr 2024</a>: Tesla's Q1 report cites the arson attack</li>
+      <li><a href="https://www.netzwelt.de/news/189410-tesla-brandanschlag-berliner-gigafactory-baustellebekennerschreiben-kursiert.html" target="_blank" rel="noopener">netzwelt, 2021</a>: earlier arson on construction-site cables</li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ---- Grid diagram: move the same SVG into chapter 3 when that chapter is in view ----
+  var fig1=document.querySelector('[data-chart="grid"] .fig'), svg=fig1.querySelector('svg'), score=document.getElementById('score');
+  var slot2=document.getElementById('grid2Slot'), cap1=document.getElementById('gridCap'), cap2=document.getElementById('grid2Cap');
+  var slot1=document.createElement('div');fig1.insertBefore(slot1,svg);slot1.appendChild(svg);slot1.appendChild(score);
+  var clone=slot1.cloneNode(true);clone.querySelectorAll('[id]').forEach(function(e){e.id=e.id+'_2';});slot2.appendChild(clone);slot1.removeChild(score);
+  var STATES={
+    normal:{on:['fA1','fA2','fH','zL','zP','zC','h'],cap:'Normal operation'},
+    fire:{on:['fire'],cap:'5 Mar, ~5 a.m. · plant dark'},
+    backup:{on:['fire','cut'],cap:'Backup can\'t connect · 12,500 sent home'},
+    spof:{on:['fA1','fA2','fH','zL','zP','zC','h','spof'],cap:'One line, one power tower'},
+    none:{on:['fire','score'],cap:'Do nothing · plant dark for 8 days',dim:['gen','bess','feed']},
+    gen:{on:['fire','gen','zC','zP','score'],cap:'Gensets · critical systems stay on',dim:['bess','feed']},
+    bess:{on:['fire','bess','zL','zP','zC','score'],cap:'Battery · full power for ~4 hours',dim:['gen','feed']},
+    feed:{on:['fire','feedB','zL','zP','zC','score'],cap:'Second feed · plant keeps running',dim:['gen','bess']}
+  };
+  function setGrid(root,suffix,cap,s){
+    var st=STATES[s]; if(!st)return;
+    var ids=['fA1','fA2','fH','zL','zP','zC','fire','cut','spof','gen','bess','feedB','score'];
+    ids.forEach(function(id){var el=root.querySelector('#'+id+suffix);if(el)el.classList.toggle('on',st.on.indexOf(id)>=0);});
+    root.querySelectorAll('.house').forEach(function(h){h.classList.toggle('on',st.on.indexOf('h')>=0);});
+    root.querySelectorAll('.sc').forEach(function(r){r.classList.toggle('dim',!!st.dim&&st.dim.indexOf(r.getAttribute('data-k'))>=0);});
+    cap.textContent=st.cap;
+  }
+  setGrid(slot1,'',cap1,'normal'); setGrid(clone,'_2',cap2,'spof');
+
+  // ---- Cost visual ----
+  var daysEl=document.getElementById('days'), carsEl=document.getElementById('cars');
+  var DATES=['5','6','7','8','9','10','11','12','13'];
+  DATES.forEach(function(d){var x=document.createElement('div');x.className='day';x.innerHTML='<b>'+d+'</b>Mar';daysEl.appendChild(x);});
+  for(var i=0;i<80;i++){var c=document.createElement('i');c.className='car';carsEl.appendChild(c);}
+  var nCars=document.getElementById('nCars'), nEur=document.getElementById('nEur'), costCap=document.getElementById('costCap');
+  function setCost(d){
+    var dark=Math.min(d,8);
+    Array.prototype.forEach.call(daysEl.children,function(x,i){x.classList.toggle('dark',i<dark);x.classList.toggle('back',d>=9&&i===8);});
+    Array.prototype.forEach.call(carsEl.children,function(x,i){x.classList.toggle('lost',i<dark*10);});
+    nCars.textContent='~'+(dark*1000).toLocaleString('en-US');
+    nEur.textContent='€'+Math.round(dark*49+8)+'M';
+    costCap.textContent=d>=9?'13 Mar · production restarts':'Day '+d+' without power';
+  }
+  setCost(1);
+
+  // ---- Scroll steps ----
+  function bind(sel,fn){
+    var steps=document.querySelectorAll(sel+' .step');
+    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(e.target);}});},{rootMargin:'-40% 0px -45% 0px'});
+    steps.forEach(function(s){io.observe(s);});
+    if(steps[0])steps[0].classList.add('on');
+  }
+  bind('[data-chart="grid"]',function(s){setGrid(slot1,'',cap1,s.getAttribute('data-s'));});
+  bind('[data-chart="grid2"]',function(s){setGrid(clone,'_2',cap2,s.getAttribute('data-s'));});
+  bind('[data-chart="cost"]',function(s){setCost(+s.getAttribute('data-d'));});
+
+
+  // ---- Question reveal ----
+  var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
+  function rvTick(){
+    var r=rv.getBoundingClientRect(), span=r.height-innerHeight;
+    var p=span>0?Math.min(1,Math.max(0,-r.top/span)):1;
+    var n=Math.floor(p*4.6); // 0..4
+    rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1&&true);});
+  }
+  addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
+
+  // ---- Calculator (estimates) ----
+  var PER_DAY=49, RESTART=8;
+  var LENGTHS=[{h:4,l:'4 hours'},{h:24,l:'1 day'},{h:192,l:'8 days ★ real'},{h:504,l:'3 weeks'}];
+  var FREQS=[{y:5,l:'1 in 5 yrs'},{y:25,l:'1 in 25 yrs'},{y:100,l:'1 in 100 yrs'}];
+  function loss(h){return h/24*PER_DAY+RESTART;}
+  var OPTS=[
+    {k:'none',name:'Do nothing',cost:0,lead:'—',avoid:function(){return 0;}},
+    {k:'gen',name:'Diesel gensets',cost:2,lead:'weeks',avoid:function(h){return RESTART+(h>24?PER_DAY:0);}},
+    {k:'bess',name:'Battery storage',cost:4,lead:'months',avoid:function(h){return Math.min(h,4)/24*PER_DAY+RESTART;}},
+    {k:'feed',name:'Second grid feed',cost:3,lead:'2–4 yrs',avoid:function(h){return 0.9*loss(h);}}
+  ];
+  var st={len:2,freq:1};
+  function seg(id,items,key){var el=document.getElementById(id);items.forEach(function(it,i){var b=document.createElement('button');b.type='button';b.id=id+i;b.textContent=it.l;b.addEventListener('click',function(){st[key]=i;render();});el.appendChild(b);});return el;}
+  var lenSeg=seg('lenSeg',LENGTHS,'len'), freqSeg=seg('freqSeg',FREQS,'freq'), cardsEl=document.getElementById('cards');
+  function fm(m){return '€'+(m>=10?Math.round(m):m.toFixed(1))+'M';}
+  function render(){
+    [[lenSeg,st.len],[freqSeg,st.freq]].forEach(function(p){Array.prototype.forEach.call(p[0].children,function(b,i){b.setAttribute('aria-pressed',i===p[1]?'true':'false');});});
+    var h=LENGTHS[st.len].h, yrs=FREQS[st.freq].y, L=loss(h);
+    document.getElementById('exp').innerHTML='One outage costs <b>~'+fm(L)+'</b>. With no protection, that is <b>~'+fm(L/yrs)+' a year</b> on average. <span class="est">estimate</span>';
+    var rows=OPTS.map(function(o){var a=o.avoid(h);return {o:o,a:a,net:a/yrs-o.cost,be:o.cost?a/o.cost:null};});
+    var best=rows.reduce(function(m,r){return r.net>m.net?r:m;},rows[0]);
+    cardsEl.innerHTML='';
+    rows.forEach(function(r){
+      var cls='',chip;
+      if(r===best){cls='best';chip='✓ Best choice';}
+      else if(r.o.k==='none'){chip='✗ Riskiest';}
+      else if(r.net>0){cls='win';chip='✓ Pays off';}
+      else{chip='✗ Doesn\'t pay';}
+      var pay=r.o.k==='none'?'Costs €0 until it happens':'Worth it at 1 in '+Math.max(1,Math.round(r.be))+' yrs or more often';
+      var d=document.createElement('div');d.className='card '+cls;
+      d.innerHTML='<span class="chip">'+chip+'</span><h3>'+r.o.name+'</h3><dl class="kv"><dt>Cost a year</dt><dd>'+(r.o.cost?'€'+r.o.cost+'M':'€0')+'</dd><dt>Saved per outage</dt><dd>'+(r.a?fm(r.a)+' ('+Math.round(r.a/L*100)+'%)':'€0')+'</dd><dt>Time to build</dt><dd>'+r.o.lead+'</dd></dl><div class="pay">'+pay+'</div>';
+      cardsEl.appendChild(d);
+    });
+  }
+  render();
+})();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

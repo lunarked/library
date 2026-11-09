@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Story: Zara near-shoring (1990s)</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --paper:#FFFFFF; --ink:#141A22; --muted:#5A6370; --line:#D3D6DA; --soft:#E5E7EA;
+  --amber:#B86E00; --ambersoft:#F6E6CC; --sky:#2F5C8F; --skysoft:#DCE5F0;
+  --bad:#C2372D; --badsoft:#F8DEDA; --good:#1F7D47; --goodsoft:#DDF0E4;
+  --night:#0B0F16; --nightink:#E9ECEF; --nightmuted:#939CA8; --board:#FFB020;
+  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-text:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
+  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
+  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+.g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+.col{max-width:680px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+sup{font:600 .6em var(--f-mono);color:var(--muted)}
+p{margin:0 0 1em}
+b,strong{font-weight:600}
+.est{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:2px;white-space:nowrap}
+
+/* Opener */
+.open{background:var(--night);color:var(--nightink);padding-block:60px 50px;position:relative;overflow:hidden}
+.open .kick{color:var(--board)}
+.open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:15ch}
+.open h1 .u{color:#6FD49B}.open h1 .d{color:#FF7B6E}
+.dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
+.by{margin-top:26px;font:500 13px var(--f-mono);color:var(--nightmuted);letter-spacing:.04em}
+.cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
+.cue::after{content:" ↓"}
+.boardrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;max-width:960px}
+@media (max-width:700px){.boardrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.boardrow div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:10px 12px}
+.boardrow b{display:block;font:600 clamp(24px,3.4vw,36px)/1.05 var(--f-mono);color:var(--board);font-variant-numeric:tabular-nums}
+.boardrow b.g2{color:#6FD49B}
+.boardrow span{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+
+/* Prose chapter */
+.chap{padding-block:64px 24px}
+.chap h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 22px;letter-spacing:-.01em}
+.chap .lead::first-letter{font:900 3.3em/0.8 var(--f-head);float:left;margin:6px 10px 0 0;color:var(--amber)}
+.pull{font:800 clamp(24px,3.3vw,34px)/1.2 var(--f-head);border-left:5px solid var(--amber);padding:4px 0 4px 18px;margin:30px 0}
+
+/* Scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px;margin:0}
+.fig svg{width:100%;height:auto;max-height:58vh;display:block}
+.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
+.steps{padding-block:20vh 30vh}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.step:last-child{margin-bottom:10vh}
+.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
+.step p:last-child{margin:0}
+@media (max-width:860px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
+  .fig svg{max-height:34vh}
+  .steps{padding-block:4vh 10vh;position:relative;z-index:3}
+  .step{margin-bottom:45vh;opacity:1;font-size:17px}
+}
+
+/* Charts */
+.axis{stroke:var(--line);stroke-width:1}
+.tick{font:600 13px var(--f-mono);fill:var(--muted)}
+.lbl{font:600 12.5px var(--f-mono);fill:var(--muted)}
+.lblb{font:800 17px var(--f-head);fill:var(--ink)}
+.ln{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.ln.dl{stroke:var(--bad)} .ln.ua{stroke:var(--good)}
+.pt{transition:opacity .35s}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:600 12px var(--f-mono);color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:3px}
+.counters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ctr .n{font:900 clamp(24px,3.8vw,42px)/1 var(--f-head);font-variant-numeric:tabular-nums;color:var(--ink)}
+.ctr .n.bad{color:var(--bad)} .ctr .n.good{color:var(--good)}
+.ctr .k{font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* Crew diagram */
+.hub{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
+.crew{transition:transform .7s ease,fill .4s}
+.crew.ok{fill:var(--good)} .crew.off{fill:var(--bad)} .crew.time{fill:var(--amber)}
+.tool{transition:opacity .4s}
+
+/* Tool */
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;margin-top:10px}
+.ml{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.seg button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.exp{font-size:17px;margin:14px 0}
+.exp b{font-family:var(--f-head)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:700px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
+.card.best{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
+.chip{align-self:flex-start;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--badsoft);color:var(--bad)}
+.best .chip{background:var(--goodsoft);color:var(--good)}
+.card h3{font-size:18px}
+.big{font:900 clamp(30px,4vw,44px)/1 var(--f-head);font-variant-numeric:tabular-nums}
+.big small{font:600 13px var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;margin:0;font:500 12.5px var(--f-mono)}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.pay{font:600 12.5px var(--f-mono);border-top:1px dashed var(--line);padding-top:7px;margin-top:auto;color:var(--muted)}
+.note{font-size:16px;color:var(--muted);margin:14px 0 0}
+
+/* Decision */
+.verdict{background:var(--ink);color:var(--bg);border-radius:8px;padding:26px 24px;margin:10px 0 14px}
+.verdict .kick{color:var(--amber)}
+.verdict h3{font-weight:900;font-size:clamp(22px,3.1vw,32px);line-height:1.15;margin-top:8px}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:26px}
+@media (max-width:860px){.trio{grid-template-columns:minmax(0,1fr)}}
+.trio div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
+.trio b{display:block;font:800 18px var(--f-head);margin-bottom:4px}
+.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+@media (max-width:860px){.paths{grid-template-columns:minmax(0,1fr)}}
+.paths div{padding:16px 18px;font-size:16.5px;line-height:1.5;border-right:1px solid var(--line)}
+.paths div:last-child{border-right:0}
+@media (max-width:860px){.paths div{border-right:0;border-bottom:1px solid var(--line)}.paths div:last-child{border-bottom:0}}
+.paths .ml{display:block;margin-bottom:4px;color:var(--amber)}
+.paths h3{font-size:18px;margin-bottom:4px}
+
+/* Two recoveries */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:8px 0 10px}
+@media (max-width:700px){.vs{grid-template-columns:minmax(0,1fr)}}
+.vs div{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
+.vs div.w{border-top-color:var(--good)}
+.vs h3{font-size:19px;margin:6px 0 4px}
+
+/* Question reveal */
+.reveal{height:200vh;background:var(--night);position:relative}
+.rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+.rv-in{width:100%}
+.rv-l{font:800 clamp(24px,3.6vw,40px)/1.2 var(--f-head);color:var(--nightink);margin:0 0 14px;opacity:.18;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rv-q{font-weight:900;font-size:clamp(34px,6.2vw,80px);line-height:1.02;letter-spacing:-.015em;color:var(--nightink);margin-top:28px;max-width:18ch;opacity:.18;transform:translateY(12px);transition:opacity .6s,transform .6s}
+.rv-q em{font-style:normal;color:var(--board)}
+.rv-l.on,.rv-q.on{opacity:1;transform:none}
+.rv-l.on{color:var(--board)}
+
+/* Sources */
+.src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
+.src ol{padding-left:20px;margin:8px 0 14px}
+.src a{color:var(--ink)}
+details summary{cursor:pointer;font:600 15px var(--f-head);color:var(--ink)}
+details p{margin-top:8px}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.rv-l,.rv-q{opacity:1;transform:none}}
+.rings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:8px 0 10px}
+@media (max-width:760px){.rings{grid-template-columns:minmax(0,1fr)}}
+.rings div{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--line);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
+.rings div.w{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
+.rings .n{font:900 34px/1 var(--f-head);display:block;margin:8px 0 2px}
+.rings h3{font-size:18px;margin-bottom:4px}
+.grid14{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:3px;max-width:820px;margin:14px 0 6px}
+.grid14 i{display:block;aspect-ratio:1;border-radius:2px;background:var(--soft);transition:background .35s}
+.grid14 i.p{background:var(--bad)} .grid14 i.x{box-shadow:0 0 0 2px var(--ink) inset}
+.meter{display:flex;gap:3px;margin-top:4px;width:64px;margin-left:auto}
+.meter span{height:8px;flex:1;border-radius:2px;background:var(--soft)}
+.meter.l1 span:nth-child(-n+1),.meter.l2 span:nth-child(-n+2),.meter.l3 span:nth-child(-n+3),.meter.l4 span:nth-child(-n+4){background:var(--bad)}
+.cards4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:980px){.cards4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cards4{grid-template-columns:minmax(0,1fr)}}
+.card.sel{outline:2px solid var(--ink);outline-offset:2px}
+.card.mid{border-top-color:var(--amber)} .card.mid .chip{background:var(--ambersoft);color:var(--amber)}
+.plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:860px){.plan{grid-template-columns:minmax(0,1fr)}}
+.pday{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ptop{display:flex;justify-content:space-between;align-items:baseline}
+.pd{font:900 22px var(--f-head)} .pdate{font:600 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.mini{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:2px}
+.mini i{display:block;aspect-ratio:1;border-radius:1px;background:var(--soft)}
+.mini i.p{background:var(--bad)} .mini i.a{background:var(--amber)}
+.pnum{font:900 28px/1 var(--f-head);font-variant-numeric:tabular-nums}
+.pnum small{font:600 12px var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.pnum.bad{color:var(--bad)} .pnum.amb{color:var(--amber)} .pnum.good{color:var(--good)}
+.pday p{margin:0;font-size:16.5px;line-height:1.5}
+.tag{align-self:flex-start;margin-top:auto;font:700 12px var(--f-mono);letter-spacing:.03em;padding:4px 8px;border-radius:4px}
+.tag.same{background:var(--goodsoft);color:var(--good)} .tag.new{background:var(--ambersoft);color:var(--amber)}
+.tline{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:3px solid var(--line);padding-top:4px}
+@media (max-width:860px){.tline{grid-template-columns:minmax(0,1fr);border-top:0;border-left:3px solid var(--line);padding:0 0 0 4px}}
+.tl{position:relative;padding:18px 18px 6px 0}
+@media (max-width:860px){.tl{padding:6px 0 14px 18px}}
+.tl .dot{position:absolute;top:-11px;left:0;width:14px;height:14px;border-radius:50%;background:var(--amber);border:3px solid var(--bg)}
+@media (max-width:860px){.tl .dot{top:8px;left:-12px}}
+.tl h3{font-size:18px;margin:4px 0}
+.tl p{margin:0;font-size:16.5px;line-height:1.5}
+.hw{margin-top:30px;border-left:5px solid var(--amber);background:var(--paper);border-radius:0 8px 8px 0;padding:16px 20px}
+.hw p{margin:6px 0 0;font-size:18px}
+/* Zara v3: sticky scenes */
+.scenes{position:relative;height:clamp(300px,56vh,480px)}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s;pointer-events:none}
+.scene.on{opacity:1;transform:none;pointer-events:auto}
+.lane{margin-bottom:22px}
+.lane .who{display:flex;justify-content:space-between;align-items:baseline;font:800 19px var(--f-head);margin-bottom:6px}
+.lane .who span{font:600 13px var(--f-mono);color:var(--muted)}
+.track{height:34px;background:var(--soft);border-radius:4px;position:relative;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:4px;transition:width 1.6s cubic-bezier(.3,.7,.3,1)}
+.fill.r{background:var(--bad)} .fill.z{background:var(--good);transition-duration:.5s}
+.ax{display:flex;justify-content:space-between;font:600 12px var(--f-mono);color:var(--muted);margin-top:-12px}
+.fork{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:16px;background:var(--paper)}
+.opt .ml{display:block}
+.opt h3{font-size:clamp(18px,2.2vw,24px);margin:6px 0 8px}
+.opt p{font-size:16px;line-height:1.45;margin:0;color:var(--muted)}
+.opt .tag2{display:inline-block;margin-top:10px;font:700 12px var(--f-mono);padding:3px 8px;border-radius:4px}
+.t-bad{background:var(--badsoft);color:var(--bad)} .t-good{background:var(--goodsoft);color:var(--good)}
+.split{display:flex;height:56px;border-radius:6px;overflow:hidden;font:800 16px var(--f-head);color:#fff;margin-bottom:16px}
+.split div{display:flex;align-items:center;padding:0 14px;white-space:nowrap;width:0;transition:width 1.2s ease}
+.split .n{background:var(--good)} .split .f{background:var(--sky)}
+.scene.on .split .n,.scene.on .split .f{width:50%}
+.keys{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;font-size:16px;line-height:1.45;color:var(--muted)}
+.keys b{display:block;font-family:var(--f-head);color:var(--ink);font-size:17px}
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.pair.one{grid-template-columns:minmax(0,1fr)}
+.gb h3{font-size:18px;margin-bottom:8px}
+.g10{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px;max-width:250px}
+.g10 i{display:block;aspect-ratio:1;border-radius:2px;background:var(--soft);transition:background .3s}
+.g10 i.f{background:var(--good)} .g10 i.d{background:var(--amber)} .g10 i.w{background:var(--bad)}
+.bign{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.bign div{border-top:4px solid var(--good);padding-top:12px}
+.bign div.m{border-top-color:var(--line)}
+.bign b{display:block;font:900 clamp(48px,8vw,96px)/1 var(--f-head);color:var(--good);font-variant-numeric:tabular-nums}
+.bign div.m b{color:var(--muted)}
+.bign span{font:600 12.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.solo b{display:block;font:900 clamp(80px,14vw,160px)/1 var(--f-head);color:var(--good)}
+.solo span{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+@media (max-width:860px){
+  .scenes{height:300px}
+  .opt{padding:12px}.opt p{font-size:14px}.opt h3{font-size:17px}
+  .keys{font-size:14px}.keys b{font-size:15px}
+  .g10{max-width:150px;gap:2px}
+  .split{height:44px}
+  .steps{padding-bottom:50vh}
+}
+</style>
+
+<header class="open g">
+  <div class="in">
+    <div class="kick">Decision story · Zara, 1990s</div>
+    <h1>Why Zara kept its factories <span class="u">close to home</span></h1>
+    <p class="dek">Most clothing brands moved their sewing to Asia to save money. Zara did not. This is the problem it faced, the question it asked, what it decided, and what happened.</p>
+    <div class="cue">Scroll to start</div>
+  </div>
+</header>
+
+<!-- Part 1: problem and question -->
+<section class="g" style="padding-top:40px">
+  <div class="in scrolly" data-chart="a">
+    <figure class="fig">
+      <div class="figcap" id="aCap"></div>
+      <div class="scenes">
+        <div class="scene" data-scene="0">
+          <div class="lane"><div class="who">Typical brand <span>5–6 months</span></div><div class="track"><div class="fill r" data-w="100"></div></div></div>
+          <div class="ax"><span>first sketch</span><span>in stores</span></div>
+        </div>
+        <div class="scene" data-scene="1">
+          <div class="fork">
+            <div class="opt"><span class="ml">Option A</span><h3>Cheap, far away</h3><p>Sew in Asia like everyone else. Every order is a guess made months ahead.</p><span class="tag2 t-good">Lower cost</span> <span class="tag2 t-bad">Slow</span></div>
+            <div class="opt"><span class="ml">Option B</span><h3>Fast, close to home</h3><p>Sew in Spain and nearby. New clothes reach stores in weeks.</p><span class="tag2 t-bad">Higher cost</span> <span class="tag2 t-good">Fast</span></div>
+          </div>
+        </div>
+      </div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="0"><span class="t">1 · The problem</span><h3 style="font-size:22px;margin-bottom:8px">Fashion changes faster than clothes can be made</h3><p>In the 1990s, a brand had to guess months ahead what people would want to wear. It ordered a whole season from Asia and shipped it by sea. A wrong guess ended up on sale or never sold.</p></div>
+      <div class="step" data-s="1"><span class="t">2 · The question Zara asked</span><h3 style="font-size:22px;margin-bottom:8px">Make clothes where it is cheapest, or where it is fastest?</h3><p>Zara was growing across Europe. Its founder, Amancio Ortega, had to decide where its clothes would be made.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" id="reveal" aria-label="The supply chain question">
+  <div class="rv-pin g">
+    <div class="in rv-in">
+      <p class="rv-l" data-at="0">So for supply chain, the question is:</p>
+      <h2 class="rv-q" data-at="1">Is it worth paying more per item to get clothes into stores <em>faster?</em></h2>
+    </div>
+  </div>
+</section>
+
+<!-- Part 2: why, decision, outcome -->
+<section class="g" style="padding-top:40px">
+  <div class="in scrolly" data-chart="b">
+    <figure class="fig">
+      <div class="figcap" id="bCap"></div>
+      <div class="scenes">
+        <div class="scene" data-scene="0">
+          <div class="pair one"><div class="gb"><h3>100 items from a typical brand</h3><div class="g10" data-grid="53,29,18"></div></div></div>
+        </div>
+        <div class="scene" data-scene="1">
+          <div class="split"><div class="n">Near home</div><div class="f">Asia</div></div>
+          <div class="keys">
+            <div><b>About half: trend items</b>Spain, Portugal and Morocco. Trucks to stores twice a week.</div>
+            <div><b>The rest: basics</b>Plain T-shirts and items that sell the same every year.</div>
+          </div>
+        </div>
+        <div class="scene" data-scene="2">
+          <div class="lane"><div class="who">Typical brand <span>5–6 months</span></div><div class="track"><div class="fill r" data-w="100"></div></div></div>
+          <div class="lane"><div class="who">Zara <span>about 2 weeks</span></div><div class="track"><div class="fill z" data-w="8"></div></div></div>
+          <div class="ax" style="margin-top:-8px"><span>first sketch</span><span>in stores</span></div>
+        </div>
+        <div class="scene" data-scene="3">
+          <div class="pair">
+            <div class="gb"><h3>Typical brand</h3><div class="g10" data-grid="53,29,18"></div></div>
+            <div class="gb"><h3>Zara</h3><div class="g10" data-grid="75,16,9"></div></div>
+          </div>
+        </div>
+        <div class="scene" data-scene="4">
+          <div class="bign"><div><b>17×</b><span>visits a year to Zara</span></div><div class="m"><b>4×</b><span>to a typical London store</span></div></div>
+        </div>
+        <div class="scene" data-scene="5">
+          <div class="solo"><b>57%</b><span>of Inditex clothes still made near Spain in 2018</span></div>
+        </div>
+      </div>
+      <div class="legend" id="bLeg"></div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="0"><span class="t">3 · Why speed mattered</span><h3 style="font-size:22px;margin-bottom:8px">A wrong guess cost more than higher wages</h3><p>Typical brands sold 30 to 40% of their clothes at a discount, and about a fifth never sold at all. For Zara, the bigger cost was at the end of the season, not in the factory.</p></div>
+      <div class="step" data-s="1"><span class="t">4 · What Zara decided</span><h3 style="font-size:22px;margin-bottom:8px">Keep trend items close and send basics far</h3><p>Zara cut fabric in its own plants in Galicia and had small workshops nearby sew it. Basics stayed in cheap Asian factories. A spokesman later said that to cut lead time, Zara had to produce closer to home, even if it was not cheaper.</p></div>
+      <div class="step" data-s="2"><span class="t">5 · What happened</span><h3 style="font-size:22px;margin-bottom:8px">New designs reached stores in about two weeks</h3><p>Zara sent small batches, watched what sold and made more of the winners. It could change 40 to 50% of its orders after the season started. Most brands could change about 20%.</p></div>
+      <div class="step" data-s="3"><span class="t">5 · What happened</span><h3 style="font-size:22px;margin-bottom:8px">Fewer clothes on sale, fewer left over</h3><p>Zara sold only 15 to 20% of its clothes on sale, and less than 10% were never sold. Out of 100 items, more sold at full price. <span class="est">est.</span></p></div>
+      <div class="step" data-s="4"><span class="t">5 · What happened</span><h3 style="font-size:22px;margin-bottom:8px">Shoppers kept coming back</h3><p>The stores changed every few days, so people visited more often and bought before items were gone.</p></div>
+      <div class="step" data-s="5"><span class="t">The lesson</span><h3 style="font-size:22px;margin-bottom:8px">Paying more per item made sense for clothes that are hard to predict</h3><p>Speed cut the much bigger cost of guessing wrong. Zara still pays more for labor, and keeps cheap Asian production for items where a guess is easy.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+<footer class="src g">
+  <div class="col">
+    <strong style="color:var(--ink);font-family:var(--f-head)">Sources</strong>
+    <ol>
+      <li><a href="https://www.csmonitor.com/2001/0726/p8s1.html" target="_blank" rel="noopener">Christian Science Monitor, 26 Jul 2001</a>: new designs in stores within two weeks vs five or six months, workshops in northwest Spain and Portugal, trucks twice a week</li>
+      <li><a href="https://hbr.org/2004/11/rapid-fire-fulfillment" target="_blank" rel="noopener">Ferdows, Lewis and Machuca, Harvard Business Review, Nov 2004</a>: 40 to 50% of orders can change after the season starts vs 20% at most, under 10% unsold vs 17 to 20%, 17 visits a year vs 4 in London</li>
+      <li><a href="https://core.ac.uk/download/4404451.pdf" target="_blank" rel="noopener">Caro and Gallien, MIT Sloan working paper, 2007</a>: 15 to 20% of Zara sales at marked-down prices vs 30 to 40% at European peers, local production raises labor cost</li>
+      <li><a href="https://en.wikipedia.org/wiki/Zara_(retailer)" target="_blank" rel="noopener">Wikipedia, Zara (retailer)</a>, citing Businessweek: fashion items, about half of all merchandise, made in company-owned factories; basics outsourced mainly to Asia</li>
+      <li><a href="https://www.modaes.com/global/companies/inditex-sourcing-where-does-zara-owner-make-its-clothes" target="_blank" rel="noopener">Modaes Global, 2019</a>: 57% of Inditex production near Spain in 2018</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+(function(){
+  function bind(sel,fn){
+    var steps=document.querySelectorAll(sel+' .step');
+    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});fn(0);return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(+e.target.getAttribute('data-s'));}});},{rootMargin:'-40% 0px -45% 0px'});
+    steps.forEach(function(s){io.observe(s);});
+    if(steps[0])steps[0].classList.add('on');
+  }
+  document.querySelectorAll('[data-grid]').forEach(function(g){for(var i=0;i<100;i++)g.appendChild(document.createElement('i'));});
+  function paint(g){
+    var v=g.getAttribute('data-grid').split(',').map(Number), sq=g.children;
+    for(var i=0;i<100;i++)sq[i].className='';
+    for(var i=0;i<100;i++){(function(i){setTimeout(function(){sq[i].className=i<v[0]?'f':i<v[0]+v[1]?'d':'w';},i*10);})(i);}
+  }
+  function show(root,n){
+    root.querySelectorAll('.scene').forEach(function(sc){
+      var on=+sc.getAttribute('data-scene')===n, was=sc.classList.contains('on');
+      sc.classList.toggle('on',on);
+      sc.querySelectorAll('.fill').forEach(function(f){f.style.width=on?f.getAttribute('data-w')+'%':'0';});
+      if(on&&!was)sc.querySelectorAll('[data-grid]').forEach(paint);
+    });
+  }
+  var GL='<span><i style="background:var(--good)"></i>Full price</span><span><i style="background:var(--amber)"></i>On sale</span><span><i style="background:var(--bad)"></i>Never sold</span>';
+  var A=document.querySelector('[data-chart="a"]'), B=document.querySelector('[data-chart="b"]');
+  var AC=['Weeks from first sketch to the store','The two options'];
+  var BC=['What happens to 100 items','Where Zara made its clothes','Weeks from first sketch to the store','Out of every 100 items made','Store visits per shopper','Today'];
+  function setA(s){show(A,s);document.getElementById('aCap').textContent=AC[s];}
+  function setB(s){show(B,s);document.getElementById('bCap').textContent=BC[s];document.getElementById('bLeg').innerHTML=(s===0||s===3)?GL:'';}
+  setA(0); bind('[data-chart="a"]',setA);
+  setB(0); bind('[data-chart="b"]',setB);
+
+  var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
+  function rvTick(){
+    var rr=rv.getBoundingClientRect(), span=rr.height-innerHeight;
+    var p=span>0?Math.min(1,Math.max(0,-rr.top/span)):1;
+    var n=Math.floor(p*2.6);
+    rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1);});
+  }
+  addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
+})();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

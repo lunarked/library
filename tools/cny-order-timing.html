@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Tool: Chinese New Year Order Timing</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control rail on the left, verdict + journey timeline on the right; stacks on phones. */
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --ink:#15202A; --muted:#5A6874; --line:#D6DCE2;
+  --accent:#C2362B; --accent-soft:#F6DCD8; --ramp:#F2E3C6;
+  --prod:#3E5568; --qc:#B9822A; --truck:#7A6A58; --surge:#C2362B; --ocean:#1D7088; --air:#5B6FC7;
+  --customs:#7A4F9A; --dray:#4E7F6A; --recv:#2E8B57; --gap:#C2362B;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F151B; --surface:#17202A; --ink:#E6ECF1; --muted:#93A2AE; --line:#2A3743;
+  --accent:#F0675B; --accent-soft:#3A1E1D; --ramp:#3A3020;
+  --prod:#8BA6BC; --qc:#E0AE55; --truck:#B8A58E; --surge:#F0675B; --ocean:#4DB3CF; --air:#93A4F0;
+  --customs:#B98CDB; --dray:#7EC0A3; --recv:#5DCB8B; --gap:#F0675B; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F151B; --surface:#17202A; --ink:#E6ECF1; --muted:#93A2AE; --line:#2A3743;
+  --accent:#F0675B; --accent-soft:#3A1E1D; --ramp:#3A3020;
+  --prod:#8BA6BC; --qc:#E0AE55; --truck:#B8A58E; --surge:#F0675B; --ocean:#4DB3CF; --air:#93A4F0;
+  --customs:#B98CDB; --dray:#7EC0A3; --recv:#5DCB8B; --gap:#F0675B; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding-block:28px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px;margin-bottom:22px}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,4vw,38px);letter-spacing:-.01em;line-height:1.05;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.lede{margin:6px 0 0;color:var(--muted);max-width:62ch}
+.yearpick{display:flex;gap:6px;flex-wrap:wrap}
+.yearpick button,.mode button{font:500 13px var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:6px;cursor:pointer}
+.yearpick button[aria-pressed="true"],.mode button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.rail{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 18px 8px}
+fieldset{border:0;margin:0 0 14px;padding:0}
+legend{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:0;margin-bottom:8px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 0;border-top:1px solid var(--line)}
+.ctl label{font-weight:500}
+.ctl output{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.ctl input{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:4px 0 0}
+.ctl small{grid-column:1/-1;color:var(--muted);font-size:12px;line-height:1.35}
+.mode{display:flex;gap:6px;margin:2px 0 8px}
+.main{display:flex;flex-direction:column;gap:20px;min-width:0}
+.verdict{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr);gap:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:640px){.verdict{grid-template-columns:minmax(0,1fr)}}
+.po{padding:20px 22px;background:var(--ink);color:var(--bg)}
+.po .k{font:700 11px var(--f-display);letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.po .d{font:800 clamp(30px,4.2vw,44px)/1.05 var(--f-display);margin:6px 0 4px;letter-spacing:-.01em}
+.po .s{font:400 13px var(--f-mono);opacity:.85}
+.po .pill{display:inline-block;margin-top:10px;font:500 12px var(--f-mono);padding:3px 8px;border-radius:99px;background:var(--accent);color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line)}
+@media (max-width:460px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--surface);padding:14px 16px;min-width:0}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat .v{font:600 20px var(--f-mono);font-variant-numeric:tabular-nums;margin-top:2px}
+.stat .n{font-size:12px;color:var(--muted)}
+.stat.hot .v{color:var(--accent)}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px;min-width:0}
+h2{font:700 17px var(--f-display);margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 12px;font-size:13px}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--f-mono)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font:600 11px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.dt{font-family:var(--f-mono);white-space:nowrap}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:8px}
+.note{font-size:12px;color:var(--muted);margin-top:10px;max-width:80ch}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:1100px){.two{grid-template-columns:minmax(0,1fr)}}
+@media (prefers-reduced-motion:no-preference){.bar{transition:x .25s,width .25s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Chinese New Year <span>order timing</span></h1>
+      <p class="lede">When is the last day to cut a PO so goods leave the factory before the line stops, and how much do you need to pre-build to bridge the gap until post-holiday production lands in the US DC?</p>
+    </div>
+    <div class="yearpick" id="years" role="group" aria-label="Chinese New Year"></div>
+  </header>
+
+  <div class="grid">
+    <aside class="rail" id="rail" aria-label="Planning assumptions"></aside>
+
+    <div class="main">
+      <div class="verdict">
+        <div class="po">
+          <div class="k">Place PO by</div>
+          <div class="d" id="poDate">–</div>
+          <div class="s" id="poSub">–</div>
+          <span class="pill" id="poPill">–</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="k">Factory stops</div><div class="v" id="sStop">–</div><div class="n" id="sStopN">–</div></div>
+          <div class="stat"><div class="k">Full output again</div><div class="v" id="sFull">–</div><div class="n" id="sFullN">–</div></div>
+          <div class="stat"><div class="k">Last pre-CNY receipt</div><div class="v" id="sPre">–</div><div class="n">at US DC</div></div>
+          <div class="stat"><div class="k">First post-CNY receipt</div><div class="v" id="sPost">–</div><div class="n">at US DC</div></div>
+          <div class="stat hot"><div class="k">Inbound supply gap</div><div class="v" id="sGap">–</div><div class="n" id="sGapN">–</div></div>
+          <div class="stat hot"><div class="k">Pre-build quantity</div><div class="v" id="sQty">–</div><div class="n" id="sQtyN">–</div></div>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2>Journey timeline</h2>
+        <p class="sub">Last pre-CNY order against the first order produced after restart. Shaded red is the factory shutdown, sand is the ramp-up period.</p>
+        <div class="scroll" id="ganttWrap"><svg id="gantt" role="img" aria-label="Timeline of order stages"></svg></div>
+        <div class="legend" id="legend"></div>
+      </section>
+
+      <div class="two">
+        <section class="card">
+          <h2>Last pre-CNY order: stage by stage</h2>
+          <p class="sub">PO placement to receipt at the US warehouse.</p>
+          <div class="scroll"><table id="tblPre"></table></div>
+        </section>
+        <section class="card">
+          <h2>First post-CNY order</h2>
+          <p class="sub">Production starts on restart day at ramp-up capacity.</p>
+          <div class="scroll"><table id="tblPost"></table></div>
+          <p class="note" id="rampNote"></p>
+        </section>
+      </div>
+
+      <p class="note">Method: the PO deadline works backward from the day the line stops (CNY minus the pre-holiday slowdown), less production, QC and trucking to port, less your planning buffer. Goods must reach the port before workers leave. The pre-build covers forecast demand across the inbound gap plus safety stock. Default values reflect a typical Shenzhen/Dongguan consumer electronics contract manufacturer shipping Yantian to Los Angeles/Long Beach. CNY dates: 2027 Feb 6, 2028 Jan 26, 2029 Feb 13, 2030 Feb 3.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+const DAY=86400000;
+const CNY={2027:"2027-02-06",2028:"2028-01-26",2029:"2029-02-13",2030:"2030-02-03"};
+const toDay=s=>Math.round(Date.parse(s+"T00:00:00Z")/DAY);
+const todayN=(()=>{const t=new Date();return Math.round(Date.UTC(t.getFullYear(),t.getMonth(),t.getDate())/DAY);})();
+const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],W=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const dt=n=>{const d=new Date(n*DAY);return M[d.getUTCMonth()]+" "+d.getUTCDate();};
+const dtl=n=>{const d=new Date(n*DAY);return W[d.getUTCDay()]+", "+M[d.getUTCMonth()]+" "+d.getUTCDate()+", "+d.getUTCFullYear();};
+const fmt=n=>n.toLocaleString("en-US");
+
+const groups=[
+ {name:"Factory",ctl:[
+  ["slow","Pre-holiday slowdown",0,21,1,10,"days","Migrant workers leave early. The line stops this many days before CNY."],
+  ["shut","Factory shutdown",7,42,1,25,"days","Total days closed. Many plants reopen around the Lantern Festival."],
+  ["ramp","Post-holiday ramp-up",0,42,1,21,"days","Time until headcount and yield are back to normal."],
+  ["cap","Ramp-up capacity",30,100,5,60,"%","Average output during ramp-up versus normal."],
+  ["prod","Production lead time",10,90,1,35,"days","PO to finished goods: components, SMT, final assembly."],
+  ["qc","QC inspection and packing",1,10,1,3,"days","Pre-shipment inspection (AQL), cartonize, palletize."]]},
+ {name:"Freight",mode:true,ctl:[
+  ["truck","Trucking to port and cut-off",1,7,1,2,"days","Factory to Yantian, including CY / cargo cut-off."],
+  ["surge","Pre-CNY freight surge delay",0,21,1,7,"days","Rolled bookings and blank sailings in the weeks before CNY."],
+  ["transit","Ocean transit",10,40,1,18,"days","Port to port, Yantian to LA / Long Beach."],
+  ["customs","US customs clearance",1,10,1,3,"days","Entry filing, CBP release, possible exam hold."],
+  ["dray","Drayage / rail to DC",1,14,1,5,"days","Port to distribution center, incl. chassis wait."],
+  ["recv","Receiving and put-away",1,7,1,2,"days","Dock to stock at the DC."]]},
+ {name:"Demand and buffers",ctl:[
+  ["demand","Forecast demand",500,50000,500,6000,"units/wk","Weekly sell-through for this SKU."],
+  ["ss","Safety stock",0,8,0.5,2,"weeks","Cover on top of the gap for forecast error."],
+  ["buffer","Planning buffer",0,21,1,5,"days","Slack before the hard deadline for supplier slippage."]]}
+];
+const MODES={ocean:{label:"Ocean",min:10,max:40,def:18,name:"Ocean transit",hint:"Port to port, Yantian to LA / Long Beach."},
+             air:{label:"Air",min:1,max:10,def:4,name:"Air freight",hint:"HKG / SZX to LAX incl. uplift wait, door to airport."}};
+const S={year:2027,mode:"ocean",transitByMode:{ocean:18,air:4}};
+groups.forEach(g=>g.ctl.forEach(c=>S[c[0]]=c[5]));
+
+/* build controls */
+const rail=document.getElementById("rail");
+groups.forEach(g=>{
+  const fs=document.createElement("fieldset");
+  fs.innerHTML='<legend>'+g.name+'</legend>';
+  if(g.mode){
+    const m=document.createElement("div");m.className="mode";m.setAttribute("role","group");m.setAttribute("aria-label","Transport mode");
+    Object.keys(MODES).forEach(k=>{const b=document.createElement("button");b.type="button";b.id="mode-"+k;b.textContent=MODES[k].label;b.dataset.mode=k;m.appendChild(b);
+      b.addEventListener("click",()=>{S.transitByMode[S.mode]=S.transit;S.mode=k;const mm=MODES[k];const r=document.getElementById("in-transit");
+        r.min=mm.min;r.max=mm.max;S.transit=S.transitByMode[k];r.value=S.transit;document.getElementById("lb-transit").textContent=mm.name;document.getElementById("hint-transit").textContent=mm.hint;update();});});
+    fs.appendChild(m);
+  }
+  g.ctl.forEach(([id,label,min,max,step,def,unit,hint])=>{
+    const d=document.createElement("div");d.className="ctl";
+    d.innerHTML='<label for="in-'+id+'" id="lb-'+id+'">'+label+'</label><output id="out-'+id+'" for="in-'+id+'"></output>'+
+      '<input type="range" id="in-'+id+'" min="'+min+'" max="'+max+'" step="'+step+'" value="'+def+'">'+
+      '<small id="hint-'+id+'">'+hint+'</small>';
+    d.dataset.unit=unit;fs.appendChild(d);
+    d.querySelector("input").addEventListener("input",e=>{S[id]=+e.target.value;update();});
+  });
+  rail.appendChild(fs);
+});
+const yrs=document.getElementById("years");
+Object.keys(CNY).forEach(y=>{const b=document.createElement("button");b.type="button";b.id="yr-"+y;b.textContent="CNY "+y;
+  b.addEventListener("click",()=>{S.year=+y;update();});yrs.appendChild(b);});
+
+function prodDuringRamp(P,R,c){ // calendar days to finish P full-capacity days starting at restart
+  const cap=c/100, rampOut=R*cap;
+  return P<=rampOut?Math.ceil(P/cap):Math.ceil(R+(P-rampOut));
+}
+
+function compute(){
+  const cny=toDay(CNY[S.year]);
+  const stop=cny-S.slow, restart=stop+S.shut, full=restart+S.ramp;
+  const hard=stop-S.prod-S.qc-S.truck;
+  const po=hard-S.buffer;
+  const surgeWait=S.surge;
+  const pre=[];let t=po;
+  const push=(arr,key,name,days,color)=>{if(days<=0)return;arr.push({key,name,s:t,e:t+days,days,color});t+=days;};
+  const tName=S.mode==="ocean"?"Ocean transit":"Air freight", tCol=S.mode==="ocean"?"--ocean":"--air";
+  push(pre,"prod","Production",S.prod,"--prod");
+  push(pre,"qc","QC inspection and packing",S.qc,"--qc");
+  if(S.buffer>0){pre.push({key:"buf",name:"Buffer (ready early)",s:t,e:t+S.buffer,days:S.buffer,color:"--muted",ghost:true});t+=S.buffer;}
+  push(pre,"truck","Trucking to port",S.truck,"--truck");
+  push(pre,"surge","Wait for vessel (surge)",surgeWait,"--surge");
+  push(pre,"transit",tName,S.transit,tCol);
+  push(pre,"customs","US customs clearance",S.customs,"--customs");
+  push(pre,"dray",S.mode==="ocean"?"Drayage / rail to DC":"Truck airport to DC",S.dray,"--dray");
+  push(pre,"recv","Receiving and put-away",S.recv,"--recv");
+  const preArr=t;
+  // Post: PO placed during shutdown, production starts at restart
+  const pDays=prodDuringRamp(S.prod,S.ramp,S.cap);
+  const post=[];t=restart;
+  push(post,"prod","Production (ramp-up)",pDays,"--prod");
+  push(post,"qc","QC inspection and packing",S.qc,"--qc");
+  push(post,"truck","Trucking to port",S.truck,"--truck");
+  push(post,"transit",tName,S.transit,tCol);
+  push(post,"customs","US customs clearance",S.customs,"--customs");
+  push(post,"dray",S.mode==="ocean"?"Drayage / rail to DC":"Truck airport to DC",S.dray,"--dray");
+  push(post,"recv","Receiving and put-away",S.recv,"--recv");
+  const postArr=t;
+  const gap=Math.max(0,postArr-preArr);
+  const qty=Math.ceil((gap/7*S.demand+S.ss*S.demand)/100)*100;
+  return {cny,stop,restart,full,hard,po,pre,post,preArr,postArr,gap,qty,pDays};
+}
+
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function update(){
+  // outputs
+  groups.forEach(g=>g.ctl.forEach(([id])=>{
+    const o=document.getElementById("out-"+id), u=o.parentElement.dataset.unit;
+    o.textContent=(id==="demand"?fmt(S[id]):S[id])+" "+u;
+  }));
+  document.querySelectorAll(".yearpick button").forEach(b=>b.setAttribute("aria-pressed",b.id==="yr-"+S.year));
+  document.querySelectorAll(".mode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.mode===S.mode));
+  const r=compute();
+  document.getElementById("poDate").textContent=dtl(r.po).replace(/, \d{4}$/,"");
+  document.getElementById("poSub").textContent=new Date(r.po*DAY).getUTCFullYear()+" · hard deadline "+dt(r.hard);
+  const left=r.po-todayN;
+  document.getElementById("poPill").textContent=left>0?left+" days from today":left===0?"Today":"Passed "+(-left)+" days ago";
+  document.getElementById("sStop").textContent=dt(r.stop);
+  document.getElementById("sStopN").textContent="CNY "+dt(r.cny)+(S.slow?" − "+S.slow+"d":"");
+  document.getElementById("sFull").textContent=dt(r.full);
+  document.getElementById("sFullN").textContent="restart "+dt(r.restart);
+  document.getElementById("sPre").textContent=dt(r.preArr);
+  document.getElementById("sPost").textContent=dt(r.postArr);
+  document.getElementById("sGap").textContent=r.gap+" days";
+  document.getElementById("sGapN").textContent=(r.gap/7).toFixed(1)+" weeks with no inbound";
+  document.getElementById("sQty").textContent=fmt(r.qty);
+  document.getElementById("sQtyN").textContent=((r.gap/7)+S.ss).toFixed(1)+" weeks of cover";
+  table("tblPre",r.pre,r.po,r.preArr);
+  table("tblPost",r.post,r.restart,r.postArr);
+  document.getElementById("rampNote").textContent="At "+S.cap+"% capacity during the "+S.ramp+"-day ramp-up, "+S.prod+" days of normal production takes "+r.pDays+" calendar days. Place this PO before restart so materials are staged.";
+  gantt(r);
+}
+
+function table(id,rows,start,end){
+  let h='<thead><tr><th>#</th><th>Stage</th><th>Start</th><th>End</th><th class="num">Days</th></tr></thead><tbody>';
+  rows.forEach((s,i)=>{h+='<tr><td class="num">'+(i+1)+'</td><td><span class="sw" style="background:var('+s.color+')'+(s.ghost?';opacity:.35':'')+'"></span>'+s.name+'</td><td class="dt">'+dt(s.s)+'</td><td class="dt">'+dt(s.e)+'</td><td class="num">'+s.days+'</td></tr>';});
+  h+='<tr><td></td><td><strong>Total, PO to stock</strong></td><td class="dt">'+dt(start)+'</td><td class="dt"><strong>'+dt(end)+'</strong></td><td class="num"><strong>'+(end-start)+'</strong></td></tr></tbody>';
+  document.getElementById(id).innerHTML=h;
+}
+
+function gantt(r){
+  const svg=document.getElementById("gantt"), wrap=document.getElementById("ganttWrap");
+  const W=Math.max(760,wrap.clientWidth), L=190, R=16, top=34, rowH=24, gapH=18;
+  const d0=Math.min(r.po,todayN>r.po-30&&todayN<r.po?todayN:r.po)-4, d1=Math.max(r.postArr,r.full)+5;
+  const x=n=>L+(n-d0)/(d1-d0)*(W-L-R);
+  const rows=[{h:"Last pre-CNY order"},...r.pre,{h:"First post-CNY order"},...r.post,{h:"US DC inbound"},{key:"gapRow",name:"Inbound gap",s:r.preArr,e:r.postArr,color:"--gap",gap:true}];
+  let y=top, out=[];
+  const H=top+rows.reduce((a,rw)=>a+(rw.h?gapH+4:rowH),0)+10;
+  svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.setAttribute("width",W);svg.setAttribute("height",H);
+  const ink=css("--ink"),muted=css("--muted"),line=css("--line");
+  // bands
+  out.push('<rect x="'+x(r.stop)+'" y="'+(top-6)+'" width="'+(x(r.restart)-x(r.stop))+'" height="'+(H-top)+'" fill="var(--accent-soft)"/>');
+  out.push('<rect x="'+x(r.restart)+'" y="'+(top-6)+'" width="'+(x(r.full)-x(r.restart))+'" height="'+(H-top)+'" fill="var(--ramp)"/>');
+  // weekly grid + month labels
+  for(let n=d0;n<=d1;n++){
+    const d=new Date(n*DAY);
+    if(d.getUTCDay()===1){out.push('<line x1="'+x(n)+'" x2="'+x(n)+'" y1="'+(top-6)+'" y2="'+H+'" stroke="'+line+'" stroke-width="1"/>');}
+    if(d.getUTCDate()===1||n===d0){out.push('<text x="'+(x(n)+3)+'" y="12" font-size="11" fill="'+ink+'" font-weight="500">'+M[d.getUTCMonth()]+(d.getUTCMonth()===0||n===d0?" "+d.getUTCFullYear():"")+'</text>');
+      out.push('<line x1="'+x(n)+'" x2="'+x(n)+'" y1="2" y2="'+H+'" stroke="'+muted+'" stroke-width="1" stroke-opacity=".5"/>');}
+  }
+  // markers
+  const mark=(n,label,col,yy)=>{out.push('<line x1="'+x(n)+'" x2="'+x(n)+'" y1="'+(top-10)+'" y2="'+H+'" stroke="'+col+'" stroke-width="1.5" stroke-dasharray="3 3"/>');
+    out.push('<text x="'+(x(n)+4)+'" y="'+yy+'" font-size="10.5" fill="'+col+'">'+label+'</text>');};
+  mark(r.cny,"CNY "+dt(r.cny),css("--accent"),26);
+  mark(r.po,"PO by "+dt(r.po),ink,26);
+  if(todayN>=d0&&todayN<=d1)mark(todayN,"today",muted,26);
+  rows.forEach(rw=>{
+    if(rw.h){out.push('<text x="0" y="'+(y+gapH-3)+'" font-size="11" font-weight="600" fill="'+ink+'" style="font-family:var(--f-display);letter-spacing:.08em;text-transform:uppercase">'+rw.h.toUpperCase()+'</text>');y+=gapH+4;return;}
+    out.push('<text x="8" y="'+(y+rowH/2+4)+'" font-size="11.5" fill="'+muted+'">'+rw.name+'</text>');
+    const bx=x(rw.s),bw=Math.max(2,x(rw.e)-x(rw.s));
+    if(rw.gap){out.push('<rect class="bar" x="'+bx+'" y="'+(y+4)+'" width="'+bw+'" height="'+(rowH-8)+'" fill="none" stroke="var(--gap)" stroke-width="1.5" stroke-dasharray="4 3" rx="3"/>');
+      out.push('<text x="'+(bx+bw/2)+'" y="'+(y+rowH/2+4)+'" font-size="11" text-anchor="middle" fill="var(--gap)" font-weight="500">'+r.gap+' days, cover with pre-build</text>');}
+    else{out.push('<rect class="bar" x="'+bx+'" y="'+(y+4)+'" width="'+bw+'" height="'+(rowH-8)+'" rx="3" fill="var('+rw.color+')"'+(rw.ghost?' fill-opacity=".25"':'')+'><title>'+rw.name+': '+dt(rw.s)+' – '+dt(rw.e)+' ('+rw.days+' d)</title></rect>');
+      if(bw>26)out.push('<text x="'+(bx+bw/2)+'" y="'+(y+rowH/2+4)+'" font-size="10.5" text-anchor="middle" fill="'+(rw.ghost?ink:'#fff')+'">'+rw.days+'d</text>');}
+    y+=rowH;
+  });
+  // band labels
+  out.push('<text x="'+((x(r.stop)+x(r.restart))/2)+'" y="'+(H-4)+'" font-size="10.5" text-anchor="middle" fill="'+css("--accent")+'">shutdown</text>');
+  if(r.full>r.restart)out.push('<text x="'+((x(r.restart)+x(r.full))/2)+'" y="'+(H-4)+'" font-size="10.5" text-anchor="middle" fill="'+muted+'">ramp-up</text>');
+  svg.innerHTML=out.join("");
+  const lg=[["Production","--prod"],["QC","--qc"],["Truck to port","--truck"],["Surge wait","--surge"],[S.mode==="ocean"?"Ocean":"Air",S.mode==="ocean"?"--ocean":"--air"],["Customs","--customs"],["Drayage","--dray"],["Receiving","--recv"]];
+  document.getElementById("legend").innerHTML=lg.map(([n,c])=>'<span><i style="background:var('+c+')"></i>'+n+'</span>').join("");
+}
+
+let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(update,120);});
+if(window.matchMedia)matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",update);
+new MutationObserver(update).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+update();
+})();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

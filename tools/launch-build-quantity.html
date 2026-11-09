@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Tool: Launch build quantity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: problem (demand scenarios + key choices), then one lock-date Gantt per build plan, then the scoreboard, why, and edit tables. */
+:root{
+  --bg:#EEF1F3; --surface:#FFFFFF; --ink:#141B22; --muted:#5B6873; --line:#D3DAE0; --track:#E4E9ED;
+  --accent:#1F5FA8; --accent-soft:#DCE8F6;
+  --late:#C8322A; --late-soft:#F8DEDB; --warn:#B87406; --warn-soft:#F7E8CC; --ok:#2C8A55; --ok-soft:#D9EFE2;
+  --flop:#3C9BC2; --base:#1F5FA8; --hit:#7E6BC4; --exact:#2C8A55;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --flop:#5BB6DB; --base:#6FA8EA; --hit:#A08FE6; --exact:#5CC98A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --flop:#5BB6DB; --base:#6FA8EA; --hit:#A08FE6; --exact:#5CC98A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:26px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5.4vw,52px);line-height:.98;margin:4px 0 0;letter-spacing:-.005em;text-wrap:balance;text-transform:uppercase}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:8px 0 0;color:var(--muted);max-width:66ch}
+h2{font-family:var(--f-display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.01em;margin:0;line-height:1.1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 18px;align-items:center;border-radius:12px;padding:18px;border:2px solid var(--vc);background:var(--vs)}
+.verdict .big{width:64px;height:64px;border-radius:50%;background:var(--vc);color:var(--surface);display:grid;place-items:center;font:800 32px var(--f-display)}
+.verdict h3{font:800 clamp(23px,3.8vw,33px)/1.04 var(--f-display);text-transform:uppercase;margin:0;color:var(--vc);text-wrap:balance}
+.verdict p{margin:4px 0 0;max-width:72ch}
+.v-warn{--vc:var(--warn);--vs:var(--warn-soft)} .v-ok{--vc:var(--ok);--vs:var(--ok-soft)}
+
+.controls{display:flex;flex-wrap:wrap;gap:16px 26px;align-items:end}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl label,.ctl .lab{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.slide{flex:1 1 260px}
+.slide .val{font:800 26px/1 var(--f-display);color:var(--ink)}
+.slide .val small{font:500 13px var(--f-body);color:var(--muted);margin-left:6px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:7px 12px;font-weight:600;font-size:14px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.reset{border:0;background:none;color:var(--accent);font-weight:600;padding:7px 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* demand scenarios */
+.dem{display:flex;flex-direction:column;gap:8px}
+.dr{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;align-items:center}
+.dr .nm{display:flex;flex-direction:column;line-height:1.1}
+.dr .nm b{font:800 19px var(--f-display);text-transform:uppercase;color:var(--sc)}
+.dr .nm small{font:500 11px var(--f-mono);color:var(--muted)}
+.dbar{height:28px;border-radius:5px;background:var(--sc);display:flex;align-items:center;padding-left:10px;color:var(--surface);font:600 13px var(--f-body);white-space:nowrap;min-width:84px}
+.dtrack{background:var(--track);border-radius:5px}
+
+/* scoreboard */
+.sbwrap{overflow-x:auto;margin-top:12px}
+.sb{display:grid;grid-template-columns:minmax(110px,1.1fr) repeat(4,minmax(96px,1fr));min-width:520px}
+.sb > div{padding:9px 8px;border-bottom:1px solid var(--track);display:flex;align-items:center;gap:8px;min-width:0}
+.sb .hd{flex-direction:column;align-items:flex-start;gap:2px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.sb .hd b{font:700 17px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.sb .hd .wins{font:600 11px var(--f-mono);color:var(--muted)}
+.sb .hd.pick{background:var(--accent-soft);border-radius:8px 8px 0 0}
+.sb .rl{font-weight:600;font-size:14px;line-height:1.2;flex-direction:column;align-items:flex-start;gap:1px}
+.sb .rl small{display:block;font:400 11px var(--f-mono);color:var(--muted)}
+.sb .c.pick{background:var(--accent-soft)}
+.ic{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--surface)}
+.ic.win{background:var(--ok)} .ic.lose{background:var(--late)} .ic.mid{background:var(--track);color:var(--muted)}
+.cv{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cv.lose{color:var(--late)} .cv.win{color:var(--ok);font-weight:600}
+.pickpill{font:700 9.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--accent);color:var(--surface)}
+
+/* gantts */
+.ghead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:end}
+.gantts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.gc{border:1px solid var(--line);border-radius:10px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;background:var(--surface)}
+.gc.pick{border:2px solid var(--accent);padding:12px 13px}
+.gc h3{margin:0;font:800 21px/1.05 var(--f-display);text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gc .how{margin:0;font-size:13.5px;color:var(--muted);line-height:1.35}
+.gt{--lab:132px;display:flex;flex-direction:column}
+.gr{display:grid;grid-template-columns:var(--lab) minmax(0,1fr);align-items:center;min-height:36px;border-bottom:1px solid var(--track)}
+.gr.ax{min-height:20px;border-bottom:1px solid var(--line)}
+.gl{padding-right:8px;min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.gl b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl small{font:500 10.5px var(--f-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl small.bad{color:var(--late);font-weight:600} .gl small.good{color:var(--ok);font-weight:600}
+.gtr{position:relative;height:100%;min-height:inherit}
+.lwin{position:absolute;top:0;bottom:-1px;background:var(--track);opacity:.6}
+.gb{position:absolute;top:50%;height:16px;transform:translateY(-50%);border-radius:3px;display:flex;align-items:center;justify-content:center;font:600 10px var(--f-mono);color:var(--surface);white-space:nowrap;overflow:hidden}
+.gb.open{height:6px;background:transparent;border:1px dashed var(--muted);opacity:.6}
+.gb.lock{background:var(--lc)}
+.gb.chase{background:var(--warn);color:var(--surface)}
+.gb.toolate{background:repeating-linear-gradient(135deg,var(--late) 0 3px,transparent 3px 6px);border:1px solid var(--late)}
+.vl{position:absolute;top:0;bottom:-1px;z-index:3}
+.vl.pre{border-left:2px dashed var(--exact)}
+.vl.launch{border-left:2px solid var(--ink)}
+.axl{position:absolute;top:3px;font:600 10px var(--f-mono);white-space:nowrap;color:var(--muted);transform:translateX(-50%)}
+.axl.pre{color:var(--surface);background:var(--exact);padding:0 4px;border-radius:3px}
+.axl.la{color:var(--bg);background:var(--ink);padding:0 4px;border-radius:3px}
+.gfoot{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--track);padding-top:7px}
+.gfoot span{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.gfoot b{font:800 20px/1 var(--f-display)}
+.gfoot b.bad{color:var(--late)} .gfoot b.good{color:var(--ok)}
+.keys{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.keys span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:10px;border-radius:2px;display:inline-block}
+.pickline{margin:10px 0 0;font-size:15px}
+.pickline b{color:var(--accent)}
+
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:5px 8px;border-bottom:1px solid var(--track);font-variant-numeric:tabular-nums}
+td input[type=number]{width:90px;border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:4px 6px;font:500 13px var(--f-mono)}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 22px;margin-top:10px}
+.why p{margin:0;max-width:60ch}
+.why b{display:block;font-family:var(--f-display);text-transform:uppercase;font-size:17px;letter-spacing:.02em}
+.foot{font-size:12.5px;color:var(--muted);margin:0}
+
+@media (max-width:900px){.gantts{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){
+  .verdict{grid-template-columns:minmax(0,1fr)}
+  .verdict .big{width:46px;height:46px;font-size:24px}
+  .gt{--lab:108px}
+  .gc{padding:11px} .gc.pick{padding:10px}
+  .gb{font-size:0}
+  .dr{grid-template-columns:78px minmax(0,1fr)}
+  .sb{grid-template-columns:74px repeat(4,minmax(0,1fr));min-width:0}
+  .sb .hd b{font-size:14px}
+  .sb .hd .wins{font-size:9.5px}
+  .sb .rl{font-size:12.5px}
+  .sb .rl small{display:none}
+  .sb .c{flex-direction:column;align-items:flex-start;gap:3px}
+  .cv{font-size:11.5px;white-space:normal;line-height:1.15}
+  .sb > div{padding:8px 4px}
+  .ic{width:18px;height:18px;font-size:11px}
+  .pickpill{font-size:8.5px;padding:1px 4px}
+}
+@media (prefers-reduced-motion:no-preference){.gb,.dbar{transition:width .25s ease,left .25s ease}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hardware procurement · new product launch</div>
+    <h1>Launch build <em>quantity</em></h1>
+    <p class="lede">A new device launches soon and nobody knows how well it will sell. Each part locks on a different date, after which the order can't be cancelled. You decide how much to lock for each part before real demand shows.</p>
+  </header>
+
+  <section id="verdict" class="verdict v-warn" aria-live="polite"></section>
+
+  <section class="panel" aria-label="The problem">
+    <h2>The problem</h2>
+    <div class="eyebrow" style="margin:2px 0 10px">Launch-window demand could land in one of three places</div>
+    <div class="dem" id="dem"></div>
+    <div class="controls" style="margin-top:16px">
+      <div class="ctl">
+        <span class="lab" id="out-lab">How likely is a hit</span>
+        <div class="seg" role="group" aria-labelledby="out-lab" id="outlook"></div>
+      </div>
+      <div class="ctl slide">
+        <label for="pre">Pre-orders open</label>
+        <div class="val" id="pre-val"></div>
+        <input type="range" id="pre" min="0" max="10" step="1" value="4">
+      </div>
+      <div class="ctl">
+        <span class="lab" id="prio-lab">What matters most</span>
+        <div class="seg" role="group" aria-labelledby="prio-lab" id="prio"></div>
+      </div>
+      <button class="reset" id="reset" type="button">Reset example</button>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="ghead">
+      <div>
+        <h2>The choices: how much to lock, part by part</h2>
+        <div class="eyebrow" style="margin-top:2px">Each row is a part. Weeks before and after launch.</div>
+      </div>
+      <div class="ctl">
+        <span class="lab" id="sc-lab">Show what happens if demand is a</span>
+        <div class="seg" role="group" aria-labelledby="sc-lab" id="scen"></div>
+      </div>
+    </div>
+    <div class="keys" id="keys" style="margin-top:10px"></div>
+    <div class="gantts" id="gantts"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Which plan wins</h2>
+    <div class="eyebrow" style="margin-top:2px">Green is best, red is worst</div>
+    <p class="pickline" id="pickline"></p>
+    <div class="sbwrap"><div class="sb" id="sb"></div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Why each part gets a different answer</h2>
+    <div class="why">
+      <p><b>Late reorder means lost sales</b>Chip wafers take 18 weeks. If you lock too few and the device is a hit, new wafers arrive after the launch window is over. Those sales are gone.</p>
+      <p><b>Expensive and hard to resell</b>Displays are the most costly part and a custom size has almost no resale value. Locking extra costs a lot if it flops, and a reorder still arrives early enough to save most hit sales.</p>
+      <p><b>Short reorder time</b>Memory and enclosures arrive a few weeks after a reorder. If demand is a hit you can catch up early in the launch window, so locking the forecast is enough.</p>
+      <p><b>Late parts can wait</b>Assembly slots and boxes lock after pre-orders open. By then you know roughly how many to order, so they never need a guess.</p>
+      <p><b>Earlier pre-orders help</b>Every week that pre-orders open sooner lets one more part wait for real demand. Move the slider and watch the gap between plans shrink.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Edit parts and demand</h2>
+    <div class="tblwrap" style="margin-top:10px"><table>
+      <thead><tr><th>Part</th><th>Locks (weeks before launch)</th><th>Cost per unit ($)</th><th>Resale value if unused (%)</th></tr></thead>
+      <tbody id="ptbl"></tbody>
+    </table></div>
+    <div class="tblwrap" style="margin-top:14px"><table>
+      <thead><tr><th>Flop demand</th><th>Base demand</th><th>Hit demand</th><th>Profit per device sold ($)</th><th>Launch window (weeks)</th></tr></thead>
+      <tbody><tr id="dtbl"></tr></tbody>
+    </table></div>
+  </section>
+
+  <p class="foot">All numbers are illustrative examples (est.) for a consumer electronics device. Unsold parts are written off at cost minus resale value. Reorders can be placed once pre-orders open and arrive after the part's lock time.</p>
+</div>
+
+<script>
+const DEFAULT_PARTS=[
+  {id:'wafer',name:'Chip wafers',d:18,cost:15,salv:0},
+  {id:'disp',name:'Display',d:10,cost:30,salv:10},
+  {id:'pkg',name:'Chip packaging',d:8,cost:10,salv:0},
+  {id:'mem',name:'Memory',d:7,cost:16,salv:60},
+  {id:'encl',name:'Enclosure',d:6,cost:10,salv:0},
+  {id:'assy',name:'Assembly slots',d:3,cost:14,salv:50},
+  {id:'box',name:'Box + cables',d:1,cost:4,salv:0}
+];
+const DEFAULT_DEM={flop:40000,base:100000,hit:180000,margin:200,window:12};
+const SCEN=[{id:'flop',name:'Flop'},{id:'base',name:'Base'},{id:'hit',name:'Hit'}];
+const OUTLOOKS=[
+  {id:'low',name:'Unlikely',p:{flop:.4,base:.45,hit:.15}},
+  {id:'even',name:'Even odds',p:{flop:.25,base:.5,hit:.25}},
+  {id:'high',name:'Likely',p:{flop:.15,base:.45,hit:.4}}
+];
+const PLANS=[
+  {id:'hit',name:'Build for a hit',how:'Lock every part at hit volume before demand is known.'},
+  {id:'base',name:'Build for the forecast',how:'Lock every part at the base forecast.'},
+  {id:'lean',name:'Build lean, chase',how:'Lock only flop volume, then reorder once pre-orders show demand.'},
+  {id:'mix',name:'Each part on its own',how:'Each part gets the amount that pays best, based on its lock date and cost.'}
+];
+const PRIOS=[
+  {id:'profit',name:'Profit on average'},
+  {id:'flop',name:'Safe if it flops'},
+  {id:'hit',name:'Never sell out'},
+  {id:'cash',name:'Less cash at risk'}
+];
+const LVCOL={flop:'--flop',base:'--base',hit:'--hit',exact:'--exact'};
+const LVNAME={flop:'Flop',base:'Base',hit:'Hit',exact:'Pre-orders'};
+let parts,dem,pre,outlook,prio,scen;
+function reset(){parts=DEFAULT_PARTS.map(p=>({...p}));dem={...DEFAULT_DEM};pre=4;outlook='even';prio='profit';scen='hit';
+  document.getElementById('pre').value=4;}
+reset();
+
+/* ---------- model ---------- */
+// levels: part id -> 'flop'|'base'|'hit' for parts that lock before pre-orders
+function simulate(levels,D){
+  const W=dem.window;
+  const q=parts.map(p=>p.d>pre?dem[levels[p.id]]:D);
+  const built=Math.min(...q);
+  const sold0=Math.min(built,D);
+  const shortfall=D-sold0;
+  let T=0;
+  parts.forEach((p,i)=>{if(q[i]<D)T=Math.max(T,Math.max(0,p.d-pre));});
+  const recovered=shortfall*Math.max(0,(W-T)/W);
+  const sold=sold0+recovered;
+  let waste=0;const pw=[];
+  parts.forEach((p,i)=>{const w=Math.max(0,q[i]-sold)*p.cost*(1-p.salv/100);pw.push(w);waste+=w;});
+  return {q,sold,lost:D-sold,waste,pw,T,profit:sold*dem.margin-waste};
+}
+function cashAtRisk(levels){return parts.reduce((s,p)=>s+(p.d>pre?dem[levels[p.id]]*p.cost:0),0);}
+function evalPlan(levels){
+  const P=OUTLOOKS.find(o=>o.id===outlook).p;
+  const r={};SCEN.forEach(s=>r[s.id]=simulate(levels,dem[s.id]));
+  const avg=SCEN.reduce((t,s)=>t+P[s.id]*r[s.id].profit,0);
+  return {r,avg,cash:cashAtRisk(levels)};
+}
+function planLevels(id){
+  const early=parts.filter(p=>p.d>pre);
+  const L={};
+  if(id!=='mix'){const lv=id==='lean'?'flop':id;early.forEach(p=>L[p.id]=lv);return L;}
+  // try every combination for the early parts, keep the best average profit
+  const opts=['flop','base','hit'];let best=null,bestL=null;
+  const n=early.length,total=Math.pow(3,n);
+  for(let c=0;c<total;c++){let x=c;const T={};
+    for(const p of early){T[p.id]=opts[x%3];x=Math.floor(x/3);}
+    const e=evalPlan(T);
+    if(!best||e.avg>best.avg+1||(Math.abs(e.avg-best.avg)<=1&&e.cash<best.cash)){best=e;bestL=T;}}
+  return bestL||{};
+}
+
+/* ---------- formatting ---------- */
+const nf=new Intl.NumberFormat('en-US');
+const fmt=n=>nf.format(Math.round(n));
+const k=n=>n>=1000?Math.round(n/1000)+'k':fmt(n);
+function money(x){const s=x<0?'−':'';x=Math.abs(x);
+  if(x>=1e9)return s+'$'+(x/1e9).toFixed(2)+'B';
+  if(x>=1e6)return s+'$'+(x/1e6).toFixed(1)+'M';
+  if(x>=1e3)return s+'$'+Math.round(x/1e3)+'k';return s+'$'+Math.round(x);}
+
+/* ---------- render ---------- */
+function render(){
+  const P=OUTLOOKS.find(o=>o.id===outlook).p;
+  document.getElementById('pre-val').innerHTML=pre===0?`At launch<small>no early signal</small>`:`${pre} weeks<small>before launch</small>`;
+  const maxD=Math.max(dem.flop,dem.base,dem.hit);
+  document.getElementById('dem').innerHTML=SCEN.map(s=>`<div class="dr" style="--sc:var(${LVCOL[s.id]})"><div class="nm"><b>${s.name}</b><small>${Math.round(P[s.id]*100)}% chance</small></div>
+    <div class="dtrack"><div class="dbar" style="width:${dem[s.id]/maxD*100}%">${fmt(dem[s.id])} devices</div></div></div>`).join('');
+  document.getElementById('outlook').innerHTML=OUTLOOKS.map(o=>`<button type="button" data-out="${o.id}" aria-pressed="${o.id===outlook}">${o.name}</button>`).join('');
+  document.getElementById('prio').innerHTML=PRIOS.map(p=>`<button type="button" data-prio="${p.id}" aria-pressed="${p.id===prio}">${p.name}</button>`).join('');
+  document.getElementById('scen').innerHTML=SCEN.map(s=>`<button type="button" data-scen="${s.id}" aria-pressed="${s.id===scen}">${s.name}</button>`).join('');
+
+  const res=PLANS.map(pl=>{const L=planLevels(pl.id);return {pl,L,e:evalPlan(L)};});
+  const early=parts.filter(p=>p.d>pre);
+
+  // verdict
+  const v=document.getElementById('verdict');
+  if(!early.length){
+    v.className='verdict v-ok';
+    v.innerHTML=`<div class="big">✓</div><div><h3>Every part can wait for pre-orders</h3><p>Pre-orders open before any part locks, so every plan orders the right amount. Move the slider closer to launch to see the real problem.</p></div>`;
+  }else{
+    v.className='verdict v-warn';
+    v.innerHTML=`<div class="big">?</div><div><h3>Demand could be ${k(dem.flop)} or ${k(dem.hit)}. How much do you lock for each part?</h3>
+      <p>${early.length} of ${parts.length} parts lock before pre-orders open. Lock too much and a flop leaves parts you can't cancel. Lock too little and a hit sells out while new parts are still on the way.</p></div>`;
+  }
+
+  // scoreboard rows
+  const rows=[
+    {name:'Profit on average',sub:'weighted by chance',v:x=>x.e.avg,better:'high',show:x=>money(x.e.avg)},
+    {name:'Profit if it flops',sub:`${k(dem.flop)} demand`,v:x=>x.e.r.flop.profit,better:'high',show:x=>money(x.e.r.flop.profit)},
+    {name:'Profit if it is a hit',sub:`${k(dem.hit)} demand`,v:x=>x.e.r.hit.profit,better:'high',show:x=>money(x.e.r.hit.profit)},
+    {name:'Parts written off',sub:'if it flops',v:x=>x.e.r.flop.waste,better:'low',show:x=>money(x.e.r.flop.waste)},
+    {name:'Sales lost',sub:'if it is a hit',v:x=>x.e.r.hit.lost,better:'low',show:x=>x.e.r.hit.lost<1?'None':fmt(x.e.r.hit.lost)+' devices'},
+    {name:'Cash locked early',sub:'before pre-orders',v:x=>x.e.cash,better:'low',show:x=>money(x.e.cash)}
+  ];
+  const status=rows.map(row=>res.map(x=>{
+    const vals=res.map(y=>row.v(y));const hi=Math.max(...vals),lo=Math.min(...vals);
+    const best=row.better==='high'?hi:lo,worst=row.better==='high'?lo:hi;
+    const val=row.v(x);if(Math.abs(hi-lo)<1)return 'win';
+    if(Math.abs(val-best)<1)return 'win';if(Math.abs(val-worst)<1)return 'lose';return 'mid';}));
+  const wins=res.map((_,i)=>status.reduce((s,r)=>s+(r[i]==='win'?1:0),0));
+
+  const key={profit:x=>[x.e.avg],flop:x=>[-x.e.r.flop.waste,x.e.avg],hit:x=>[-Math.round(x.e.r.hit.lost),x.e.avg],cash:x=>[-x.e.cash,x.e.avg]}[prio];
+  let pickIdx=0;
+  res.forEach((x,i)=>{const a=key(x),b=key(res[pickIdx]);
+    for(let j=0;j<a.length;j++){if(a[j]>b[j]+1){pickIdx=i;break;}if(a[j]<b[j]-1)break;}});
+  const hasChoice=early.length>0;
+  const pick=res[pickIdx];
+  const pl=document.getElementById('pickline');
+  if(hasChoice){
+    const lost=rows.map((row,ri)=>status[ri][pickIdx]==='lose'?row.name.toLowerCase()+' '+row.sub:null).filter(Boolean);
+    pl.innerHTML=`For ${PRIOS.find(p=>p.id===prio).name.toLowerCase()}, pick <b>${pick.pl.name}</b>.`+(lost.length?` It comes last on ${lost.length>1?lost.slice(0,-1).join(', ')+' and '+lost.at(-1):lost[0]}.`:' It does not come last on anything.');
+  }else pl.textContent='Every part waits for pre-orders, so all plans tie.';
+
+  const sb=document.getElementById('sb');
+  let h=`<div class="hd"><span class="eyebrow">Outcome</span></div>`;
+  res.forEach((x,i)=>{const pk=i===pickIdx&&hasChoice;h+=`<div class="hd${pk?' pick':''}"><b>${x.pl.name}</b><span class="wins">Best on ${wins[i]} of ${rows.length}</span>${pk?'<span class="pickpill">Your pick</span>':''}</div>`;});
+  rows.forEach((row,ri)=>{h+=`<div class="rl">${row.name}<small>${row.sub}</small></div>`;
+    res.forEach((x,i)=>{const s=status[ri][i];const pk=i===pickIdx&&hasChoice;
+      h+=`<div class="c${pk?' pick':''}"><span class="ic ${s}" aria-label="${s==='win'?'best':s==='lose'?'worst':'middle'}">${s==='win'?'✓':s==='lose'?'✕':'–'}</span><span class="cv ${s}">${row.show(x)}</span></div>`;});});
+  sb.innerHTML=h;
+
+  // keys
+  document.getElementById('keys').innerHTML=
+    ['flop','base','hit','exact'].map(l=>`<span><i class="sw" style="background:var(${LVCOL[l]})"></i>Locked at ${LVNAME[l]==='Pre-orders'?'pre-order demand':LVNAME[l].toLowerCase()}</span>`).join('')+
+    `<span><i class="sw" style="height:0;border-top:1px dashed var(--muted)"></i>Can still cancel</span>
+     <span><i class="sw" style="background:var(--warn)"></i>Reorder on the way</span>
+     <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--late) 0 3px,transparent 3px 6px);border:1px solid var(--late)"></i>Arrives too late</span>`;
+
+  // gantts
+  const W=dem.window;const XMIN=-(Math.max(...parts.map(p=>p.d))+2),XMAX=W;
+  const X=w=>(w-XMIN)/(XMAX-XMIN)*100;
+  const D=dem[scen];
+  const sp=res.map(x=>x.e.r[scen].profit),sHi=Math.max(...sp),sLo=Math.min(...sp);
+  const fcls=i=>sHi-sLo<1?'':Math.abs(sp[i]-sHi)<1?'good':Math.abs(sp[i]-sLo)<1?'bad':'';
+  document.getElementById('gantts').innerHTML=res.map((x,i)=>{
+    const r=x.e.r[scen];
+    const rws=parts.map((p,pi)=>{
+      const lv=p.d>pre?x.L[p.id]:'exact';
+      const q=r.q[pi];
+      let bars=`<i class="gb open" style="left:${X(XMIN)}%;width:${X(-p.d)-X(XMIN)}%"></i>`;
+      bars+=`<i class="gb lock" style="--lc:var(${LVCOL[lv]});left:${X(-p.d)}%;width:${X(0)-X(-p.d)}%">${k(q)}</i>`;
+      let res2='',cls='good';
+      if(q<D){const arr=Math.max(0,p.d-pre);
+        if(arr>=W){bars+=`<i class="gb toolate" style="left:${X(0)}%;width:${X(W)-X(0)}%"></i>`;res2=`✕ short ${k(D-q)}, too late`;cls='bad';}
+        else{if(arr>0)bars+=`<i class="gb chase" style="left:${X(0)}%;width:${X(arr)-X(0)}%"></i>`;res2=arr>0?`! short, +${arr} wks`:'✓ reorder in time';cls=arr>0?'bad':'good';}
+      }else if(r.pw[pi]>=1000){res2=`✕ ${money(r.pw[pi])} left over`;cls='bad';}
+      else if(q>r.sold+0.5){res2='✓ extra resold';}
+      else res2='✓ fits';
+      return `<div class="gr"><div class="gl"><b>${p.name}</b><small style="color:var(${LVCOL[lv]})">${LVNAME[lv]} · ${k(q)}</small><small class="${cls}">${res2}</small></div>
+        <div class="gtr" role="img" aria-label="${p.name}: locks ${p.d} weeks before launch at ${fmt(q)}. ${res2}"><span class="lwin" style="left:${X(0)}%;width:${X(W)-X(0)}%"></span>${bars}
+        ${pre>0?`<span class="vl pre" style="left:${X(-pre)}%"></span>`:''}<span class="vl launch" style="left:${X(0)}%"></span></div></div>`;}).join('');
+    const ax=`<div class="gr ax"><div class="gl"><small>Weeks</small></div><div class="gtr"><span class="axl" style="left:${X(XMIN)+3}%">${XMIN}</span>${pre>0&&pre<XMIN*-1-3?`<span class="axl pre" style="left:${X(-pre)}%">Pre</span>`:''}<span class="axl la" style="left:${X(0)}%">Launch</span><span class="axl" style="left:${X(W)-4}%">+${W}</span></div></div>`;
+    const pk=i===pickIdx&&hasChoice;
+    return `<article class="gc${pk?' pick':''}"><h3>${x.pl.name}${pk?'<span class="pickpill">Your pick</span>':''}</h3><p class="how">${x.pl.how}</p>
+      <div class="gt">${ax}${rws}</div>
+      <div class="gfoot"><span>Profit if ${scen==='hit'?'a hit':scen==='flop'?'a flop':'base'}</span><b class="${fcls(i)}">${money(r.profit)}</b></div></article>`;
+  }).join('');
+}
+
+/* ---------- edit tables ---------- */
+function renderTables(){
+  document.getElementById('ptbl').innerHTML=parts.map((p,i)=>`<tr><td><b>${p.name}</b></td>`+
+    [['d',1,0,30],['cost',1,0,1000],['salv',5,0,100]].map(([f,st,mn,mx])=>`<td><input type="number" id="p-${p.id}-${f}" data-i="${i}" data-f="${f}" step="${st}" min="${mn}" max="${mx}" value="${p[f]}" aria-label="${p.name} ${f}"></td>`).join('')+`</tr>`).join('');
+  document.getElementById('dtbl').innerHTML=[['flop',5000],['base',5000],['hit',5000],['margin',10],['window',1]].map(([f,st])=>`<td><input type="number" id="d-${f}" data-f="${f}" step="${st}" min="1" value="${dem[f]}" aria-label="${f}"></td>`).join('');
+}
+document.getElementById('ptbl').addEventListener('input',e=>{const t=e.target;if(!t.dataset.f)return;let v=Number(t.value);if(!isFinite(v)||t.value==='')return;
+  v=Math.max(0,v);if(t.dataset.f==='salv')v=Math.min(100,v);if(t.dataset.f==='d')v=Math.min(30,Math.round(v));parts[+t.dataset.i][t.dataset.f]=v;render();});
+document.getElementById('dtbl').addEventListener('input',e=>{const t=e.target;if(!t.dataset.f)return;let v=Number(t.value);if(!isFinite(v)||t.value==='')return;
+  dem[t.dataset.f]=Math.max(1,v);render();});
+document.getElementById('pre').addEventListener('input',e=>{pre=+e.target.value;render();});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.out){outlook=b.dataset.out;render();}
+  else if(b.dataset.prio){prio=b.dataset.prio;render();}
+  else if(b.dataset.scen){scen=b.dataset.scen;render();}
+  else if(b.id==='reset'){reset();renderTables();render();}});
+renderTables();render();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

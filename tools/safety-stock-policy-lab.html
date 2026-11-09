@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Tool: Safety Stock Policy Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: priority switch on top, then three policy cards side by side (gains vs costs), comparison bars, stock chart. Product settings sit in a left rail; everything stacks on phones. */
+:root{
+  --bg:#F3F4F7; --surface:#FFFFFF; --ink:#141A26; --muted:#5B6475; --line:#D8DCE4; --soft:#EBEEF4; --track:#E4E7EE;
+  --accent:#2F4AA8;
+  --p1:#3B5BDB; --p2:#0B8A8F; --p3:#D9480F;
+  --good:#1F7A45; --goodbg:#E3F3EA; --bad:#B4302A; --badbg:#FBE7E5;
+  --band:rgba(217,72,15,.09); --band2:rgba(59,91,219,.09);
+  --f-display:"Barlow Condensed","Arial Narrow","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F131B; --surface:#171C27; --ink:#E6E9F0; --muted:#98A1B3; --line:#2B3344; --soft:#1F2633; --track:#252D3B;
+  --accent:#8EA4F2; --p1:#7C95F0; --p2:#3CC4C4; --p3:#FF8A4C;
+  --good:#6FD39A; --goodbg:#16301F; --bad:#F2786C; --badbg:#3A1C1A;
+  --band:rgba(255,138,76,.11); --band2:rgba(124,149,240,.11); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F131B; --surface:#171C27; --ink:#E6E9F0; --muted:#98A1B3; --line:#2B3344; --soft:#1F2633; --track:#252D3B;
+  --accent:#8EA4F2; --p1:#7C95F0; --p2:#3CC4C4; --p3:#FF8A4C;
+  --good:#6FD39A; --goodbg:#16301F; --bad:#F2786C; --badbg:#3A1C1A;
+  --band:rgba(255,138,76,.11); --band2:rgba(124,149,240,.11); color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1360px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{margin-bottom:18px;display:flex;flex-direction:column;gap:6px}
+.eyebrow{font:600 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font:800 clamp(32px,5vw,50px)/1 var(--f-display);margin:0;text-transform:uppercase;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:72ch}
+h2{font:700 15px var(--f-display);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.grid{display:grid;grid-template-columns:310px minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}.rail{order:2}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.rail{padding:16px 18px 12px}
+.seg{display:flex;flex-wrap:wrap;gap:5px}
+.seg button{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 10px;border-radius:5px;cursor:pointer}
+.seg button:hover{border-color:var(--accent)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.group{border-top:2px solid var(--line);margin-top:14px;padding-top:10px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:0 8px;padding:7px 0}
+.ctl+.ctl{border-top:1px dashed var(--line)}
+.ctl label{font-weight:600;font-size:14px}
+.ctl output{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+.ctl input[type=range]{grid-column:1/-1;width:100%;accent-color:var(--accent);margin:5px 0 0}
+.ctl small{grid-column:1/-1;color:var(--muted);font-size:12.5px;line-height:1.35}
+.ctl .seg{grid-column:1/-1;margin-top:5px}
+.foot{color:var(--muted);font-size:12.5px;margin:6px 0 0}
+.main{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* priority */
+.priority{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.prio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+@media (max-width:620px){.prio{grid-template-columns:minmax(0,1fr)}}
+.prio button{text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:9px 12px;cursor:pointer;display:flex;flex-direction:column;gap:1px;font:inherit}
+.prio button b{font:700 18px/1.1 var(--f-display);text-transform:uppercase;letter-spacing:.03em}
+.prio button span{font-size:13px;color:var(--muted);line-height:1.35}
+.prio button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--soft)}
+
+/* policy cards */
+.pols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:820px){.pols{grid-template-columns:minmax(0,1fr)}}
+.pol{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.pol.win{border-color:var(--pc);box-shadow:0 0 0 2px var(--pc)}
+.pol .top{border-top:6px solid var(--pc);padding:12px 14px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:start}
+.pol .rank{grid-column:1/-1;font:600 11.5px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.pol.win .rank{color:var(--pc)}
+.pol h3{margin:0;font:800 23px/1.05 var(--f-display);text-transform:uppercase;text-wrap:balance}
+.pol .mind{grid-column:1/2;font-size:13px;color:var(--muted);line-height:1.3}
+.pol .fit{grid-row:2/4;grid-column:2;text-align:right}
+.pol .fit b{display:block;font:800 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.pol .fit span{font:500 11px var(--f-mono);color:var(--muted)}
+.kstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kstats div{padding:8px 10px;display:flex;flex-direction:column;gap:0}
+.kstats div+div{border-left:1px solid var(--line)}
+.kstats b{font:600 17px var(--f-mono);font-variant-numeric:tabular-nums}
+.kstats span{font-size:11.5px;color:var(--muted);line-height:1.2}
+.pc-list{padding:10px 14px 12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.item{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;font-size:14px;line-height:1.35}
+.item i{font-style:normal;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 15px/1 var(--f-mono)}
+.item.g i{background:var(--goodbg);color:var(--good)}
+.item.b i{background:var(--badbg);color:var(--bad)}
+.item.n i{background:var(--soft);color:var(--muted)}
+.item small{display:block;font:400 12.5px/1.35 var(--f-body);color:var(--muted);margin-top:1px}
+.item small b{font:600 12px var(--f-mono);color:var(--ink)}
+.pol .how{padding:8px 14px 12px;font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line)}
+
+/* bars */
+.bars{padding:14px 16px}
+.bhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 14px;align-items:baseline}
+.brow{display:grid;grid-template-columns:200px minmax(0,1fr);gap:4px 16px;padding:10px 0;border-top:1px solid var(--line)}
+@media (max-width:620px){.brow{grid-template-columns:minmax(0,1fr)}}
+.brow .bl b{display:block;font-weight:600;font-size:14px}
+.brow .bl span{font-size:12px;color:var(--muted);line-height:1.3;display:block}
+.brow .bl em{font-style:normal;font:600 11px var(--f-mono);letter-spacing:.04em;text-transform:uppercase}
+.bset{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bar{display:grid;grid-template-columns:64px minmax(0,1fr) 88px;gap:8px;align-items:center;font:500 12.5px var(--f-mono);font-variant-numeric:tabular-nums}
+.bar .who{color:var(--muted);font-size:11.5px}
+.bar .tr{height:12px;background:var(--track);border-radius:3px;position:relative;overflow:hidden}
+.bar .fl{position:absolute;inset:0 auto 0 0;background:var(--pc);border-radius:3px;opacity:.45}
+.bar.best .fl{opacity:1}
+.bar .v{text-align:right;white-space:nowrap}
+.bar.best .v{color:var(--good);font-weight:700}
+.bar.best .v::before{content:"best ";font-size:10px;font-weight:600;letter-spacing:.04em}
+.bar.worst .v{color:var(--bad)}
+
+/* chart */
+.chartcard{padding:14px 16px}
+.charthead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:baseline;margin-bottom:6px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.legend i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.legend .bx{width:12px;height:10px;border-radius:2px}
+#chart{width:100%;display:block;touch-action:pan-y}
+.readout{font:500 12.5px var(--f-mono);color:var(--muted);min-height:1.5em;font-variant-numeric:tabular-nums}
+.btn{font:600 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 11px;border-radius:5px;cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+
+/* industry examples (full width) */
+.ind{margin-top:34px;padding-top:22px;border-top:3px solid var(--ink);display:flex;flex-direction:column;gap:14px}
+.ihead{display:flex;flex-direction:column;gap:4px}
+h2.big{font:800 clamp(26px,3.6vw,38px)/1.05 var(--f-display);color:var(--ink);letter-spacing:0;text-transform:uppercase;margin:0;text-wrap:balance}
+.ind .tabs{display:flex;flex-wrap:wrap;gap:8px}
+.ind .tabs button{font:700 18px var(--f-display);text-transform:uppercase;letter-spacing:.04em;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:10px 18px;border-radius:6px;cursor:pointer}
+.ind .tabs button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.prof{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px 26px;align-items:center;padding:18px 20px}
+@media (max-width:860px){.prof{grid-template-columns:minmax(0,1fr)}}
+.prof svg{width:100%;display:block}
+.prof .cap{font:500 12px var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px}
+.prof .cap i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.prof h3{margin:0;font:800 28px/1.05 var(--f-display);text-transform:uppercase}
+.prof p{margin:6px 0 0;max-width:60ch}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tags span{font:500 12px var(--f-mono);background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:2px 7px}
+.verdictline{margin-top:12px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vl{border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.vl span{font:700 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
+.vl b{font:800 22px/1.05 var(--f-display);text-transform:uppercase}
+.vl.win{background:var(--goodbg)} .vl.win span{color:var(--good)}
+.vl.lose{background:var(--badbg)} .vl.lose span{color:var(--bad)}
+.sgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:1150px){.sgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.sgrid{grid-template-columns:minmax(0,1fr)}}
+.sc{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.sc .what{font:600 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sc h4{margin:0;font:800 22px/1.05 var(--f-display);text-transform:uppercase}
+.sc .sit{font-size:13px;color:var(--muted);margin-top:-6px}
+.sc .take{font-size:17px;font-weight:700;line-height:1.3;text-wrap:balance}
+.vr{display:grid;grid-template-columns:30px minmax(0,1fr);gap:9px;align-items:center;padding:7px 8px;border-radius:6px;border-left:5px solid var(--pc)}
+.vr .ic{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 17px/1 var(--f-body)}
+.vr b{display:block;font-size:14px;line-height:1.2}
+.vr small{display:block;font-size:12.5px;color:var(--muted);line-height:1.25}
+.vr.up{background:var(--goodbg)} .vr.up .ic{background:var(--good);color:var(--surface)}
+.vr.down{background:var(--badbg)} .vr.down .ic{background:var(--bad);color:var(--surface)}
+.vr.mid{background:var(--soft)} .vr.mid .ic{background:var(--line);color:var(--muted)}
+.sc details{font-size:13px;color:var(--muted);margin-top:auto}
+.sc summary{cursor:pointer;font-weight:600;color:var(--accent)}
+.sc details p{margin:6px 0 0}
+
+/* scooter timeline */
+.tlwrap{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.tlwrap .lede2{color:var(--muted);max-width:75ch;margin:0}
+.tl{position:relative;display:flex;flex-direction:column;gap:0;margin-top:10px}
+.step{position:relative;display:grid;grid-template-columns:120px minmax(0,1fr);gap:0 18px}
+.step .rail2{position:relative;display:flex;flex-direction:column;align-items:flex-end;padding-top:16px}
+.step .rail2 b{font:800 22px/1 var(--f-display);text-transform:uppercase}
+.step .rail2 span{font:500 11.5px var(--f-mono);color:var(--muted)}
+.step .body{position:relative;border-left:3px solid var(--ink);padding:10px 0 26px 22px}
+.step:last-child .body{border-left-color:transparent}
+.step .dot{position:absolute;left:-11px;top:16px;width:19px;height:19px;border-radius:50%;background:var(--surface);border:4px solid var(--ink)}
+.step .arrow{position:absolute;left:-9px;bottom:2px;font:700 14px/1 var(--f-body);color:var(--ink)}
+.flow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.2fr) minmax(0,1.1fr);gap:8px;align-items:stretch}
+@media (max-width:1100px){.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.flow{grid-template-columns:minmax(0,1fr)}.step{grid-template-columns:minmax(0,1fr)}.step .rail2{align-items:flex-start;padding:0 0 4px 22px;flex-direction:row;gap:8px;align-items:baseline}.step .body{margin-left:8px}}
+.fb{border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;border:1px solid var(--line);background:var(--surface)}
+.fb .lab{font:700 11px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.fb .big{font:800 20px/1.1 var(--f-display);text-transform:uppercase}
+.fb p{margin:0;font-size:13.5px;line-height:1.35}
+.fb.alarm{background:var(--badbg);border-color:transparent}.fb.alarm .lab{color:var(--bad)}
+.fb.act{border:2px solid var(--pc);box-shadow:inset 6px 0 0 var(--pc)}
+.fb.act .lab{color:var(--pc)}
+.fb.res{background:var(--goodbg);border-color:transparent}.fb.res .lab{color:var(--good)}
+.kp{display:flex;justify-content:space-between;gap:8px;font:500 13px var(--f-mono);font-variant-numeric:tabular-nums}
+.kp span:first-child{font-family:var(--f-body);font-weight:600}
+.kp s{color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.kp b{color:var(--good)}
+.kp b.worse{color:var(--bad)} .kp s.ok{color:var(--muted)}
+.kp em.tradeoff{font:700 10px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--bad);font-style:normal}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Inventory policy · 180-day simulation · any industry</div>
+    <h1>Safety Stock Policy Lab</h1>
+    <p class="lede">Three ways to hold safety stock, run on the same demand. Pick what management cares about most and see what each policy wins and what it costs, in operational terms: stockouts, aged stock, stock levels and order rhythm. <a href="#industry" style="color:var(--accent);font-weight:600">See industry examples ↓</a></p>
+  </header>
+
+  <div class="grid">
+    <aside class="card rail" aria-label="Product behavior">
+      <h2>Product type</h2>
+      <div class="seg" id="presets" role="group" aria-label="Product type"></div>
+      <p class="foot" id="presetNote"></p>
+
+      <div class="group">
+        <h2>Demand</h2>
+        <div class="ctl"><label>Demand pattern</label><output></output>
+          <div class="seg" id="pattern" role="group" aria-label="Demand pattern">
+            <button data-v="steady" type="button">Steady</button><button data-v="seasonal" type="button">Seasonal</button><button data-v="spiky" type="button">Spiky</button>
+          </div>
+        </div>
+        <div class="ctl"><label for="mu">Average daily demand</label><output id="muO"></output><input type="range" id="mu" min="10" max="300" step="5"></div>
+        <div class="ctl"><label for="cv">Day-to-day swing</label><output id="cvO"></output><input type="range" id="cv" min="0" max="80" step="5"><small>Standard deviation as % of the daily average.</small></div>
+        <div class="ctl"><label for="promo">Demand spike</label><output id="promoO"></output><input type="range" id="promo" min="0" max="200" step="10"><small>Extra demand for 10 days from day 110 (a promotion, a launch, a surge). No policy sees it coming.</small></div>
+      </div>
+
+      <div class="group">
+        <h2>Supply</h2>
+        <div class="ctl"><label for="lt">Lead time</label><output id="ltO"></output><input type="range" id="lt" min="1" max="40" step="1"></div>
+        <div class="ctl"><label for="ltsd">Lead time swing</label><output id="ltsdO"></output><input type="range" id="ltsd" min="0" max="10" step="0.5"><small>Standard deviation of each delivery's lead time.</small></div>
+        <div class="ctl"><label for="delay">Supplier delay</label><output id="delayO"></output><input type="range" id="delay" min="0" max="21" step="1"><small>Extra days on every order placed between day 60 and 75.</small></div>
+        <div class="ctl"><label for="rev">Order cycle</label><output id="revO"></output><input type="range" id="rev" min="1" max="14" step="1"><small>How often the two periodic policies order. Also sets the reorder point lot size, so average order size is equal.</small></div>
+      </div>
+
+      <div class="group">
+        <h2>Limits</h2>
+        <div class="ctl"><label for="shelf">Shelf life / obsolescence</label><output id="shelfO"></output><input type="range" id="shelf" min="3" max="121" step="1"><small>Stock older than this is written off. Far right means no limit.</small></div>
+        <div class="ctl"><label for="cap">Storage capacity</label><output id="capO"></output><input type="range" id="cap" min="5" max="61" step="1"><small>Max stock on hand plus on order, in days of demand. Far right means no limit.</small></div>
+      </div>
+
+      <div class="group">
+        <h2>Buffer size</h2>
+        <div class="ctl"><label for="buf">Safety stock</label><output id="bufO"></output><input type="range" id="buf" min="0" max="20" step="0.5"><small>In days of average demand. All three start with the same buffer, so differences come from how each policy behaves.</small></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px">
+        <button class="btn" id="reseed" type="button">New demand draw</button>
+        <span class="foot" id="seedO" style="margin:0"></span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="card priority" aria-label="Management priority">
+        <h2>1 · What does management care about most?</h2>
+        <div class="prio" id="prio" role="group">
+          <button data-v="avail" type="button"><b>Availability first</b><span>Never run out. Extra stock is fine.</span></button>
+          <button data-v="flex" type="button"><b>Flex with demand</b><span>Lean, fresh stock that scales with demand.</span></button>
+          <button data-v="process" type="button"><b>Process control</b><span>Predictable orders, steady rhythm for suppliers.</span></button>
+        </div>
+      </section>
+
+      <section aria-label="Policy comparison" aria-live="polite">
+        <div class="bhead" style="margin:0 2px 8px"><h2 style="margin:0">2 · What each policy wins and costs</h2><span class="foot" style="margin:0">★ counts toward the chosen priority</span></div>
+        <div class="pols" id="pols"></div>
+      </section>
+
+      <section class="card bars">
+        <div class="bhead"><h2>3 · Side by side</h2><span class="foot" style="margin:0">Every metric is “lower is better”. Shortest bar wins.</span></div>
+        <div id="bars"></div>
+      </section>
+
+      <section class="card chartcard">
+        <div class="charthead">
+          <h2>4 · Stock on hand, day by day</h2>
+          <div class="legend" id="legend"></div>
+        </div>
+        <svg id="chart" role="img" aria-label="Stock on hand for the three policies over 180 days"></svg>
+        <div class="readout" id="readout">Touch or hover the chart to read a day.</div>
+        <p class="foot">Scored on days 30 to 180 (the shaded start is warm-up). Unmet demand is lost, oldest stock ships first, and all three policies face the same demand and the same delays.</p>
+      </section>
+
+    </main>
+  </div>
+  <section class="ind" id="industry" aria-label="Industry examples">
+    <div class="ihead"><div class="eyebrow">Industry examples</div><h2 class="big">What happens when something changes?</h2></div>
+    <div class="tabs" id="indTabs" role="group" aria-label="Industry"></div>
+    <div class="prof card" id="indProf"></div>
+    <div class="sgrid" id="indScn"></div>
+    <div id="indTimeline"></div>
+    <p class="foot">Results come from the same simulation, pinned to one demand sample so the examples stay stable. “Run this in the lab” loads the industry's normal case into the simulator above.</p>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const POL=[
+  {k:"fixed",n:"Fixed safety stock",short:"Fixed",c:"--p1",mind:"Set a buffer in units once and hold it.",how:"Orders every cycle up to forecast demand plus a fixed number of units."},
+  {k:"time",n:"Days of cover",short:"Cover",c:"--p2",mind:"Buffer = X days of recent demand, so it scales.",how:"Same ordering, but the buffer is X days of the latest 14-day forecast (time-based safety stock)."},
+  {k:"rop",n:"Reorder point",short:"ROP",c:"--p3",mind:"Fixed trigger, fixed lot. Same move every time.",how:"Checks daily. When stock plus open orders hits a fixed trigger, it orders a fixed lot (ROP)."}
+];
+const DAYS=180, WARM=30, PROMO_START=110, PROMO_LEN=10, DEL_A=60, DEL_B=75;
+
+const PRESETS={
+  steady:{label:"Steady runner",note:"High-volume item with even demand and a reliable supplier.",
+    v:{pattern:"steady",mu:100,cv:15,promo:40,lt:5,ltsd:1,delay:4,rev:7,shelf:121,cap:61,buf:3,prio:"avail"}},
+  seasonal:{label:"Seasonal",note:"Demand rises and falls over a 90-day season, plus a surprise spike.",
+    v:{pattern:"seasonal",mu:100,cv:25,promo:80,lt:7,ltsd:2,delay:6,rev:7,shelf:121,cap:61,buf:4,prio:"avail"}},
+  spiky:{label:"Spiky / erratic",note:"Unpredictable demand with sudden bursts, like spare parts.",
+    v:{pattern:"spiky",mu:30,cv:40,promo:100,lt:10,ltsd:3,delay:7,rev:7,shelf:121,cap:61,buf:5,prio:"avail"}},
+  perishable:{label:"Short life",note:"Stock expires or goes obsolete fast; frequent small deliveries, tight space.",
+    v:{pattern:"seasonal",mu:60,cv:30,promo:100,lt:2,ltsd:0.5,delay:2,rev:2,shelf:9,cap:12,buf:1.5,prio:"flex"}},
+  longlead:{label:"Long lead time",note:"Overseas or made-to-order supply with long, noisy lead times.",
+    v:{pattern:"steady",mu:50,cv:20,promo:50,lt:28,ltsd:5,delay:14,rev:7,shelf:121,cap:61,buf:10,prio:"process"}}
+};
+const PRIO={
+  avail:{n:"Availability first",w:{lost:.4,stockout:.35,recovery:.25}},
+  flex:{n:"Flex with demand",w:{lost:.3,dos:.3,aged:.25,stockout:.15}},
+  process:{n:"Process control",w:{stab:.4,repl:.2,lost:.2,dos:.2}}
+};
+let S={preset:"seasonal",seed:7,...PRESETS.seasonal.v};
+
+// seeded RNG
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+function makeDemand(){
+  const r=rng(S.seed), d=[], mean=[];
+  for(let t=0;t<DAYS;t++){
+    let m=S.mu;
+    if(S.pattern==="seasonal") m*=1+0.35*Math.sin(2*Math.PI*(t-10)/90);
+    if(t>=PROMO_START&&t<PROMO_START+PROMO_LEN) m*=1+S.promo/100;
+    if(S.eol&&t>=S.eol) m*=0.1;
+    let x=m*(1+S.cv/100*gauss(r));
+    if(S.pattern==="spiky"&&r()<0.07) x*=2.2+r();
+    else if(S.pattern==="spiky") x*=0.92;
+    mean.push(m); d.push(Math.max(0,Math.round(x)));
+  }
+  // lead-time noise draws, shared by all policies (index by order day)
+  const ltn=[]; for(let t=0;t<DAYS;t++) ltn.push(gauss(r));
+  return {d,mean,ltn};
+}
+
+function simulate(pol,D){
+  const mu0=S.mu, L=S.lt, R=S.rev, SSu=S.buf*mu0;
+  const shelf=S.shelf>120?Infinity:S.shelf, cap=S.cap>60?Infinity:S.cap*mu0;
+  let lots=[], pipe=[], hist=[];
+  const start=Math.round(mu0*(R/2)+SSu+(pol==="rop"?0:0));
+  lots.push({q:start,a:0});
+  // seed pipeline so the system starts in steady state
+  for(let k=1;k<=L;k+=R) pipe.push({at:k,q:Math.round(mu0*R)});
+  const out={oh:[],orders:[],lost:0,dem:0,served:0,waste:0,recv:0,stockDays:0,eps:[],ohSum:0,n:0};
+  let run=0;
+  for(let t=0;t<DAYS;t++){
+    // receive
+    for(const p of pipe) if(p.at===t){lots.push({q:p.q,a:0}); if(t>=WARM) out.recv+=p.q}
+    pipe=pipe.filter(p=>p.at!==t);
+    // serve FIFO
+    let need=D.d[t];
+    for(const l of lots){const take=Math.min(l.q,need);l.q-=take;need-=take;if(!need)break}
+    lots=lots.filter(l=>l.q>0);
+    const lost=need;
+    if(t>=WARM){
+      out.dem+=D.d[t]; out.lost+=lost; out.served+=D.d[t]-lost; out.n++;
+      if(lost>0){out.stockDays++;run++} else if(run){out.eps.push(run);run=0}
+    }
+    // age + expire
+    for(const l of lots){l.a++; if(l.a>=shelf){if(t>=WARM) out.waste+=l.q; l.q=0}}
+    lots=lots.filter(l=>l.q>0);
+    const oh=lots.reduce((s,l)=>s+l.q,0);
+    out.oh.push(oh); if(t>=WARM) out.ohSum+=oh;
+    hist.push(D.d[t]);
+    const fc=hist.slice(-14).reduce((a,b)=>a+b,0)/Math.min(14,hist.length);
+    const ip=oh+pipe.reduce((s,p)=>s+p.q,0);
+    // decide
+    let q=0;
+    if(pol==="rop"){
+      const rop=mu0*L+SSu, Q=Math.max(1,Math.round(mu0*R));
+      let pos=ip; while(pos<=rop){q+=Q;pos+=Q}
+    } else if(t%R===0){
+      const ss=pol==="fixed"?SSu:S.buf*fc;
+      q=Math.max(0,Math.round(fc*(R+L)+ss-ip));
+    }
+    if(q>0&&ip+q>cap) q=Math.max(0,Math.floor(cap-ip));
+    if(q>0){
+      let lt=Math.max(1,Math.round(L+S.ltsd*D.ltn[t]));
+      if(t>=DEL_A&&t<=DEL_B) lt+=S.delay;
+      pipe.push({at:t+lt,q});
+      if(t>=WARM) out.orders.push(q);
+    }
+  }
+  if(run) out.eps.push(run);
+  // end of life: whatever is left on hand or still on order becomes obsolete
+  if(S.eol){out.waste+=out.oh[DAYS-1]+pipe.reduce((a,p)=>a+p.q,0);out.recv+=pipe.reduce((a,p)=>a+p.q,0)}
+  const avgD=out.dem/out.n;
+  const m={
+    avail:100*(out.n-out.stockDays)/out.n,
+    fill:out.dem?100*out.served/out.dem:100,
+    stockout:out.stockDays,
+    recovery:out.eps.length?out.eps.reduce((a,b)=>a+b,0)/out.eps.length:0,
+    aged:out.waste,
+    agedPct:out.recv?100*out.waste/out.recv:0,
+    repl:out.orders.length,
+    dos:(out.ohSum/out.n)/avgD,
+    avgOh:out.ohSum/out.n,
+    stab:cv(out.orders)
+  };
+  return {oh:out.oh,m};
+}
+function cv(a){if(a.length<2)return 0;const m=a.reduce((x,y)=>x+y,0)/a.length;const v=a.reduce((s,x)=>s+(x-m)**2,0)/(a.length-1);return m?100*Math.sqrt(v)/m:0}
+
+
+// all metrics are "lower is better" so bars read the same way
+const MET=[
+  {k:"stockout",l:"Stockout days",d:"days with any unmet demand",f:v=>v.toFixed(0)+" d",tol:()=>10,
+    g:"Fewest stockout days",b:"Most stockout days"},
+  {k:"lost",l:"Lost demand",d:"share of demand not served",f:v=>v.toFixed(1)+"%",tol:()=>4,
+    g:"Serves the most demand",b:"Loses the most demand"},
+  {k:"recovery",l:"Time to recover",d:"avg length of one stockout",f:v=>v?v.toFixed(1)+" d":"none",tol:()=>3,
+    g:"Recovers fastest from a stockout",b:"Slowest to recover from a stockout"},
+  {k:"aged",l:"Aged stock",d:"share of receipts expired or obsolete",f:v=>v.toFixed(1)+"%",tol:()=>5,
+    g:"Least stock written off",b:"Most stock written off"},
+  {k:"dos",l:"Days of supply",d:"average stock ÷ daily demand",f:v=>v.toFixed(1)+" d",tol:b=>Math.max(1,.4*b),
+    g:"Leanest stock",b:"Heaviest stock"},
+  {k:"repl",l:"Orders placed",d:"replenishment orders in 150 days",f:v=>v.toFixed(0),tol:b=>Math.max(3,.3*b),
+    g:"Fewest orders to manage",b:"Most orders to manage"},
+  {k:"stab",l:"Order size swing",d:"how much order quantities vary",f:v=>v.toFixed(0)+"%",tol:()=>50,
+    g:"Most predictable order sizes",b:"Most erratic order sizes"}
+];
+const WHY={
+  fixed:{svc:"The buffer does not grow when demand rises.",stock:"The same units sit there in slow periods too.",rhythm:"Each order resizes to refill the gap."},
+  time:{svc:"The buffer follows recent demand, so it lags a sudden jump.",stock:"After a spike the buffer stays inflated for a while.",rhythm:"Every forecast change moves the buffer and the order."},
+  rop:{svc:"The trigger is planned once and ignores seasons and spikes.",stock:"Fixed lots can land on stock still on hand.",rhythm:"When demand runs hot, fixed lots mean more orders."}
+};
+const GRP={stockout:"svc",lost:"svc",recovery:"svc",aged:"stock",dos:"stock",repl:"rhythm",stab:"rhythm"};
+
+let RES=null;
+function run(){const D=makeDemand();RES={D,res:POL.map(p=>simulate(p.k,D))};
+  RES.res.forEach(r=>{r.m.lost=100-r.m.fill;r.m.agedRaw=r.m.aged;r.m.aged=r.m.agedPct});render()}
+
+function render(){
+  const res=RES.res, w=PRIO[S.prio].w, N={};
+  MET.forEach(m=>{const vals=res.map(r=>r.m[m.k]);const best=Math.min(...vals);const t=m.tol(best);N[m.k]=vals.map(v=>Math.max(0,1-(v-best)/t))});
+  const pts=[0,1,2].map(i=>Math.round(100*Object.entries(w).reduce((s,[k,wt])=>s+wt*N[k][i],0)));
+  const order=[0,1,2].sort((a,b)=>pts[b]-pts[a]); const wi=order[0];
+  const rankTxt=["Best fit","2nd","3rd"];
+  const wsort=MET.slice().sort((a,b)=>(w[b.k]||0)-(w[a.k]||0));
+  // cards
+  $("pols").innerHTML=order.map((i,ri)=>{
+    const p=POL[i], m=res[i].m;
+    const items=[];
+    wsort.forEach(mt=>{
+      const n=N[mt.k], vals=res.map(r=>r.m[mt.k]), mn=Math.min(...n);
+      if(1-mn<0.12) return; // no meaningful gap on this metric
+      const bi=vals.indexOf(Math.min(...vals)), wo=vals.indexOf(Math.max(...vals));
+      const key=(w[mt.k]?"★ ":"");
+      if(n[i]===1) items.push({t:"g",x:mt.g,s:`<b>${mt.f(vals[i])}</b> vs ${mt.f(vals[wo])} worst`,pri:w[mt.k]||0,key});
+      else if(n[i]===mn&&n[i]<0.8) items.push({t:"b",x:mt.b,s:`<b>${mt.f(vals[i])}</b> vs ${mt.f(vals[bi])} best. ${WHY[p.k][GRP[mt.k]]}`,pri:w[mt.k]||0,key});
+    });
+    const gs=items.filter(x=>x.t==="g").slice(0,3), bs=items.filter(x=>x.t==="b").slice(0,3);
+    let list=gs.map(it).join("")+bs.map(it).join("");
+    if(!gs.length) list=`<div class="item n"><i>=</i><div>No clear win here<small>Close to the others, never the best.</small></div></div>`+list;
+    if(!bs.length) list+=`<div class="item n"><i>=</i><div>No clear weak spot<small>Never meaningfully the worst.</small></div></div>`;
+    return `<article class="pol ${ri===0?"win":""}" style="--pc:var(${p.c})">
+      <div class="top"><div class="rank">${rankTxt[ri]} · ${PRIO[S.prio].n}</div>
+        <h3>${p.n}</h3><div class="fit"><b>${pts[i]}</b><span>fit / 100</span></div>
+        <div class="mind">${p.mind}</div></div>
+      <div class="kstats"><div><b>${m.avail.toFixed(1)}%</b><span>days in stock</span></div><div><b>${m.dos.toFixed(1)} d</b><span>days of supply</span></div><div><b>${m.repl}</b><span>orders</span></div></div>
+      <div class="pc-list">${list}</div>
+      <div class="how">${p.how}</div></article>`;
+  }).join("");
+  // bars
+  $("bars").innerHTML=MET.map(mt=>{
+    const vals=res.map(r=>r.m[mt.k]); const mx=Math.max(...vals,1e-9); const n=N[mt.k]; const mn=Math.min(...n); const flat=1-mn<0.12;
+    const wt=w[mt.k];
+    return `<div class="brow"><div class="bl"><b>${mt.l}</b><span>${mt.d}</span>${wt?`<em style="color:var(--accent)">weighs ${Math.round(wt*100)}% for this priority</em>`:""}</div>
+      <div class="bset">${POL.map((p,i)=>`<div class="bar ${flat?"":n[i]===1?"best":n[i]===mn?"worst":""}" style="--pc:var(${p.c})"><span class="who">${p.short}</span><span class="tr"><span class="fl" style="width:${Math.max(vals[i]>0?1.5:0,100*vals[i]/mx)}%"></span></span><span class="v">${mt.f(vals[i])}</span></div>`).join("")}${flat?`<span class="foot" style="margin:0">About even.</span>`:""}</div></div>`;
+  }).join("");
+  RES.wi=wi; drawChart();
+}
+function it(x){return `<div class="item ${x.t}"><i>${x.t==="g"?"+":"−"}</i><div>${x.key}${x.x}<small>${x.s}</small></div></div>`}
+
+function drawChart(){
+  const svg=$("chart"), Wd=Math.max(300,svg.clientWidth||700), H=Math.round(Math.min(300,Math.max(220,Wd*0.38)));
+  svg.setAttribute("viewBox",`0 0 ${Wd} ${H}`); svg.setAttribute("height",H);
+  const m={l:44,r:10,t:10,b:26}, iw=Wd-m.l-m.r, ih=H-m.t-m.b;
+  let ymax=Math.max(...RES.res.flatMap(r=>r.oh),1); const step=nice(ymax/4); ymax=Math.ceil(ymax/step)*step;
+  const x=t=>m.l+t/(DAYS-1)*iw, y=v=>m.t+ih-v/ymax*ih;
+  let g=`<rect x="${x(DEL_A)}" y="${m.t}" width="${x(DEL_B)-x(DEL_A)}" height="${ih}" fill="var(--band2)"/>`+
+    `<rect x="${x(PROMO_START)}" y="${m.t}" width="${x(PROMO_START+PROMO_LEN)-x(PROMO_START)}" height="${ih}" fill="var(--band)"/>`+
+    `<rect x="${m.l}" y="${m.t}" width="${x(WARM)-m.l}" height="${ih}" fill="var(--soft)"/>`;
+  for(let v=0;v<=ymax+1e-9;v+=step)g+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${m.l-6}" y="${y(v)+4}" text-anchor="end" font-size="11" font-family="var(--f-mono)" fill="var(--muted)">${fmtK(v)}</text>`;
+  for(let t=0;t<=DAYS;t+=Wd<520?60:30){const tx=Math.min(t,DAYS-1);g+=`<text x="${x(tx)}" y="${H-8}" text-anchor="${t===0?"start":t>=DAYS?"end":"middle"}" font-size="11" font-family="var(--f-mono)" fill="var(--muted)">d${t}</text>`}
+  g+=`<text x="${m.l+4}" y="${m.t+13}" font-size="10.5" font-family="var(--f-mono)" fill="var(--muted)">warm-up</text>`;
+  const ord=[0,1,2].filter(i=>i!==RES.wi).concat(RES.wi);
+  ord.forEach(i=>{const d=RES.res[i].oh.map((v,t)=>(t?"L":"M")+x(t).toFixed(1)+" "+y(v).toFixed(1)).join("");
+    g+=`<path d="${d}" fill="none" stroke="var(${POL[i].c})" stroke-width="${i===RES.wi?2.6:1.4}" stroke-linejoin="round" opacity="${i===RES.wi?1:.6}"/>`});
+  g+=`<line id="hair" x1="0" x2="0" y1="${m.t}" y2="${m.t+ih}" stroke="var(--ink)" opacity="0"/>`;
+  svg.innerHTML=g;
+  $("legend").innerHTML=POL.map(p=>`<span><i style="background:var(${p.c})"></i>${p.n}</span>`).join("")+
+    `<span><i class="bx" style="background:var(--band2)"></i>Supplier delay</span><span><i class="bx" style="background:var(--band)"></i>Demand spike</span>`;
+  svg.onpointermove=e=>{const b=svg.getBoundingClientRect();const t=Math.max(0,Math.min(DAYS-1,Math.round(((e.clientX-b.left)/b.width*Wd-m.l)/iw*(DAYS-1))));
+    const hr=$("hair");hr.setAttribute("x1",x(t));hr.setAttribute("x2",x(t));hr.setAttribute("opacity",.35);
+    $("readout").textContent=`Day ${t} · demand ${RES.D.d[t]} · `+POL.map((p,i)=>`${p.short} ${RES.res[i].oh[t]}`).join(" · ")};
+}
+function nice(v){const p=Math.pow(10,Math.floor(Math.log10(v)));const n=v/p;return(n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p}
+function fmtK(v){return v>=10000?(v/1000).toFixed(0)+"k":v>=1000?(v/1000).toFixed(1)+"k":String(Math.round(v))}
+
+const sliders=["mu","cv","promo","lt","ltsd","delay","rev","shelf","cap","buf"];
+function syncUI(){
+  sliders.forEach(k=>$(k).value=S[k]);
+  $("muO").textContent=S.mu+" units/day"; $("cvO").textContent="±"+S.cv+"%"; $("promoO").textContent="+"+S.promo+"%";
+  $("ltO").textContent=S.lt+" d"; $("ltsdO").textContent="±"+S.ltsd+" d"; $("delayO").textContent="+"+S.delay+" d";
+  $("revO").textContent="every "+S.rev+" d";
+  $("shelfO").textContent=S.shelf>120?"no limit":S.shelf+" d";
+  $("capO").textContent=S.cap>60?"no limit":S.cap+" d ("+Math.round(S.cap*S.mu).toLocaleString()+" units)";
+  $("bufO").textContent=S.buf+" d ("+Math.round(S.buf*S.mu).toLocaleString()+" units)";
+  $("presetNote").textContent=S.preset?PRESETS[S.preset].note:"Custom settings.";
+  $("seedO").textContent="Sample #"+S.seed;
+  document.querySelectorAll("#presets button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.preset));
+  document.querySelectorAll("#pattern button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.pattern));
+  document.querySelectorAll("#prio button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.prio));
+}
+$("presets").innerHTML=Object.entries(PRESETS).map(([k,p])=>`<button type="button" data-v="${k}">${p.label}</button>`).join("");
+$("presets").onclick=e=>{const b=e.target.closest("button");if(!b)return;S={...S,preset:b.dataset.v,...PRESETS[b.dataset.v].v};syncUI();run()};
+$("pattern").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.pattern=b.dataset.v;S.preset=null;syncUI();run()};
+$("prio").onclick=e=>{const b=e.target.closest("button");if(!b)return;S.prio=b.dataset.v;syncUI();render()};
+sliders.forEach(k=>$(k).addEventListener("input",()=>{S[k]=+$(k).value;S.preset=null;syncUI();run()}));
+$("reseed").onclick=()=>{S.seed=1+Math.floor(Math.random()*9999);syncUI();run()};
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>RES&&drawChart(),120)});
+syncUI();run();
+
+// ---------- industry examples ----------
+const IND={
+  retail:{label:"Consumer retail",sum:"Retail risk comes from sales swings, not supply. Keep the buffer on the shelf.",unit:"units",
+    desc:"A store or e-commerce item. Sales follow a season, swing day to day, and get pushed by promotions. Deliveries come every few days from a distribution center.",
+    tags:["Seasonal","±30% daily swing","4-day lead time","delivery every 3 d"],
+    v:{pattern:"seasonal",mu:80,cv:30,promo:0,lt:4,ltsd:1,delay:0,rev:3,shelf:121,cap:61,buf:3,prio:"avail"},
+    scn:[
+      {n:"Promotion",t:"Stock already on the shelf saves the promo.",d:"+120% sales for 10 days",ch:{promo:120},why:"Nobody planned the promo into the policy. Days of cover raises its buffer only once the spike shows up in recent sales, so it helps late. A fixed buffer absorbs the first days, then runs dry. Reorder point keeps ordering the same lot and falls behind."},
+      {n:"DC / truck delay",t:"Lean stock feels late trucks first.",d:"+8 days on orders for two weeks",ch:{delay:8},why:"Late trucks drain the shelf buffer. The reorder point runs closest to empty, so it runs out first. A buffer already on the shelf rides out the delay, and the short lead time means everyone recovers within days."},
+      {n:"Season ends early",t:"Every policy gets stuck with leftovers.",d:"Sales drop 90% from day 150; leftovers are marked out",ch:{eol:150},why:"Seasonal or fashion goods lose value when the season turns. Whatever is on the shelf or on order at that point becomes aged stock. The more stock a policy carries into the drop, the more it marks out."},
+      {n:"Steadier demand",t:"Calm demand: all three perform alike.",d:"Daily swing drops to ±10%",ch:{cv:10},why:"When demand gets predictable, every policy needs less buffer. The gap between them shrinks, and the simple fixed rules lose little."}
+    ]},
+  semis:{label:"Semiconductor manufacturing",sum:"Long, unreliable supply. Buffer depth matters more than precision, until the product goes end-of-life.",unit:"wafers",
+    desc:"A die or wafer bank feeding an assembly and test line. Consumption is fairly steady, but supply comes from a fab or OSAT with long and noisy lead times.",
+    tags:["Steady","±15% daily swing","28-day lead time","weekly PO release"],
+    v:{pattern:"steady",mu:50,cv:15,promo:0,lt:28,ltsd:4,delay:0,rev:7,shelf:121,cap:61,buf:10,prio:"process"},
+    scn:[
+      {n:"Fab / OSAT delay",t:"Deep buffers bridge long delays.",d:"+14 days on orders for two weeks",ch:{delay:14},why:"With a 4-week lead time, a delay hits weeks later and lasts. The buffer has to bridge the gap; nothing can be expedited in time. The heavier buffer wins here."},
+      {n:"Demand upside",t:"Nobody can react inside a 28-day lead time.",d:"+120% line pulls for 10 days",ch:{promo:120},why:"A customer pull-in. Replenishment cannot react inside a 28-day lead time, so only stock already on hand helps. Days of cover rebuilds higher after the upside."},
+      {n:"Lead time gets noisier",t:"Unreliable supply punishes lean stock.",d:"Lead time swing rises to ±10 days",ch:{ltsd:10},why:"Unreliable deliveries call for a bigger buffer. Reorder point runs leanest, close to its trigger, so a late delivery hits it first. The weekly policies carry an extra cycle of stock as a cushion."},
+      {n:"Product end-of-life",t:"When a product dies, lean stock writes off least.",d:"Line pulls drop 90% from day 150",ch:{eol:150},why:"When a product is phased out, whatever sits in the bank or is still on order turns into excess and obsolete (E&O). With a 28-day lead time, a lot is already in the pipeline. The heavier the buffer, the bigger the write-off."}
+    ]},
+  lime:{label:"Scooter repair shop",sum:"Bursty repairs need cover on hand. Watch for dead parts when models change.",unit:"parts",
+    desc:"Spare parts for a shared e-scooter repair shop. Parts usage follows repair work orders, which come in bursts after damage or vandalism waves.",
+    tags:["Spiky","±40% daily swing","10-day lead time","weekly orders"],
+    v:{pattern:"spiky",mu:30,cv:40,promo:0,lt:10,ltsd:3,delay:0,rev:7,shelf:121,cap:61,buf:5,prio:"avail"},
+    scn:[
+      {n:"Vandalism wave",t:"A bigger buffer keeps scooters on the road.",d:"+150% repairs for 10 days",ch:{promo:150},why:"A burst of damaged scooters needs parts now. Scooters wait off the road until parts arrive. A bigger buffer on hand keeps the fleet deployable; reorder point runs out first."},
+      {n:"Supplier delay",t:"Lean stock leaves scooters waiting for parts.",d:"+7 days on orders for two weeks",ch:{delay:7},why:"Parts arrive late while repairs keep coming. Policies that hold more cover keep repairs moving; lean ones leave scooters waiting for parts."},
+      {n:"Scooter model retires",t:"Lean stock means fewer dead parts.",d:"Old-model repairs drop 90% from day 150",ch:{eol:150},why:"When the fleet moves to a new model, leftover parts for the old one are dead stock. Heavier buffers lose more; lean ones lose less but leave scooters waiting before the switch."},
+      {n:"Summer season",t:"Summer peaks punish the lean reorder point.",d:"Usage follows a season instead of random bursts",ch:{pattern:"seasonal"},why:"Rides and damage climb in summer. The reorder point trigger is sized for the yearly average, so it runs out at the peak. Days of cover follows usage but lags each turn of the season. A generous fixed buffer pays off here."}
+    ]}
+};
+let IK="retail";
+function simSet(v){const keep=S;S={...S,...v,seed:7};const D=makeDemand();const r=POL.map(p=>simulate(p.k,D));r.forEach(x=>{x.m.lost=100-x.m.fill});S=keep;return {D,r}}
+function renderInd(){
+  const I=IND[IK];
+  $("indTabs").innerHTML=Object.entries(IND).map(([k,x])=>`<button type="button" data-v="${k}" aria-pressed="${k===IK}">${x.label}</button>`).join("");
+  const base=simSet(I.v);
+  // profile visual: daily demand + 14-day average
+  const Wd=760,H=200,m={l:34,r:6,t:8,b:20},iw=Wd-m.l-m.r,ih=H-m.t-m.b,d=base.D.d;
+  let ymax=Math.max(...d,1);const st=nice(ymax/3);ymax=Math.ceil(ymax/st)*st;
+  const x=t=>m.l+t/(DAYS-1)*iw,y=v=>m.t+ih-v/ymax*ih;
+  let g="";for(let v=0;v<=ymax+1e-9;v+=st)g+=`<line x1="${m.l}" x2="${Wd-m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${m.l-5}" y="${y(v)+4}" text-anchor="end" font-size="10" font-family="var(--f-mono)" fill="var(--muted)">${fmtK(v)}</text>`;
+  const bw=Math.max(1,iw/DAYS-0.6);
+  d.forEach((v,t)=>{g+=`<rect x="${(x(t)-bw/2).toFixed(1)}" y="${y(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(m.t+ih-y(v)).toFixed(1)}" fill="var(--accent)" opacity=".35"/>`});
+  const avg=d.map((_,t)=>{const a=d.slice(Math.max(0,t-13),t+1);return a.reduce((p,q)=>p+q,0)/a.length});
+  g+=`<path d="${avg.map((v,t)=>(t?"L":"M")+x(t).toFixed(1)+" "+y(v).toFixed(1)).join("")}" fill="none" stroke="var(--ink)" stroke-width="2"/>`;
+  for(let t=0;t<=DAYS;t+=60){const tx=Math.min(t,DAYS-1);g+=`<text x="${x(tx)}" y="${H-5}" text-anchor="${t===0?"start":t>=DAYS?"end":"middle"}" font-size="10" font-family="var(--f-mono)" fill="var(--muted)">d${t}</text>`}
+  $("indProf").innerHTML=`<div><svg viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Daily demand profile for ${I.label}">${g}</svg>
+    <div class="cap"><span><i style="background:var(--accent);opacity:.5;height:8px"></i>daily demand (${I.unit})</span><span><i style="background:var(--ink)"></i>14-day average</span></div></div>
+    <div><h3>${I.label}</h3><p>${I.desc}</p><p style="font-weight:700;color:var(--ink)">${I.sum}</p><div class="tags">${I.tags.map(t=>`<span>${t}</span>`).join("")}</div>
+    <div class="verdictline" id="verdictline"></div><div style="margin-top:10px"><button class="btn" type="button" id="indLoad">Run this in the lab ↑</button></div></div>`;
+  $("indLoad").onclick=()=>{S={...S,preset:null,...I.v};syncUI();run();document.querySelector(".priority").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})};
+  // scenarios
+  const tally=[0,0,0];
+  $("indScn").innerHTML=I.scn.map(sc=>{
+    const r=simSet({...I.v,...sc.ch}).r;
+    const dl=r.map((x,i)=>({so:x.m.stockout-base.r[i].m.stockout,lost:x.m.lost-base.r[i].m.lost,aged:x.m.agedPct-base.r[i].m.agedPct,abs:x.m}));
+    const waste=dl.some(z=>Math.abs(z.aged)>1);
+    const hit=dl.map(z=>waste?z.abs.agedPct:z.abs.lost+0.3*z.abs.stockout);
+    const mn=Math.min(...hit),mx=Math.max(...hit),spread=mx-mn>(waste?1.5:0.6),better=false;
+    const rowsH=dl.map((z,i)=>{
+      const cls=!spread?"mid":hit[i]===mn?"up":hit[i]===mx&&!better?"down":"mid";
+      const wt=better?0:waste?0.5:1; if(cls==="up")tally[i]+=wt; if(cls==="down")tally[i]-=wt;
+      let head,sub;
+      if(waste){head=cls==="up"?"Least write-off":cls==="down"?"Biggest write-off":spread?"Some write-off":"Same write-off";sub=`${z.abs.agedPct.toFixed(0)}% of stock ends up obsolete`}
+      else if(better){head=cls==="up"?"Gains most":"Little change";sub=z.abs.stockout?`${z.abs.stockout} stockout days`:"no stockouts"}
+      else{head=cls==="up"?"Stays in stock":cls==="down"?"Runs out":spread?"Small gaps":"Same as the others";sub=z.abs.stockout?`${z.abs.stockout} stockout day${z.abs.stockout>1?"s":""} · ${z.abs.lost.toFixed(1)}% of demand missed`:"no stockouts"}
+      const ic=cls==="up"?"✓":cls==="down"?"✕":"–";
+      return `<div class="vr ${cls}" style="--pc:var(${POL[i].c})"><span class="ic" aria-hidden="true">${ic}</span><div><b>${POL[i].n}: ${head}</b><small>${sub}</small></div></div>`;
+    }).join("");
+    return `<article class="sc"><div class="what">What if…</div><h4>${sc.n}</h4><div class="sit">${sc.d}</div><div class="take">${sc.t}</div>${rowsH}<details><summary>Why</summary><p>${sc.why}</p></details></article>`;
+  }).join("");
+  const best=tally.indexOf(Math.max(...tally)), worst=tally.indexOf(Math.min(...tally));
+  $("verdictline").innerHTML=`<div class="vl win"><span>✓ Safest bet here</span><b>${POL[best].n}</b></div><div class="vl lose"><span>✕ Riskiest here</span><b>${POL[worst].n}</b></div>`;
+}
+
+// timeline for the scooter shop: one season, one decision per event
+const TL=[
+  {when:"May",ev:"Summer season starts",scn:3,alarm:"Rides and damage climb. Repair work orders run above the yearly average and parts bins empty faster."},
+  {when:"July",ev:"Vandalism wave",scn:0,alarm:"Damaged scooters flood in, +150% repairs for 10 days. Scooters start waiting for parts (VOR)."},
+  {when:"August",ev:"Supplier delay",scn:1,alarm:"Parts deliveries arrive a week late for two weeks while repairs keep coming."},
+  {when:"October",ev:"Old scooter model retires",scn:2,alarm:"The fleet moves to a new model. Old-model repairs drop 90%, and parts on hand turn into dead stock."}
+];
+const ACT={
+  fixed:"Hold a fixed buffer in units, sized for the peak.",
+  time:"Let the buffer follow recent repairs: 5 days of usage.",
+  rop:"Run lean: fixed trigger, fixed lot, checked daily."
+};
+function renderTimeline(){
+  const box=$("indTimeline");
+  if(IK!=="lime"){box.innerHTML="";return}
+  const I=IND.lime; let cur=2;
+  const steps=TL.map((st,si)=>{
+    const sc=I.scn[st.scn]; const r=simSet({...I.v,...sc.ch}).r;
+    const waste=st.scn===2;
+    const hit=r.map(x=>waste?x.m.agedPct:x.m.lost+0.3*x.m.stockout);
+    const best=hit.indexOf(Math.min(...hit)), worst=hit.indexOf(Math.max(...hit));
+    const keep=best===cur, from=keep?worst:cur, A=r[from].m, B=r[best].m;
+    const kp=(l,a,b,hi)=>{const worse=hi?parseFloat(b)<parseFloat(a):parseFloat(b)>parseFloat(a);return `<div class="kp"><span>${l}${worse?" <em class=\"tradeoff\">trade-off</em>":""}</span><span>${a===b?`<b>${b}</b>`:`<s class="${worse?"ok":""}">${a}</s> → <b class="${worse?"worse":""}">${b}</b>`}</span></div>`};
+    const res=waste?
+      kp("Parts written off",A.agedPct.toFixed(0)+"%",B.agedPct.toFixed(0)+"%")+kp("Days of supply",A.dos.toFixed(1)+" d",B.dos.toFixed(1)+" d")+kp("Fleet availability",A.avail.toFixed(0)+"%",B.avail.toFixed(0)+"%",1):
+      kp("Days scooters wait for parts",A.stockout+" d",B.stockout+" d")+kp("Fleet availability",A.avail.toFixed(1)+"%",B.avail.toFixed(1)+"%",1)+kp("Repairs delayed",A.lost.toFixed(1)+"%",B.lost.toFixed(1)+"%");
+    const html=`<div class="step"><div class="rail2"><b>${st.when}</b><span>step ${si+1}</span></div><div class="body"><span class="dot"></span>${si<TL.length-1?'<span class="arrow">▼</span>':""}
+      <div class="flow">
+        <div class="fb"><span class="lab">Event</span><span class="big">${st.ev}</span><p>${sc.d}</p></div>
+        <div class="fb alarm"><span class="lab">⚠ KPI alarm</span><p>${st.alarm}</p></div>
+        <div class="fb act" style="--pc:var(${POL[best].c})"><span class="lab">${keep?"Decision: keep":"Decision: switch"}</span><span class="big">${keep?"Stay on ":""}${POL[best].n}</span><p>${keep?`Already the right tool. Don't chase the delay by switching to ${POL[worst].n.toLowerCase()}.`:`From ${POL[cur].n.toLowerCase()}. ${ACT[POL[best].k]}`}</p></div>
+        <div class="fb res"><span class="lab">✓ KPI result ${keep?`vs ${POL[worst].short}`:""}</span>${res}</div>
+      </div></div></div>`;
+    cur=best; return html;
+  }).join("");
+  box.innerHTML=`<div class="tlwrap card" style="padding:18px 20px"><div class="eyebrow">Scooter repair shop · one season</div><h2 class="big" style="font-size:clamp(22px,3vw,30px)">Switching policy as the season changes</h2>
+    <p class="lede2">No single policy wins all year. A planner who watches the KPIs and switches the policy at each turn keeps scooters on the road and avoids dead parts. Spring starts on a lean reorder point.</p>
+    <div class="tl">${steps}</div>
+    <p class="foot">Each step compares results from the matching what-if run above: crossed out is what the old policy would deliver, green is the result after the decision.</p></div>`;
+}
+$("indTabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;IK=b.dataset.v;renderInd();renderTimeline()};
+renderInd();renderTimeline();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

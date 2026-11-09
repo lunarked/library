@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Story: First cross-dock ever, Berlin Airlift '48</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+:root{
+  --bg:#F3F3F1; --paper:#FFFFFF; --ink:#141A22; --muted:#5A6370; --line:#D3D6DA; --soft:#E5E7EA;
+  --amber:#B86E00; --ambersoft:#F6E6CC; --sky:#2F5C8F; --skysoft:#DCE5F0;
+  --bad:#C2372D; --badsoft:#F8DEDA; --good:#1F7D47; --goodsoft:#DDF0E4;
+  --night:#0B0F16; --nightink:#E9ECEF; --nightmuted:#939CA8; --board:#FFB020;
+  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-text:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
+  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
+  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+.g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+.col{max-width:680px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
+p{margin:0 0 1em}
+b,strong{font-weight:600}
+.est{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:2px;white-space:nowrap}
+
+/* Opener */
+.open{background:var(--night);color:var(--nightink);padding-block:60px 50px}
+.open .kick{color:var(--board)}
+.open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:15ch}
+.open h1 .u{color:#6FD49B}
+.dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
+.cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
+.cue::after{content:" ↓"}
+.boardrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;max-width:960px}
+@media (max-width:700px){.boardrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.boardrow div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:10px 12px}
+.boardrow b{display:block;font:600 clamp(22px,3.2vw,34px)/1.05 var(--f-mono);color:var(--board);font-variant-numeric:tabular-nums}
+.boardrow span{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+
+/* Scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px;margin:0}
+.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
+.steps{padding-block:20vh 30vh}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.step:last-child{margin-bottom:10vh}
+.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
+.step h3{font-size:22px;margin-bottom:8px}
+.step p:last-child{margin:0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:600 12px var(--f-mono);color:var(--muted);min-height:1.2em}
+.legend i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+
+.scenes{position:relative;height:clamp(320px,58vh,500px)}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s;pointer-events:none}
+.scene.on{opacity:1;transform:none;pointer-events:auto}
+.chart svg{width:100%;height:auto;max-height:54vh;display:block}
+
+/* Chart pieces */
+.tick{font:600 13px var(--f-mono);fill:var(--muted)}
+.lbl{font:600 12.5px var(--f-mono);fill:var(--muted)}
+.lblb{font:800 17px var(--f-head);fill:var(--ink)}
+.gl{stroke:var(--line);stroke-width:1}
+.zw{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
+.zs{fill:var(--badsoft);stroke:var(--bad);stroke-width:1.5;stroke-dasharray:5 4}
+.city{fill:var(--ink)}
+.road{stroke:var(--muted);stroke-width:3;stroke-dasharray:2 5;stroke-linecap:round;fill:none}
+.xm{stroke:var(--bad);stroke-width:5;stroke-linecap:round}
+.corr{stroke:var(--sky);stroke-width:10;stroke-opacity:.22;stroke-linecap:round}
+.need{stroke:var(--ink);stroke-width:2;stroke-dasharray:6 5;fill:none}
+.ln{fill:none;stroke:var(--good);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.dot{fill:var(--good)} .dot.lo{fill:var(--bad)}
+.rec{fill:var(--amber)}
+.plane{fill:var(--sky)} .plane.w{fill:var(--bad)}
+.runway{fill:var(--soft);stroke:var(--line)}
+.seg-t{fill:var(--sky)} .seg-u{fill:var(--amber)} .seg-w{fill:var(--bad)} .seg-c{fill:var(--good)}
+.slot{fill:var(--soft);stroke:var(--line);transition:fill .2s}
+.slot.on{fill:var(--good)} .slot.now{fill:var(--amber)}
+.hand{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+
+/* Option cards */
+.fork{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.opt{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:8px;padding:14px;background:var(--paper)}
+.opt.w{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
+.opt .ml{display:block;font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.opt h3{font-size:clamp(17px,2vw,22px);margin:6px 0 8px}
+.opt p{font-size:15.5px;line-height:1.45;margin:0;color:var(--muted)}
+.tag2{display:inline-block;margin-top:8px;font:700 11.5px var(--f-mono);padding:3px 8px;border-radius:4px}
+.t-bad{background:var(--badsoft);color:var(--bad)} .t-good{background:var(--goodsoft);color:var(--good)}
+
+/* Cross-dock diagram */
+.flow{display:flex;flex-direction:column;gap:22px}
+.frow .who{font:800 18px var(--f-head);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.frow .who span{font:600 12.5px var(--f-mono);color:var(--muted);text-align:right}
+.boxes{display:grid;grid-template-columns:minmax(0,1fr) 26px minmax(0,1.2fr) 26px minmax(0,1fr);align-items:center}
+.bx{border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:12px 8px;text-align:center;font:700 15px/1.25 var(--f-head)}
+.bx small{display:block;font:600 11.5px var(--f-mono);color:var(--muted);margin-top:4px;letter-spacing:.02em}
+.bx.st{background:var(--badsoft);border-color:var(--bad);color:var(--bad)}
+.bx.st small{color:var(--bad)}
+.bx.dk{background:var(--goodsoft);border-color:var(--good);color:var(--good)}
+.bx.dk small{color:var(--good)}
+.ar{text-align:center;font:700 20px var(--f-head);color:var(--muted)}
+
+/* Lanes, counters */
+.lane{margin-bottom:22px}
+.lane .who{display:flex;justify-content:space-between;align-items:baseline;font:800 19px var(--f-head);margin-bottom:6px;gap:10px}
+.lane .who span{font:600 13px var(--f-mono);color:var(--muted)}
+.track{height:34px;background:var(--soft);border-radius:4px;position:relative;overflow:hidden}
+.fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:4px;transition:width 1.4s cubic-bezier(.3,.7,.3,1)}
+.fill.r{background:var(--bad)} .fill.z{background:var(--good)}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
+.trio div{border-top:4px solid var(--good);padding-top:8px}
+.trio b{display:block;font:900 clamp(26px,4vw,42px)/1 var(--f-head);color:var(--good);font-variant-numeric:tabular-nums}
+.trio span{font:600 11.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.split{display:flex;height:50px;border-radius:6px;overflow:hidden;font:800 15px var(--f-head);color:#fff}
+.split div{display:flex;align-items:center;padding:0 12px;white-space:nowrap;overflow:hidden}
+.split .c{background:#3A4350;width:68%} .split .f{background:var(--good);width:23%} .split .o{background:var(--amber);width:9%;padding:0}
+.ax{display:flex;justify-content:space-between;font:600 12px var(--f-mono);color:var(--muted);margin-top:6px}
+
+/* Question reveal */
+.reveal{height:200vh;background:var(--night);position:relative}
+.rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+.rv-in{width:100%}
+.rv-l{font:800 clamp(24px,3.6vw,40px)/1.2 var(--f-head);color:var(--nightink);margin:0 0 14px;opacity:.18;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rv-q{font-weight:900;font-size:clamp(34px,6.2vw,80px);line-height:1.02;letter-spacing:-.015em;color:var(--nightink);margin-top:28px;max-width:18ch;opacity:.18;transform:translateY(12px);transition:opacity .6s,transform .6s}
+.rv-q em{font-style:normal;color:var(--board)}
+.rv-l.on,.rv-q.on{opacity:1;transform:none}
+.rv-l.on{color:var(--board)}
+
+/* Sources */
+.src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
+.src ol{padding-left:20px;margin:8px 0 14px}
+.src a{color:var(--ink)}
+a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.rv-l,.rv-q{opacity:1;transform:none}}
+
+@media (max-width:860px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
+  .steps{padding-block:4vh 50vh;position:relative;z-index:3}
+  .step{margin-bottom:45vh;opacity:1;font-size:17px}
+  .scenes{height:250px}
+  .chart svg{max-height:245px}
+  .chart .tick,.chart .lbl{font-size:20px} .chart .lblb{font-size:24px}
+  .fork{gap:6px}
+  .opt{padding:9px 8px}.opt p{display:none}.opt h3{font-size:15px;margin:4px 0}
+  .opt .ml{font-size:10px}.tag2{font-size:10px;padding:2px 5px;margin-top:5px}
+  .flow{gap:8px}
+  .frow .who{margin-bottom:4px}
+  .frow .who{font-size:15px}.frow .who span{font-size:10.5px}
+  .boxes{grid-template-columns:minmax(0,1fr) 16px minmax(0,1.2fr) 16px minmax(0,1fr)}
+  .bx{font-size:12.5px;padding:8px 4px}.bx small{font-size:10px}
+  .ar{font-size:15px}
+  .lane{margin-bottom:14px}.lane .who{font-size:16px}.lane .who span{font-size:11.5px}
+  .track{height:28px}
+  .trio{gap:8px;margin-bottom:14px}.trio b{font-size:24px}.trio span{font-size:10px}
+  .split{height:40px;font-size:12.5px}
+}
+</style>
+
+<header class="open g">
+  <div class="in">
+    <div class="kick">Decision story · Berlin, 1948 to 1949</div>
+    <h1>First cross-dock ever: <span class="u">Berlin Airlift ’48</span></h1>
+    <p class="dek">In 1948 the Soviet Union cut every road and railway into West Berlin. The Allies kept the city alive with planes, by running its airports like a cross-dock. This is the question they faced, what they decided, and what happened.</p>
+    <div class="boardrow">
+      <div><b>2.3M</b><span>tons flown in</span></div>
+      <div><b>277,000</b><span>flights</span></div>
+      <div><b>3 min</b><span>between landings</span></div>
+      <div><b>15</b><span>months</span></div>
+    </div>
+    <div class="cue">Scroll to start</div>
+  </div>
+</header>
+
+<!-- Part 1: problem and question -->
+<section class="g" style="padding-top:40px">
+  <div class="in scrolly" data-chart="a">
+    <figure class="fig">
+      <div class="figcap" id="aCap"></div>
+      <div class="legend" id="aLeg"></div>
+      <div class="scenes">
+        <div class="scene" data-scene="0"><div class="chart" id="map"></div></div>
+        <div class="scene" data-scene="1">
+          <div class="fork">
+            <div class="opt"><span class="ml">Option A</span><h3>Armed convoy</h3><p>Send troops and trucks up the motorway to force the road open.</p><span class="tag2 t-bad">Risk of war</span></div>
+            <div class="opt"><span class="ml">Option B</span><h3>Leave Berlin</h3><p>Pull out of the city and let the Soviets take it.</p><span class="tag2 t-bad">City lost</span></div>
+            <div class="opt w"><span class="ml">Option C</span><h3>Supply by air</h3><p>Fly everything in through the three air routes that stayed open.</p><span class="tag2 t-good">No shots</span> <span class="tag2 t-bad">Never done</span></div>
+          </div>
+        </div>
+        <div class="scene" data-scene="2"><div class="chart" id="early"></div></div>
+      </div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="0"><span class="t">1 · The problem</span><h3>The Soviets cut every road, railway and canal</h3><p>On 24 June 1948 the Soviet Union closed all land routes into West Berlin. Two million people had food for 36 days and coal for 45. The city needed about 4,500 tons of supplies a day.</p></div>
+      <div class="step" data-s="1"><span class="t">2 · The question the Allies asked</span><h3>Fight through, leave, or fly?</h3><p>General Clay wanted an armed convoy on the motorway. Washington and London feared it could start a war. Leaving Berlin was rejected too. The three air routes into the city were still open, so the Allies chose to fly, at first only to buy time.</p></div>
+      <div class="step" data-s="2"><span class="t">2 · The question the Allies asked</span><h3>The first airlift was far too small</h3><p>The first day brought 80 tons. Small planes carried 3 tons each, crews flew when they could, and planes circled over Berlin waiting to land. By mid-July it moved about 2,000 tons a day, less than half of what the city needed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" id="reveal" aria-label="The supply chain question">
+  <div class="rv-pin g">
+    <div class="in rv-in">
+      <p class="rv-l" data-at="0">So for supply chain, the question is:</p>
+      <h2 class="rv-q" data-at="1">How do you move more goods through one dock <em>with no room to store them?</em></h2>
+    </div>
+  </div>
+</section>
+
+<!-- Part 2: why, decision, outcome -->
+<section class="g" style="padding-top:40px">
+  <div class="in scrolly" data-chart="b">
+    <figure class="fig">
+      <div class="figcap" id="bCap"></div>
+      <div class="legend" id="bLeg"></div>
+      <div class="scenes">
+        <div class="scene" data-scene="0">
+          <div class="flow">
+            <div class="frow"><div class="who">A warehouse <span>goods wait for days</span></div>
+              <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx st">Shelf<small>stored for days</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
+            <div class="frow"><div class="who">A cross-dock <span>goods move in minutes</span></div>
+              <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx dk">Dock<small>straight across</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
+            <div class="frow"><div class="who">Tempelhof airport, 1948 <span>no room for a shelf</span></div>
+              <div class="boxes"><div class="bx">Plane in</div><div class="ar">→</div><div class="bx dk">Unload<small>onto trucks</small></div><div class="ar">→</div><div class="bx">Trucks to the city</div></div></div>
+          </div>
+        </div>
+        <div class="scene" data-scene="1"><div class="chart" id="stack"></div></div>
+        <div class="scene" data-scene="2"><div class="chart" id="clock"></div></div>
+        <div class="scene" data-scene="3"><div class="chart" id="gantt"></div></div>
+        <div class="scene" data-scene="4"><div class="chart" id="tons"></div></div>
+        <div class="scene" data-scene="5">
+          <div class="trio">
+            <div><b>2.3M</b><span>tons flown in</span></div>
+            <div><b>277,000</b><span>flights</span></div>
+            <div><b>15</b><span>months</span></div>
+          </div>
+          <div class="split" role="img" aria-label="Coal 68%, food 23%, other 9%"><div class="c">Coal 68%</div><div class="f">Food 23%</div><div class="o"></div></div>
+          <div class="ax"><span>what the planes carried</span><span>other 9%</span></div>
+        </div>
+        <div class="scene" data-scene="6">
+          <div class="lane"><div class="who">60 minutes at the door <span>24 loads a day</span></div><div class="track"><div class="fill r" data-w="50"></div></div></div>
+          <div class="lane"><div class="who">30 minutes at the door <span>48 loads a day</span></div><div class="track"><div class="fill z" data-w="100"></div></div></div>
+          <div class="ax"><span>loads through one dock door in 24 hours</span><span></span></div>
+        </div>
+      </div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="0"><span class="t">3 · Why it mattered</span><h3>Berlin's airports worked like a cross-dock</h3><p>A cross-dock is a site where goods go from incoming vehicles straight onto outgoing ones, with almost no storage. At Tempelhof, planes landed, Berliners unloaded them onto trucks, and the trucks drove into the city. Nothing waited on a shelf.</p></div>
+      <div class="step" data-s="1"><span class="t">3 · Why it mattered</span><h3>The dock, not the number of planes, was the limit</h3><p>On 13 August 1948 a storm hit Berlin. A plane crashed on landing, many more circled overhead, and loaded planes on the ground could not take off. General Tunner, the new head of the airlift, saw that more planes would not help. The limit was how many could land, unload and leave each hour.</p></div>
+      <div class="step" data-s="2"><span class="t">4 · What Tunner decided</span><h3>Run the airport on a fixed rhythm</h3><p>One plane landed every 3 minutes, day and night, in any weather. A pilot who missed his landing flew back with the load instead of circling. Planes flew in on two air routes and out on the third, so traffic only moved one way.</p></div>
+      <div class="step" data-s="3"><span class="t">4 · What Tunner decided</span><h3>Keep each plane on the ground as short as possible</h3><p>Crews stayed with the plane. An officer brought the return papers and the weather to the door, and a snack truck brought food. Large planes with 10-ton loads replaced small 3-ton ones. Time on the ground in Berlin fell by half, to 30 minutes. <span class="est">est. split</span></p></div>
+      <div class="step" data-s="4"><span class="t">5 · What happened</span><h3>The airlift passed what the city needed</h3><p>By the end of August it delivered more than 4,500 tons a day. Unloading a 10-ton plane fell from 10 minutes to under 6. Berliners built a new airport, Tegel, in three months. On 16 April 1949 nearly 1,400 flights brought 12,941 tons in one day, and after that the airlift kept up close to 9,000 tons a day.</p></div>
+      <div class="step" data-s="5"><span class="t">5 · What happened</span><h3>The Soviets reopened the roads</h3><p>On 12 May 1949 the blockade ended. The airlift kept flying until September to build up stock. In total it carried 2.3 million tons, two thirds of it coal. 78 people died in accidents.</p></div>
+      <div class="step" data-s="6"><span class="t">The lesson</span><h3>A dock's output depends on how long each load stays at the door</h3><p>Fixed arrival slots, standard loads and no waiting at the door let the same space handle far more. Modern cross-docks work the same way: trucks book a door slot, unload and leave.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr>
+<footer class="src g">
+  <div class="col">
+    <strong style="color:var(--ink);font-family:var(--f-head)">Sources</strong>
+    <ol>
+      <li><a href="https://www.pbs.org/wgbh/amex/airlift/timeline" target="_blank" rel="noopener">PBS American Experience, Berlin Airlift timeline</a>: blockade 24 June 1948, food for 36 days and coal for 45, Tunner arrives late July, Tegel built August to November 1948, Easter record 16 April 1949, blockade ends 12 May 1949, last flight 30 September 1949</li>
+      <li><a href="https://www.americanheritage.com/william-h-tunner-berlin-airlift-commander" target="_blank" rel="noopener">American Heritage, William H. Tunner</a>: 80 tons on the first day, about 2,000 tons a day in mid-July, need of 4,500 tons a day, one plane every three minutes, missed landings fly home, crews stay with the plane, snack bars, ground time cut in half to 30 minutes, 3-ton and 10-ton planes, 12,941 tons on 1,398 flights</li>
+      <li><a href="https://en.wikipedia.org/wiki/Berlin_Blockade" target="_blank" rel="noopener">Wikipedia, Berlin Blockade</a>: more than 4,500 tons a day by end of August 1948, 10-ton unload from 10 minutes to 5 minutes 45 seconds, instrument flying and one landing try, 6,729 tons a day before Easter 1949 and 8,893 after</li>
+      <li><a href="https://europeanaviationhistory.blogspot.com/2023/08/the-berlin-crisis-1948-allied-options.html" target="_blank" rel="noopener">European Aviation History, The Berlin Crisis 1948: Allied Options</a>: armed convoy, withdrawal and airlift, and why the first two were rejected</li>
+      <li><a href="https://europeanaviationhistory.blogspot.com/2024/11/the-berlin-airlift-by-numbers.html" target="_blank" rel="noopener">European Aviation History, The Berlin Airlift by the numbers</a>: 2,325,510 tons, coal 68% and food 23%, 277,569 flights, 78 deaths</li>
+      <li><a href="https://centennialofflight.net/essay/Air_Power/berlin_airlift/AP35.htm" target="_blank" rel="noopener">US Centennial of Flight Commission, The Berlin Airlift</a>: three air corridors, in through the north and south, out through the center</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(t,a,txt){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
+  function svg(w,h,label){return el('svg',{viewBox:'0 0 '+w+' '+h,role:'img','aria-label':label});}
+  // Small plane icon, nose pointing right, centred on 0,0
+  function plane(s,x,y,cls,sc){
+    var g=el('g',{transform:'translate('+x+','+y+') scale('+(sc||1)+')'});
+    g.appendChild(el('path',{d:'M-16,-2 L10,-2 Q16,0 10,2 L-16,2 Z M-2,-2 L-8,-14 L-3,-14 L6,-2 Z M-2,2 L-8,14 L-3,14 L6,2 Z M-16,-2 L-19,-7 L-15,-7 L-11,-2 Z M-16,2 L-19,7 L-15,7 L-11,2 Z',class:'plane'+(cls?' '+cls:'')}));
+    s.appendChild(g);
+  }
+
+  // Map: West Germany, Soviet zone, Berlin, cut land routes, open air routes
+  (function(){
+    var s=svg(640,380,'Map: land routes into West Berlin cut, three air routes open');
+    s.appendChild(el('path',{d:'M20,20 L330,20 L350,120 L320,230 L300,360 L20,360 Z',class:'zw'}));
+    s.appendChild(el('path',{d:'M330,20 L620,20 L620,360 L300,360 L320,230 L350,120 Z',class:'zs'}));
+    s.appendChild(el('text',{x:40,y:50,class:'lbl'},'Allied zones'));
+    s.appendChild(el('text',{x:600,y:50,'text-anchor':'end',class:'lbl',style:'fill:var(--bad)'},'Soviet zone'));
+    var B=[490,175], C=[['Hamburg',250,70],['Hanover',230,175],['Frankfurt',190,310]];
+    C.forEach(function(c){s.appendChild(el('line',{x1:c[1],y1:c[2],x2:B[0],y2:B[1],class:'corr'}));});
+    // land routes
+    [[230,185,490,185],[195,300,490,190]].forEach(function(r){s.appendChild(el('path',{d:'M'+r[0]+','+r[1]+' L'+r[2]+','+r[3],class:'road'}));});
+    [[335,186],[333,240]].forEach(function(p){s.appendChild(el('line',{x1:p[0]-10,y1:p[1]-10,x2:p[0]+10,y2:p[1]+10,class:'xm'}));s.appendChild(el('line',{x1:p[0]+10,y1:p[1]-10,x2:p[0]-10,y2:p[1]+10,class:'xm'}));});
+    C.forEach(function(c){s.appendChild(el('circle',{cx:c[1],cy:c[2],r:5,class:'city'}));s.appendChild(el('text',{x:c[1]-10,y:c[2]+5,'text-anchor':'end',class:'lbl'},c[0]));});
+    s.appendChild(el('circle',{cx:B[0],cy:B[1],r:16,fill:'none',stroke:'var(--ink)','stroke-width':3}));
+    s.appendChild(el('circle',{cx:B[0],cy:B[1],r:6,class:'city'}));
+    s.appendChild(el('text',{x:B[0],y:B[1]-26,'text-anchor':'middle',class:'lblb'},'West Berlin'));
+    s.appendChild(el('text',{x:545,y:228,'text-anchor':'middle',class:'lbl'},'2 million people'));
+    document.getElementById('map').appendChild(s);
+  })();
+
+  // Tons per day chart. mode 'early' = first weeks only; 'full' = through April 1949
+  function tons(id,mode){
+    var W=640,H=340,L=74,R=625,T=24,B=292;
+    var full=mode==='full', MX=full?14000:5000, D0=0, D1=full?320:60; // days since 26 June 1948
+    var x=function(d){return L+(d-D0)/(D1-D0)*(R-L);}, y=function(v){return B-(v/MX)*(B-T);};
+    var s=svg(W,H,'Tons delivered per day vs what Berlin needed');
+    (full?[0,4000,8000,12000]:[0,2000,4000]).forEach(function(v){s.appendChild(el('line',{x1:L,x2:R,y1:y(v),y2:y(v),class:'gl'}));s.appendChild(el('text',{x:L-8,y:y(v)+5,'text-anchor':'end',class:'tick'},v===0?'0':(v/1000)+'k'));});
+    var ticks=full?[[0,'Jul'],[98,'Oct'],[189,'Jan'],[279,'Apr']]:[[0,'26 Jun'],[25,'21 Jul'],[50,'15 Aug']];
+    ticks.forEach(function(t){s.appendChild(el('text',{x:x(t[0]),y:B+24,'text-anchor':t[0]===0?'start':'middle',class:'tick'},t[1]));});
+    // need line: 4,500 then 5,620 from 20 Oct (day 116)
+    var nd=full?'M'+x(0)+','+y(4500)+' L'+x(116)+','+y(4500)+' L'+x(116)+','+y(5620)+' L'+x(D1)+','+y(5620):'M'+x(0)+','+y(4500)+' L'+x(D1)+','+y(4500);
+    s.appendChild(el('path',{d:nd,class:'need'}));
+    if(full)s.appendChild(el('text',{x:x(125),y:y(5620)-12,class:'lblb'},'Need'));else s.appendChild(el('text',{x:R,y:y(4500)-10,'text-anchor':'end',class:'lblb'},'Need'));
+    var P=[[0,80],[5,90],[12,1000],[20,2000]]; if(full)P.push([66,4600],[263,6729],[310,8893]);
+    var d='';P.forEach(function(p,i){d+=(i?' L':'M')+x(p[0])+','+y(p[1]);});
+    s.appendChild(el('path',{d:d,class:'ln',style:'stroke:'+(full?'var(--good)':'var(--bad)')}));
+    P.forEach(function(p){s.appendChild(el('circle',{cx:x(p[0]),cy:y(p[1]),r:6,class:'dot'+(p[1]<4500?' lo':'')}));});
+    if(!full){s.appendChild(el('text',{x:x(20)+12,y:y(2000)+5,class:'lblb',style:'fill:var(--bad)'},'~2,000'));}
+    if(full){
+      var tx=x(32); s.appendChild(el('line',{x1:tx,x2:tx,y1:T,y2:B,class:'gl','stroke-dasharray':'3 4'}));
+      s.appendChild(el('text',{x:tx+6,y:T+14,class:'lbl'},'Tunner'));
+      var ex=x(293); s.appendChild(el('rect',{x:ex-9,y:y(12941),width:18,height:B-y(12941),rx:3,class:'rec'}));
+      s.appendChild(el('text',{x:ex-16,y:y(12941)+6,'text-anchor':'end',class:'lblb',style:'fill:var(--amber)'},'12,941'));
+      s.appendChild(el('text',{x:ex-16,y:y(12941)+28,'text-anchor':'end',class:'lbl'},'best day'));
+    }
+    document.getElementById(id).appendChild(s);
+  }
+  tons('early','early'); tons('tons','full');
+
+  // Black Friday stack: planes circling, runway blocked
+  (function(){
+    var s=svg(640,340,'Planes stacked over Berlin waiting to land');
+    s.appendChild(el('rect',{x:60,y:286,width:520,height:22,rx:4,class:'runway'}));
+    s.appendChild(el('text',{x:320,y:332,'text-anchor':'middle',class:'lbl'},'Tempelhof runway'));
+    plane(s,170,297,'w',1.1);
+    s.appendChild(el('text',{x:200,y:280,class:'lbl',style:'fill:var(--bad)'},'crash on landing'));
+    for(var r=0;r<5;r++){for(var c=0;c<4;c++){plane(s,150+c*110+(r%2)*40,40+r*46,'w',1.15);}}
+    s.appendChild(el('text',{x:620,y:30,'text-anchor':'end',class:'lblb',style:'fill:var(--bad)'},'Circling'));
+    s.appendChild(el('text',{x:620,y:52,'text-anchor':'end',class:'lbl'},'waiting to land'));
+    document.getElementById('stack').appendChild(s);
+  })();
+
+  // Landing clock: 20 slots per hour, one every 3 minutes
+  var clockSlots=[], clockHand;
+  (function(){
+    var s=svg(640,360,'One landing every 3 minutes, 20 an hour');
+    var cx=200,cy=180,R=140;
+    s.appendChild(el('circle',{cx:cx,cy:cy,r:R+22,fill:'var(--paper)',stroke:'var(--line)'}));
+    for(var i=0;i<20;i++){
+      var a=(i/20)*2*Math.PI-Math.PI/2;
+      var c=el('circle',{cx:cx+R*Math.cos(a),cy:cy+R*Math.sin(a),r:12,class:'slot'});
+      s.appendChild(c); clockSlots.push(c);
+    }
+    [0,15,30,45].forEach(function(m){var a=(m/60)*2*Math.PI-Math.PI/2;s.appendChild(el('text',{x:cx+(R-38)*Math.cos(a),y:cy+(R-38)*Math.sin(a)+5,'text-anchor':'middle',class:'tick'},':'+(m<10?'0'+m:m)));});
+    clockHand=el('line',{x1:cx,y1:cy,x2:cx,y2:cy-R+30,class:'hand'});
+    s.appendChild(clockHand); s.appendChild(el('circle',{cx:cx,cy:cy,r:6,fill:'var(--ink)'}));
+    var X=410;
+    [['3 min','between landings'],['20','landings an hour'],['480','landings a day']].forEach(function(t,i){
+      s.appendChild(el('text',{x:X,y:80+i*100,style:'font:900 46px var(--f-head);fill:var(--good)'},t[0]));
+      s.appendChild(el('text',{x:X,y:108+i*100,class:'lbl'},t[1]));
+    });
+    document.getElementById('clock').appendChild(s);
+  })();
+  var clockT=null, clockI=0;
+  function clock(on){
+    if(clockT){clearInterval(clockT);clockT=null;}
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(!on||reduce){clockSlots.forEach(function(c){c.setAttribute('class','slot'+(reduce&&on?' on':''));});return;}
+    clockI=0;
+    function tick(){
+      clockSlots.forEach(function(c,i){c.setAttribute('class','slot'+(i<clockI?' on':i===clockI?' now':''));});
+      clockHand.setAttribute('transform','rotate('+(clockI*18)+' 200 180)');
+      clockI=(clockI+1)%21;
+    }
+    tick(); clockT=setInterval(tick,350);
+  }
+
+  // Gantt: time on the ground in Berlin, before vs after (split est.)
+  (function(){
+    var s=svg(640,330,'Time on the ground in Berlin, before and after Tunner');
+    var L=150,R=600,T=34,MX=60,x=function(m){return L+m/MX*(R-L);};
+    [0,15,30,45,60].forEach(function(m){s.appendChild(el('line',{x1:x(m),x2:x(m),y1:T-6,y2:312,class:'gl'}));s.appendChild(el('text',{x:x(m),y:20,'text-anchor':'middle',class:'tick'},m+' min'));});
+    var rows=[
+      ['Before',0,'~60 min','bad'],
+      ['Plane',1,[[0,5,'t'],[5,20,'u'],[20,50,'w'],[50,60,'t']]],
+      ['Crew',1,[[5,50,'w']]],
+      ['After',0,'30 min','good'],
+      ['Plane',1,[[0,5,'t'],[5,20,'u'],[20,30,'t']]],
+      ['Crew',1,[[5,20,'c']]]
+    ];
+    var yy=T;
+    rows.forEach(function(r){
+      if(!r[1]){var t=el('text',{x:0,y:yy+22,class:'lblb'});t.appendChild(el('tspan',{},r[0]+'  '));t.appendChild(el('tspan',{style:'fill:var(--'+r[3]+')'},r[2]));s.appendChild(t);yy+=34;return;}
+      s.appendChild(el('text',{x:20,y:yy+24,class:'lbl'},r[0]));
+      r[2].forEach(function(g){s.appendChild(el('rect',{x:x(g[0])+1,y:yy+6,width:x(g[1])-x(g[0])-2,height:28,rx:3,class:'seg-'+g[2]}));});
+      yy+=42;
+    });
+    document.getElementById('gantt').appendChild(s);
+  })();
+
+  function bind(sel,fn){
+    var steps=document.querySelectorAll(sel+' .step');
+    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});fn(0);return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(+e.target.getAttribute('data-s'));}});},{rootMargin:'-40% 0px -45% 0px'});
+    steps.forEach(function(s){io.observe(s);});
+    if(steps[0])steps[0].classList.add('on');
+  }
+  function show(root,n){
+    root.querySelectorAll('.scene').forEach(function(sc){
+      var on=+sc.getAttribute('data-scene')===n;
+      sc.classList.toggle('on',on);
+      sc.querySelectorAll('.fill').forEach(function(f){f.style.width=on?f.getAttribute('data-w')+'%':'0';});
+    });
+  }
+  var A=document.querySelector('[data-chart="a"]'), Bc=document.querySelector('[data-chart="b"]');
+  var AC=['West Berlin, June 1948','The three options','Tons per day, first weeks'];
+  var ALEG={0:'<span><i style="background:var(--bad)"></i>Road and rail cut</span><span><i style="background:var(--sky);opacity:.5"></i>Air routes open</span>',
+    2:'<span><i style="background:var(--bad)"></i>Delivered</span><span><i style="border-top:2px dashed var(--ink);height:0;border-radius:0"></i>Need</span>'};
+  var BC=['Where goods wait','Black Friday, 13 August 1948','Tunner’s landing rhythm','One plane’s time on the ground in Berlin','Tons per day','The airlift in total','Same door, different time at the door'];
+  var BLEG={3:'<span><i style="background:var(--sky)"></i>Taxi</span><span><i style="background:var(--amber)"></i>Unload</span><span><i style="background:var(--bad)"></i>Crew off the plane</span><span><i style="background:var(--good)"></i>Crew served at the plane</span>',
+    4:'<span><i style="background:var(--good)"></i>Delivered</span><span><i style="background:var(--amber)"></i>Best day</span><span><i style="border-top:2px dashed var(--ink);height:0;border-radius:0"></i>Need</span>'};
+  function setA(s){show(A,s);document.getElementById('aCap').textContent=AC[s];document.getElementById('aLeg').innerHTML=ALEG[s]||'';}
+  function setB(s){show(Bc,s);document.getElementById('bCap').textContent=BC[s];document.getElementById('bLeg').innerHTML=BLEG[s]||'';clock(s===2);}
+  setA(0); bind('[data-chart="a"]',setA);
+  setB(0); bind('[data-chart="b"]',setB);
+
+  var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
+  function rvTick(){
+    var rr=rv.getBoundingClientRect(), span=rr.height-innerHeight;
+    var p=span>0?Math.min(1,Math.max(0,-rr.top/span)):1;
+    var n=Math.floor(p*2.6);
+    rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1);});
+  }
+  addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
+})();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jay Reusenmann</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Tools and stories on supply chain decisions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: one narrow column. Name, one line, then a plain list of work with thin dividers. */
+:root{
+  color-scheme:light;
+  --bg:#FFFFFF; --ink:#111111; --muted:#5F6368; --faint:#7A7F85; --line:#E3E4E6;
+  --f-text:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111214; --ink:#EDEDEE; --muted:#A3A7AD; --faint:#8D9298; --line:#2A2C30; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111214; --ink:#EDEDEE; --muted:#A3A7AD; --faint:#8D9298; --line:#2A2C30; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding-block:64px 96px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
+h1{font-size:21px;font-weight:600;margin:0;letter-spacing:-.01em}
+.sub{font-size:17px;color:var(--muted);margin:14px 0 0;line-height:1.5}
+h2{font:400 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:72px 0 0;padding-bottom:16px;border-bottom:1px solid var(--line)}
+ul{list-style:none;margin:0;padding:0}
+li{border-bottom:1px solid var(--line)}
+li a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:6px;padding:22px 0;text-decoration:none;color:inherit}
+.t{font-size:17px;font-weight:500;line-height:1.35}
+.d{grid-column:1;font-size:15px;color:var(--muted);line-height:1.5}
+.k{grid-column:2;grid-row:1;font:400 13px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap;padding-top:2px}
+li a:hover .t{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+li a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+@media (max-width:520px){
+  .wrap{padding-block:44px 64px}
+  h2{margin-top:52px}
+  li a{grid-template-columns:minmax(0,1fr)}
+  .k{grid-column:1;grid-row:auto;order:-1;font-size:12px;padding-top:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Jay Reusenmann</h1>
+  <p class="sub">Tools and stories on supply chain decisions.</p>
+
+  <h2>Tools</h2>
+  <ul>
+    <li><a href="tools/datacenter-go-live-planner.html"><span class="t">Data center go-live planner</span><span class="k">Nov 2026</span><span class="d">Set an opening date. A timeline counts back through each build phase and shows the last day to order each piece of equipment. Late orders turn red.</span></a></li>
+    <li><a href="tools/constrained-part-allocation.html"><span class="t">Constrained part allocation</span><span class="k">Nov 2026</span><span class="d">Four vehicle lines need a part that is in short supply. Compare four rules for who gets it first, and see the effect on profit, cash and waiting time.</span></a></li>
+    <li><a href="tools/launch-build-quantity.html"><span class="t">Launch build quantity</span><span class="k">Nov 2026</span><span class="d">A new device is about to launch and nobody knows how well it will sell. Decide how much of each part to order before you can no longer cancel, and compare four plans.</span></a></li>
+    <li><a href="tools/cny-order-timing.html"><span class="t">Chinese New Year order timing</span><span class="k">Nov 2026</span><span class="d">Factories in China close for the New Year holiday. Find the last day to place an order, and how much stock to build ahead to cover the gap.</span></a></li>
+    <li><a href="tools/safety-stock-policy-lab.html"><span class="t">Safety stock policy lab</span><span class="k">Nov 2026</span><span class="d">Three ways to set safety stock, run on the same demand. See the stockouts, old stock and order rhythm each one gives, with examples from retail, chips and repair.</span></a></li>
+    <li><a href="tools/utr-ops-simulator.html"><span class="t">Repair warehouse simulator</span><span class="k">Nov 2026</span><span class="d">A year in an e-scooter repair warehouse. Change staff, shifts and parts, and see the effect on weekly, monthly, quarterly and yearly results.</span></a></li>
+  </ul>
+
+  <h2>Stories</h2>
+  <ul>
+    <li><a href="stories/delta-united-crowdstrike.html"><span class="t">Delta vs United, CrowdStrike outage</span><span class="k">Nov 2026</span><span class="d">In July 2024 a bad software update grounded US airlines. United recovered in 3 days and Delta took 5. Shows why, and when Delta should have reset its crew schedule.</span></a></li>
+    <li><a href="stories/ever-given-suez.html"><span class="t">Ever Given blocks the Suez Canal</span><span class="k">Nov 2026</span><span class="d">In 2021 a container ship blocked the Suez Canal for six days. Covers the choice to wait or sail around Africa, and the rush at Europe's ports afterwards.</span></a></li>
+    <li><a href="stories/tesla-grunheide-outage.html"><span class="t">Tesla Grünheide power outage</span><span class="k">Nov 2026</span><span class="d">In 2024 a fire under one power line cut Tesla's Berlin plant off the grid for eight days. Covers what it cost and what the plant could have done instead.</span></a></li>
+    <li><a href="stories/mcdonalds-ecoli-onions.html"><span class="t">McDonald's E. coli onions</span><span class="k">Nov 2026</span><span class="d">In 2024 an E. coli outbreak was linked to the Quarter Pounder. Shows how it was traced to one onion plant, and how wide to pull a product before the cause is known.</span></a></li>
+    <li><a href="stories/adidas-yeezy.html"><span class="t">Adidas Yeezy inventory</span><span class="k">Nov 2026</span><span class="d">In 2022 Adidas ended its Yeezy deal with €1.2 billion of shoes in stock. Compares burning, keeping and selling them, and how fast to sell.</span></a></li>
+    <li><a href="stories/zara-near-shoring.html"><span class="t">Zara near-shoring</span><span class="k">Nov 2026</span><span class="d">In the 1990s rivals moved their sewing to Asia. Zara asked whether to make clothes where it was cheapest or fastest, kept trend items close to home, and cut its sales and leftovers.</span></a></li>
+    <li><a href="stories/peloton.html"><span class="t">Peloton overbuilds for the pandemic</span><span class="k">Nov 2026</span><span class="d">In 2020 Peloton could not make bikes fast enough. It added factories and stock, then demand fell. Shows the question it faced, what it decided, and the cost of building for a spike.</span></a></li>
+    <li><a href="stories/berlin-airlift.html"><span class="t">First cross-dock ever: Berlin Airlift ’48</span><span class="k">Nov 2026</span><span class="d">In 1948 the Soviets cut every road into West Berlin. Shows how the Allies supplied 2 million people by air, and how fixed landing slots and short ground times turned the airports into a fast cross-dock.</span></a></li>
+  </ul>
+</div>
+</body>
+</html>

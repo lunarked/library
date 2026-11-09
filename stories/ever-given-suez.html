@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Story: Ever Given blocks the Suez Canal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: long-form scroll story, same series look as the Tesla story. Night-sea opener, prose chapters, sticky visuals that change as text cards scroll past, two "you decide" tools, full-screen question moment, my call, sources. */
+:root{
+  --bg:#F2F4F3; --paper:#FFFFFF; --ink:#11202A; --muted:#56646E; --line:#D1D8DB; --soft:#E2E8EA;
+  --sand:#C46A16; --sandsoft:#F6E2CC; --sea:#1E5E86; --seasoft:#D7E6EF;
+  --bad:#C2372D; --badsoft:#F8DEDA; --good:#1F7D47; --goodsoft:#DDF0E4;
+  --night:#0A141B; --nightink:#E8ECEA; --nightmuted:#93A1A8; --glowc:255,150,60;
+  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
+  --f-text:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C151B; --paper:#131E26; --ink:#E6ECEF; --muted:#94A3AD; --line:#27353F; --soft:#1C2832;
+  --sand:#F0A04B; --sandsoft:#2B2418; --sea:#6FB0DA; --seasoft:#13293A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C151B; --paper:#131E26; --ink:#E6ECEF; --muted:#94A3AD; --line:#27353F; --soft:#1C2832;
+  --sand:#F0A04B; --sandsoft:#2B2418; --sea:#6FB0DA; --seasoft:#13293A;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+.g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.in{max-width:1240px;margin:0 auto}
+.col{max-width:680px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sand)}
+sup{font:600 .6em var(--f-mono);color:var(--muted)}
+p{margin:0 0 1em}
+b,strong{font-weight:600}
+.est{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:2px;white-space:nowrap}
+
+/* Opener */
+.open{background:var(--night);color:var(--nightink);padding-block:60px 50px;position:relative;overflow:hidden}
+.open .glow{position:absolute;right:-140px;top:-90px;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(var(--glowc),.30),rgba(var(--glowc),0) 65%);pointer-events:none}
+.open .kick{color:#F0A04B}
+.open h1{font-weight:900;font-size:clamp(40px,7.4vw,92px);line-height:.96;letter-spacing:-.015em;margin:16px 0 22px;max-width:14ch;position:relative}
+.open h1 em{font-style:normal;color:#F0A04B}
+.dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C3CCCB;margin:0;position:relative}
+.by{margin-top:26px;font:500 13px var(--f-mono);color:var(--nightmuted);letter-spacing:.04em;position:relative}
+.cue{margin-top:34px;font:600 13px var(--f-mono);color:#F0A04B;letter-spacing:.08em;text-transform:uppercase}
+.cue::after{content:" ↓"}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px;position:relative;max-width:900px}
+@media (max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stats div{border-top:2px solid #F0A04B;padding-top:8px}
+.stats b{display:block;font:900 clamp(26px,3.6vw,38px)/1 var(--f-head);color:var(--nightink)}
+.stats span{font:600 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+
+/* Prose chapter */
+.chap{padding-block:64px 24px}
+.chap h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 22px;letter-spacing:-.01em}
+.chap .lead::first-letter{font:900 3.3em/0.8 var(--f-head);float:left;margin:6px 10px 0 0;color:var(--sand)}
+.pull{font:800 clamp(24px,3.3vw,34px)/1.2 var(--f-head);border-left:5px solid var(--sand);padding:4px 0 4px 18px;margin:30px 0}
+
+/* Scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px;margin:0}
+.fig svg{width:100%;height:auto;max-height:60vh;display:block}
+.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
+.steps{padding-block:20vh 30vh}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.step:last-child{margin-bottom:10vh}
+.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sand);display:block;margin-bottom:6px}
+.step p:last-child{margin:0}
+@media (max-width:860px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
+  .fig svg{max-height:36vh}
+  .steps{padding-block:4vh 10vh;position:relative;z-index:3}
+  .step{margin-bottom:45vh;opacity:1;font-size:17px}
+}
+
+/* Canal diagram */
+.land{fill:var(--sandsoft)}
+.water{fill:var(--seasoft)}
+.canal{stroke:var(--sea);stroke-width:7;fill:none;stroke-linecap:round}
+.lbl{font:600 12.5px var(--f-mono);fill:var(--muted)}
+.lblb{font:800 15px var(--f-head);fill:var(--ink)}
+.dot{fill:var(--sea);transition:opacity .35s}
+.dot.wait{fill:var(--bad)}
+.opt{opacity:0;transition:opacity .4s}
+.opt.on{opacity:1}
+.mover{fill:var(--sea)}
+.counters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ctr .n{font:900 clamp(26px,4vw,46px)/1 var(--f-head);color:var(--bad);font-variant-numeric:tabular-nums}
+.ctr .n.calm{color:var(--ink)}
+.ctr .k{font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+/* Tools */
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;margin-top:10px}
+.ctrls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 28px;margin-bottom:18px}
+@media (max-width:760px){.ctrls{grid-template-columns:minmax(0,1fr)}}
+.ml{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.seg button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--sand);outline-offset:2px}
+.exp{font-size:17px;margin:0 0 14px}
+.exp b{font-family:var(--f-head)}
+.mapwrap{margin:0 auto 14px;max-width:760px}
+.mapwrap svg{width:100%;height:auto;display:block}
+.mapwrap .lbl{font-size:16px}
+.mapwrap .lblb{font-size:17px!important}
+.rt{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;transition:opacity .3s}
+.rt.suez{stroke:var(--sea)}
+.rt.cape{stroke:var(--sand);stroke-dasharray:9 7}
+.pos{fill:var(--paper);stroke:var(--muted);stroke-width:2;cursor:pointer}
+.pos.on{fill:var(--ink);stroke:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:700px){.cards,.cards.three{grid-template-columns:minmax(0,1fr)}}
+.card{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
+.card.win{border-top-color:var(--good)}
+.card.best{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
+.chip{align-self:flex-start;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--badsoft);color:var(--bad)}
+.win .chip,.best .chip{background:var(--goodsoft);color:var(--good)}
+.card h3{font-size:18px}
+.big{font:900 clamp(30px,4vw,44px)/1 var(--f-head);font-variant-numeric:tabular-nums}
+.big small{font:600 13px var(--f-mono);color:var(--muted);letter-spacing:.04em}
+.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;margin:0;font:500 12.5px var(--f-mono)}
+.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+.pay{font:600 12.5px var(--f-mono);border-top:1px dashed var(--line);padding-top:7px;margin-top:auto;color:var(--muted)}
+.note{font-size:16px;color:var(--muted);margin:14px 0 0}
+
+/* Arrivals chart */
+.bar{transition:height .35s,y .35s,fill .35s}
+.axis{stroke:var(--line);stroke-width:1}
+.tick{font:600 11px var(--f-mono);fill:var(--muted)}
+.band{transition:opacity .4s}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:600 12px var(--f-mono);color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* Decision */
+.calls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.calls{grid-template-columns:minmax(0,1fr)}}
+.call{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.ans{font-weight:900;font-size:clamp(24px,2.8vw,32px);line-height:1.1;letter-spacing:-.01em}
+.ans span{color:var(--sand)}
+.track{display:grid;grid-template-columns:1fr 1fr;border-radius:6px;overflow:hidden}
+.tz{padding:10px 12px;font:800 15px var(--f-head);text-transform:uppercase;letter-spacing:.04em}
+.tz.w{background:var(--seasoft);color:var(--sea)}
+.tz.r{background:var(--sandsoft);color:var(--sand);text-align:right}
+.tp{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;margin:0;padding:10px 0 0;background:var(--paper)}
+.tp li{font:600 11.5px var(--f-mono);color:var(--muted);text-align:center;position:relative;padding-top:14px}
+.tp li::before{content:"";position:absolute;top:0;left:50%;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--sea)}
+.tp li:nth-child(n+3)::before{background:var(--sand)}
+.rule{font-size:16.5px;margin:0;color:var(--muted)}
+.opts{list-style:none;margin:auto 0 0;padding:0;display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:14px}
+.opts li{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;font:700 16px var(--f-head)}
+.opts li b{width:20px}
+.opts .y b{color:var(--good)} .opts .n{color:var(--muted)} .opts .n b{color:var(--bad)}
+.opts em{font:600 11.5px var(--f-mono);font-style:normal;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.opts .y em{color:var(--good);background:var(--goodsoft);padding:2px 6px;border-radius:3px}
+.race{display:grid;gap:8px}
+.rr{display:grid;grid-template-columns:120px minmax(0,1fr) 64px;gap:10px;align-items:center;font:600 13px var(--f-mono);color:var(--muted)}
+.rb{height:14px;background:var(--soft);border-radius:7px;overflow:hidden}
+.rb i{display:block;height:100%;border-radius:7px}
+.bad .rb i{background:var(--bad)} .mid .rb i{background:var(--sea)} .good .rb i{background:var(--good)}
+.rv{text-align:right;color:var(--ink);font-weight:700}
+.good .rl,.good .rv{color:var(--good)}
+.rcap{font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.lessons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin-top:16px;background:var(--night);color:var(--nightink);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+@media (max-width:860px){.lessons{grid-template-columns:minmax(0,1fr)}}
+.lessons div{padding:18px 20px;font-size:16.5px;line-height:1.45}
+.lessons div+div{border-left:1px solid rgba(128,128,128,.3)}
+@media (max-width:860px){.lessons div+div{border-left:0;border-top:1px solid rgba(128,128,128,.3)}}
+.lessons b{font-family:var(--f-head);font-weight:800;color:#F0A04B;display:block;font-size:18px}
+.tl{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;position:relative}
+.tl::before{content:"";position:absolute;left:0;right:0;top:7px;height:2px;background:var(--line)}
+.tl li{position:relative;padding-top:26px;min-width:0}
+.tl li::before{content:"";position:absolute;top:0;left:0;width:16px;height:16px;border-radius:50%;background:var(--bg);border:3px solid var(--sand)}
+.tw{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--sand)}
+.tl h3{font-size:19px;margin:4px 0 6px}
+.tl p{font-size:16.5px;line-height:1.5;margin:0}
+@media (max-width:860px){
+  .tl{grid-template-columns:minmax(0,1fr);gap:22px;padding-left:28px}
+  .tl::before{left:7px;right:auto;top:0;bottom:0;width:2px;height:auto}
+  .tl li{padding-top:0}
+  .tl li::before{left:-28px}
+}
+
+/* Question reveal */
+.reveal{height:200vh;background:var(--night);position:relative}
+.rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
+.rv-in{width:100%}
+.rv-l{font:800 clamp(24px,3.6vw,40px)/1.2 var(--f-head);color:var(--nightink);margin:0 0 14px;opacity:.18;transform:translateY(8px);transition:opacity .5s,transform .5s}
+.rv-q{font-weight:900;font-size:clamp(34px,6.2vw,80px);line-height:1.02;letter-spacing:-.015em;color:var(--nightink);margin-top:28px;max-width:18ch;opacity:.18;transform:translateY(12px);transition:opacity .6s,transform .6s}
+.rv-q em{font-style:normal;color:#F0A04B}
+.rv-l.on,.rv-q.on{opacity:1;transform:none}
+.rv-l.on[data-at="0"]{color:#F0A04B}
+
+/* Sources */
+.src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
+.src ol{padding-left:20px;margin:8px 0 14px}
+.src a{color:var(--ink)}
+details summary{cursor:pointer;font:600 15px var(--f-head);color:var(--ink)}
+details p{margin-top:8px}
+hr{border:0;border-top:1px solid var(--line);margin:0}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.rv-l,.rv-q{opacity:1;transform:none}}
+</style>
+
+<header class="open g">
+  <div class="glow" aria-hidden="true"></div>
+  <div class="in">
+    <div class="kick">Decision story · Logistics disruption</div>
+    <h1>One ship, sideways, and <em>422</em> ships waiting</h1>
+    <p class="dek">In March 2021 the container ship Ever Given got stuck across the Suez Canal for six days. Ship captains had to choose between waiting and sailing around Africa. Then the delayed ships all reached Europe's ports at once. Here is what happened, what each choice cost, and what I would have done.</p>
+    <div class="stats">
+      <div><b>6 days</b><span>canal blocked</span></div>
+      <div><b>422</b><span>ships in the queue</span></div>
+      <div><b>$9.6bn</b><span>trade held up per day</span></div>
+      <div><b>12%</b><span>of world trade uses it</span></div>
+    </div>
+    <div class="by">A supply chain case study · Sources at the end</div>
+    <div class="cue">Scroll to start</div>
+  </div>
+</header>
+
+<!-- Chapter 1 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 1 · The jam</div>
+    <h2>Tuesday, 23 March, 7:40 a.m.</h2>
+    <p class="lead">The Suez Canal is a 193 km ditch through the desert that links Asia to Europe. About 12% of the world's trade goes through it, roughly 50 ships a day. Without it, a ship from Asia to Europe has to sail all the way around Africa.</p>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in scrolly" data-chart="canal">
+    <figure class="fig">
+      <div class="figcap" id="canalCap">Normal day</div>
+      <svg viewBox="0 0 600 380" role="img" aria-label="Map of the Suez Canal with ships waiting at both ends">
+        <rect x="0" y="0" width="600" height="380" class="land"/>
+        <path class="water" d="M0 0 H600 V58 C470 70 380 52 300 64 C220 76 120 56 0 66Z"/>
+        <path class="water" d="M330 300 C340 320 360 340 380 380 H250 C268 344 292 322 306 300Z"/>
+        <ellipse class="water" cx="324" cy="196" rx="26" ry="16"/>
+        <path class="canal" d="M300 62 C304 110 312 150 322 190 C326 230 318 268 318 300"/>
+        <text x="20" y="30" class="lblb">Mediterranean Sea</text>
+        <text x="292" y="82" text-anchor="end" class="lbl">Port Said</text>
+        <text x="360" y="200" class="lbl">Great Bitter Lake</text>
+        <text x="392" y="350" class="lblb">Red Sea</text>
+        <text x="372" y="306" class="lbl">Suez</text>
+        <text x="40" y="200" class="lbl">EGYPT</text>
+        <text x="470" y="250" class="lbl">SINAI</text>
+        <text x="40" y="370" class="lbl">To Asia ↓</text>
+        <text x="20" y="48" class="lbl">To Europe ↑</text>
+        <g id="movers"></g>
+        <g id="dots"></g>
+        <!-- the ship, sideways across the canal near the south end -->
+        <g class="opt" id="ship">
+          <circle cx="318" cy="282" r="26" fill="none" stroke="var(--bad)" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <rect x="296" y="278" width="44" height="9" rx="3" fill="var(--bad)" transform="rotate(-18 318 282)"/>
+          <text x="236" y="262" text-anchor="end" class="lblb" style="fill:var(--bad)">Ever Given</text>
+          <text x="236" y="278" text-anchor="end" class="lbl">400 m long, stuck</text>
+          <path d="M240 266 L290 278" stroke="var(--bad)" stroke-width="1.5"/>
+        </g>
+        <g class="opt" id="tugs">
+          <circle cx="300" cy="296" r="4" fill="var(--ink)"/><circle cx="338" cy="270" r="4" fill="var(--ink)"/><circle cx="334" cy="294" r="4" fill="var(--ink)"/>
+          <text x="352" y="268" class="lbl">tugs + dredgers</text>
+        </g>
+        <g class="opt" id="free">
+          <rect x="304" y="186" width="34" height="8" rx="3" fill="var(--good)"/>
+          <text x="250" y="232" text-anchor="end" class="lblb" style="fill:var(--good)">Floating again</text>
+        </g>
+      </svg>
+      <div class="counters">
+        <div class="ctr"><div class="n calm" id="nDay">Day 0</div><div class="k" id="nDate">23 March</div></div>
+        <div class="ctr"><div class="n calm" id="nShips">0</div><div class="k">ships waiting</div></div>
+        <div class="ctr"><div class="n calm" id="nUsd">$0</div><div class="k">trade held up <span class="est">est.</span></div></div>
+      </div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-s="0"><span class="t">Normal day</span><p>Ships enter in convoys from both ends. Much of the canal is a single lane, so ships pass in one direction at a time.</p></div>
+      <div class="step" data-s="1"><span class="t">23 Mar · 7:40 a.m.</span><p>In a sandstorm with gusts over 64 km/h, the Ever Given, one of the world's biggest container ships and bound for Rotterdam, drifts into the bank. Its bow hits the east wall and its stern the west. The canal is shut.</p></div>
+      <div class="step" data-s="2"><span class="t">25 Mar · Day 2</span><p>About 185 ships are waiting. Lloyd's List estimates the jam holds up <strong>$9.6 billion of trade a day</strong>: $5.1bn going west to Europe and $4.5bn going east.</p></div>
+      <div class="step" data-s="3"><span class="t">26 Mar · Day 3</span><p>Salvors warn it could take <strong>weeks</strong>. Maersk, MSC and Hapag-Lloyd start sending some services around Africa, about 10 extra days. In total, 17 Asia–Europe and Asia–US ships turn around.</p></div>
+      <div class="step" data-s="4"><span class="t">29 Mar · Day 6</span><p>Tugs, dredgers and a spring tide pull the ship free. By now <strong>422 ships</strong> are in the queue.</p></div>
+      <div class="step" data-s="5"><span class="t">3 Apr · Day 11</span><p>Egypt runs extra convoys day and night. The last of the 422 ships pass through on 3 April. The jam is over. Europe's problems are just starting.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="reveal" id="reveal" aria-label="The supply chain question">
+  <div class="rv-pin g">
+    <div class="in rv-in">
+      <p class="rv-l" data-at="0">So for supply chain, the question is:</p>
+      <h2 class="rv-q" data-at="1">When a route closes and <em>nobody knows for how long</em>, when do you stop waiting?</h2>
+    </div>
+  </div>
+</section>
+
+<!-- Chapter 2 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 2 · Decision 1</div>
+    <h2>Wait in line, or go around Africa?</h2>
+    <p>Put yourself on 26 March, day 3. Your ship is on its way from Asia to Rotterdam. Salvors say it could be weeks. Going around the Cape of Good Hope is certain, but it adds about 3,400 nautical miles, 7 to 10 days from Asia. Waiting is free only if the canal opens soon. And once it opens, you still join the back of a queue of hundreds.</p>
+    <p>The answer depends on two things: <strong>where your ship is</strong> and <strong>how long you think the block will last</strong>. Try it.</p>
+  </div>
+  <div class="in calc">
+    <div class="ctrls">
+      <div><div class="ml">Where is your ship on 26 March?</div><div class="seg" id="posSeg" role="group" aria-label="Ship position"></div></div>
+      <div><div class="ml">How long do you think the block lasts?</div><div class="seg" id="blkSeg" role="group" aria-label="Block length"></div></div>
+    </div>
+    <div class="mapwrap">
+      <svg viewBox="0 0 760 330" role="img" aria-label="Route map: Suez route versus the route around Africa">
+        <rect width="760" height="330" fill="var(--seasoft)"/>
+        <!-- simplified land -->
+        <path class="land" d="M210 20 H330 L345 60 L300 78 L250 70 L210 60Z"/>
+        <path class="land" d="M235 92 L330 88 L372 120 L392 150 L360 190 L330 250 L300 312 L272 316 L262 250 L232 190 L215 140Z"/>
+        <path class="land" d="M380 88 L470 80 L520 110 L470 130 L420 120 L400 100Z"/>
+        <path class="land" d="M520 70 H700 L720 120 L650 128 L600 150 L560 120Z"/>
+        <path class="land" d="M640 140 L672 150 L668 176 L648 170Z"/>
+        <text x="270" y="70" class="lbl">EUROPE</text>
+        <text x="262" y="170" class="lbl">AFRICA</text>
+        <text x="600" y="100" class="lbl">ASIA</text>
+        <!-- routes -->
+        <path class="rt suez" id="rtSuez" d="M690 180 L620 170 L470 150 L392 132 L362 98 L330 82 L252 62 L232 40"/>
+        <path class="rt cape" id="rtCape" d="M690 180 L620 170 L470 170 L380 230 L300 326 L250 300 L200 200 L190 110 L232 40"/>
+        <!-- places -->
+        <circle cx="232" cy="40" r="6" fill="var(--ink)"/><text x="244" y="34" class="lblb" style="font-size:13px">Rotterdam</text>
+        <circle cx="362" cy="98" r="5" fill="var(--sea)"/><text x="372" y="96" class="lbl">Suez Canal</text>
+        <text x="240" y="322" class="lbl" text-anchor="end">Cape</text>
+        <text x="392" y="262" class="lbl" style="fill:var(--sand)">+~3,400 nm</text>
+        <g id="posDots"></g>
+      </svg>
+    </div>
+    <p class="exp" id="exp1"></p>
+    <div class="cards" id="cards1"></div>
+    <p class="note" id="hind"></p>
+  </div>
+</section>
+
+<!-- Chapter 3 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 3 · The wave</div>
+    <h2>Silence, then everyone at once</h2>
+    <p>A ship takes about 11 days from the canal to Rotterdam. So a canal that is shut for six days doesn't just delay ships. It creates a hole in Europe's arrivals, and then a wave. About 60 ships bound for Rotterdam were in the queue.</p>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in scrolly" data-chart="wave">
+    <figure class="fig">
+      <div class="figcap" id="waveCap">Arrivals at Rotterdam from the Suez route</div>
+      <svg viewBox="0 0 600 340" id="waveSvg" role="img" aria-label="Bar chart of ships arriving per day at Rotterdam in April 2021"></svg>
+      <div class="legend"><span><i style="background:var(--sea)"></i>Normal arrivals</span><span><i style="background:var(--bad)"></i>Delayed ships, all at once</span><span><i style="background:var(--sand)"></i>Ships that went around Africa</span></div>
+      <div class="figcap" style="min-height:0">Ships per day, April 2021 <span class="est">simple model</span></div>
+    </figure>
+    <div class="steps">
+      <div class="step" data-w="0"><span class="t">Normal</span><p>On a normal day, about 7 ships arrive from the Suez route. Cranes, trucks, barges and trains are planned around that.</p></div>
+      <div class="step" data-w="1"><span class="t">3 to 8 April · the hole</span><p>The ships that would have left the canal during the block never arrive. Cranes stand idle. Exports have no ship: SeaIntelligence expected export capacity from Europe to drop by almost 80%.</p></div>
+      <div class="step" data-w="2"><span class="t">9 to 18 April · the wave</span><p>Egypt let ships out in growing groups, 12 to 15 hours apart, to soften the peak. It still arrives as a wave. Rotterdam expects traffic about 10% above normal every day for weeks and limits early export deliveries to keep space free.</p></div>
+      <div class="step" data-w="3"><span class="t">Mid to late April · the stragglers</span><p>The ships that went around Africa arrive last, about 10 days late. HMM warned that "another spike will be apparent" when they land.</p></div>
+      <div class="step" data-w="4"><span class="t">The ripple</span><p>Empty containers are stuck in the wrong place, and carriers need them back in Asia. Spot rates from Asia to North Europe were already about $7,500 per 40-ft box and reached about $13,000 by July. Covid demand drove most of that. Suez was one more push.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Chapter 4 -->
+<section class="chap g">
+  <div class="col">
+    <div class="kick">Chapter 4 · Decision 2</div>
+    <h2>How do you land the wave?</h2>
+    <p>You run a terminal in Rotterdam. About 48 extra ships are coming over ten days, on top of normal traffic. The terminal can push to about 9 ships a day. If ships pile up at anchor, the yard fills, cranes slow down, and it gets worse. Pick a plan.</p>
+  </div>
+  <div class="in calc">
+    <div class="ctrls">
+      <div><div class="ml">Your plan for the wave</div><div class="seg" id="planSeg" role="group" aria-label="Port plan"></div></div>
+      <div class="exp" id="exp2" style="margin:0"></div>
+    </div>
+    <svg viewBox="0 0 760 230" id="queueSvg" role="img" aria-label="Ships waiting per day under the chosen plan" style="width:100%;height:auto;display:block"></svg>
+    <div class="legend" style="margin:6px 0 14px"><span><i style="background:var(--bad)"></i>Waiting at anchor (burning fuel, filling the yard)</span><span><i style="background:var(--sea)"></i>Slowed down at sea, on a booked slot</span></div>
+    <div class="cards three" id="cards2"></div>
+  </div>
+</section>
+
+<!-- Chapter 5 -->
+<section class="chap g" style="padding-bottom:60px">
+  <div class="col">
+    <div class="kick">Chapter 5 · The decision</div>
+    <h2>What I would have done</h2>
+  </div>
+  <div class="in">
+    <div class="calls">
+      <article class="call">
+        <div class="kick">Decision 1 · Wait or go around</div>
+        <h3 class="ans">Close to the canal: wait.<br><span>Far away: go around.</span></h3>
+        <div class="track" aria-label="Decision rule by ship position">
+          <div class="tz w"><span>Wait</span></div><div class="tz r"><span>Go around</span></div>
+          <ol class="tp">
+            <li>In the queue</li><li>Red Sea</li><li>Sri Lanka</li><li>Singapore</li>
+          </ol>
+        </div>
+        <p class="rule">Decide on day 3. If nobody can give a reopening date by then, ships more than a week from the canal turn around.</p>
+        <ul class="opts">
+          <li class="y"><b>✓</b>One rule, based on distance <em>My pick</em></li>
+          <li class="n"><b>✗</b>Everyone waits <em>won this time, by luck</em></li>
+          <li class="n"><b>✗</b>Everyone goes around <em>queue ships lose ~3 weeks</em></li>
+        </ul>
+      </article>
+      <article class="call">
+        <div class="kick">Decision 2 · The port wave</div>
+        <h3 class="ans">Slow ships down at sea.<br><span>Clear the yard in the quiet week.</span></h3>
+        <div class="race" aria-label="Back to normal by plan">
+          <div class="rr bad"><span class="rl">Race in</span><span class="rb"><i style="width:100%"></i></span><span class="rv">18 May</span></div>
+          <div class="rr mid"><span class="rl">Berth slots</span><span class="rb"><i style="width:67%"></i></span><span class="rv">2 May</span></div>
+          <div class="rr good"><span class="rl">Slots + clear yard</span><span class="rb"><i style="width:50%"></i></span><span class="rv">24 Apr</span></div>
+          <div class="rcap">Back to normal by <span class="est">simple model</span></div>
+        </div>
+        <ul class="opts">
+          <li class="y"><b>✓</b>Berth slots + clear the yard early <em>My pick</em></li>
+          <li class="n"><b>✗</b>First come, first served <em>ships jam at anchor</em></li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="lessons">
+      <div><b>Distance decides.</b> One rule for every ship is wrong for most of them.</div>
+      <div><b>Plan for both futures.</b> On day 3 the experts said "weeks". The rule has to work if they are right.</div>
+      <div><b>Wait at sea, not at anchor.</b> Same ships, less fuel, no jam in the yard.</div>
+    </div>
+
+    <div class="ml" style="margin:34px 0 14px">The decisions that could have been made</div>
+    <ol class="tl">
+      <li><span class="tw">Before</span><h3>Plan for a closed route</h3><p>Know which orders ride through Suez. Hold extra stock of critical Asian parts. Keep a rail or air option on contract.</p></li>
+      <li><span class="tw">During · 23 Mar – 3 Apr</span><h3>Triage the boxes</h3><p>Find your containers on stuck ships on day 1. Fly the critical few. Warn customers early. Book trucks for the wave first.</p></li>
+      <li><span class="tw">After · 2021 on</span><h3>Fix the weak spot</h3><p>Egypt widened the southern stretch. Shippers: size buffers for a 2-week route closure, not just normal delays.</p></li>
+    </ol>
+    <p class="note">Afterwards, Egypt held the ship for over three months and first claimed $916 million, later lowered to about $550 million.</p>
+  </div>
+</section>
+
+<hr>
+<footer class="src g">
+  <div class="col">
+    <strong style="color:var(--ink);font-family:var(--f-head)">Sources</strong>
+    <ol>
+      <li><a href="https://www.aljazeera.com/economy/2021/3/25/suez-blockage-seen-halting-9-6-billion-a-day-of-ship-traffic" target="_blank" rel="noopener">Al Jazeera / Bloomberg, 25 Mar 2021</a>: $9.6bn a day ($5.1bn west, $4.5bn east, Lloyd's List), ~50 ships a day, ~185 waiting, 400 m ship</li>
+      <li><a href="https://www.japantimes.co.jp/news/2021/03/28/business/desert-wind-blew-10-billion-global-trade-off-course" target="_blank" rel="noopener">Japan Times / Bloomberg, 28 Mar 2021</a>: stuck by 7:40 a.m., gusts over 64 km/h, ~12% of world trade</li>
+      <li><a href="https://www.seatrade-maritime.com/containers/container-lines-divert-services-via-cape-as-suez-canal-remains-blocked" target="_blank" rel="noopener">Seatrade Maritime, 26 Mar 2021</a>: Maersk, MSC, Hapag-Lloyd divert services, ~10 extra days, salvors warn of weeks</li>
+      <li><a href="https://www.npr.org/2021/07/07/1013840787/the-ever-given-has-set-sail-from-the-suez-canal-months-after-it-blocked-the-wate" target="_blank" rel="noopener">NPR, 7 Jul 2021</a>: how it lodged, freed after six days, held three months, $916M claim lowered to $550M</li>
+      <li><a href="https://gcaptain.com/shipping-lines-considering-cape-surcharge-for-ships-re-routed-around-africa" target="_blank" rel="noopener">gCaptain</a>: Cape route adds 7 to 10 days, Asia–North Europe spot ~$7,500 per 40 ft (Freightos)</li>
+      <li><a href="https://gcaptain.com/calm-before-the-storm-european-ports-await-influx-of-ships-impacted-by-suez-blockage/" target="_blank" rel="noopener">gCaptain, Apr 2021</a>: 17 ships diverted around the Cape (VesselsValue)</li>
+      <li><a href="https://thenationalnews.com/mena/egypt/suez-canal-traffic-jam-clears-a-week-after-grounded-ever-given-freed-1.1196636" target="_blank" rel="noopener">The National, 4 Apr 2021</a>: 422 ships in the backlog, last ones through on 3 April</li>
+      <li><a href="https://shipandbunker.com/news/emea/506030-rotterdam-braces-for-influx-of-vessel-traffic-from-suez-reopening" target="_blank" rel="noopener">Ship &amp; Bunker, 30 Mar 2021</a>: ~60 ships bound for Rotterdam, six went around Africa, groups 12 to 15 hours apart</li>
+      <li><a href="https://gcaptain.com/calm-before-the-storm-european-ports-await-influx-of-ships-impacted-by-suez-blockage/" target="_blank" rel="noopener">gCaptain, Apr 2021</a>: Cosco Shipping Scorpio left canal 1 Apr, ETA Rotterdam 13 Apr; export capacity −80% (SeaIntelligence); Rotterdam limits early exports; HMM quote; empties</li>
+      <li><a href="https://gcaptain.com/global-supply-lines-struggle-to-clear-container-backlog-after-suez-chaos" target="_blank" rel="noopener">Reuters via gCaptain, 8 Apr 2021</a>: Rotterdam expects ~10% more traffic every day for weeks</li>
+      <li><a href="https://www.hellenicshippingnews.com/drewry-world-container-index-now-339-higher-than-same-week-of-2020/" target="_blank" rel="noopener">Drewry WCI, 15 Jul 2021</a>: Shanghai–Rotterdam $12,954 per 40 ft</li>
+      <li><a href="https://www.thenationalnews.com/mena/2021/12/21/lessons-learnt-from-ever-given-incident-in-suez-canal" target="_blank" rel="noopener">The National, Dec 2021</a>: widening of the 30 km southern stretch, longer two-way section in the north</li>
+    </ol>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  function bind(sel,fn){
+    var steps=document.querySelectorAll(sel+' .step');
+    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(e.target);}});},{rootMargin:'-40% 0px -45% 0px'});
+    steps.forEach(function(s){io.observe(s);});
+    if(steps[0])steps[0].classList.add('on');
+  }
+
+  // ---- Chapter 1: canal queue ----
+  var dotsG=document.getElementById('dots'), moversG=document.getElementById('movers');
+  // queue spots: north (Mediterranean, around Port Said) and south (Gulf of Suez)
+  var spots=[];
+  (function(){
+    var i,x,y;
+    for(i=0;i<60;i++){x=340+(i%15)*16;y=14+Math.floor(i/15)*11; spots.push([x,y]);}         // north, sea
+    for(i=0;i<60;i++){x=262+(i%10)*10;y=318+Math.floor(i/10)*10; spots.push([x+((Math.floor(i/10))%2)*5,y]);} // south, Red Sea
+  })();
+  // order spots alternating north/south so queue grows on both sides
+  var order=[];for(var i=0;i<60;i++){order.push(spots[i]);order.push(spots[60+i]);}
+  var dotEls=order.map(function(p){return el('circle',{cx:p[0],cy:p[1],r:3.6,class:'dot wait',opacity:0},dotsG);});
+  // moving ships on a normal day
+  var movers=[[302,90],[310,140],[320,180],[322,230],[318,270]].map(function(p){return el('circle',{cx:p[0],cy:p[1],r:4.5,class:'mover'},moversG);});
+  var C={
+    0:{day:'Normal',date:'~50 ships a day',ships:0,usd:0,cap:'Normal day · ships pass in convoys',on:[],move:1},
+    1:{day:'Day 0',date:'Tue 23 March',ships:30,usd:0,cap:'23 Mar · canal blocked',on:['ship'],move:0},
+    2:{day:'Day 2',date:'Thu 25 March',ships:185,usd:19,cap:'25 Mar · queue grows on both ends',on:['ship'],move:0},
+    3:{day:'Day 3',date:'Fri 26 March',ships:230,usd:29,cap:'26 Mar · "could take weeks"',on:['ship','tugs'],move:0},
+    4:{day:'Day 6',date:'Mon 29 March',ships:422,usd:58,cap:'29 Mar · ship freed, 422 waiting',on:['free'],move:0},
+    5:{day:'Day 11',date:'Sat 3 April',ships:0,usd:58,cap:'3 Apr · queue cleared',on:[],move:1}
+  };
+  var nDay=document.getElementById('nDay'),nDate=document.getElementById('nDate'),nShips=document.getElementById('nShips'),nUsd=document.getElementById('nUsd'),canalCap=document.getElementById('canalCap');
+  function setCanal(s){
+    var c=C[s]; if(!c)return;
+    var shown=Math.round(c.ships/422*120); // each dot ≈ 3.5 ships
+    dotEls.forEach(function(d,i){d.setAttribute('opacity',i<shown?1:0);});
+    movers.forEach(function(m){m.setAttribute('opacity',c.move?1:0);});
+    ['ship','tugs','free'].forEach(function(id){document.getElementById(id).classList.toggle('on',c.on.indexOf(id)>=0);});
+    nDay.textContent=c.day; nDate.textContent=c.date;
+    nShips.textContent=c.ships.toLocaleString('en-US'); nUsd.textContent=c.usd?'$'+c.usd+'bn':'$0';
+    var hot=s>=1&&s<=4; nShips.classList.toggle('calm',!hot); nUsd.classList.toggle('calm',!(s>=2)); nDay.classList.toggle('calm',!hot);
+    canalCap.textContent=c.cap;
+  }
+  setCanal(0);
+  bind('[data-chart="canal"]',function(s){setCanal(+s.getAttribute('data-s'));});
+
+  // ---- Question reveal ----
+  var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
+  function rvTick(){
+    var r=rv.getBoundingClientRect(), span=r.height-innerHeight;
+    var p=span>0?Math.min(1,Math.max(0,-r.top/span)):1;
+    var n=Math.floor(p*2.6);
+    rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1);});
+  }
+  addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
+
+  // ---- Chapter 2: wait or go around (estimates) ----
+  var POS=[
+    {k:'q',l:'In the queue at Suez',a:1,cape:21,xy:[362,98],already:2},
+    {k:'r',l:'In the Red Sea',a:5,cape:17,xy:[392,132],already:0},
+    {k:'s',l:'Off Sri Lanka',a:10,cape:10,xy:[620,170],already:0},
+    {k:'g',l:'Near Singapore',a:15,cape:9,xy:[690,180],already:0}
+  ];
+  var BLK=[{b:6,l:'6 days ★ real'},{b:14,l:'2 weeks'},{b:21,l:'3 weeks'}];
+  var IN=70, OUT=85, SHIP=0.07, FUEL=0.055, TOLL=0.45; // $M
+  function waitLate(a,B){ if(a<B) return (B-a)+IN*a/OUT; return Math.max(0,IN*B-OUT*(a-B))/OUT; }
+  var st1={pos:2,blk:0};
+  function seg(id,items,obj,key,cb){var e=document.getElementById(id);items.forEach(function(it,i){var b=document.createElement('button');b.type='button';b.id=id+i;b.textContent=it.l;b.addEventListener('click',function(){obj[key]=i;cb();});e.appendChild(b);});return e;}
+  function press(e,i){Array.prototype.forEach.call(e.children,function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false');});}
+  var posSeg=seg('posSeg',POS,st1,'pos',r1), blkSeg=seg('blkSeg',BLK,st1,'blk',r1);
+  var posG=document.getElementById('posDots');
+  var posEls=POS.map(function(p,i){var c=el('circle',{cx:p.xy[0],cy:p.xy[1],r:9,class:'pos',tabindex:-1},posG);c.addEventListener('click',function(){st1.pos=i;r1();});return c;});
+  var lab=el('text',{class:'lblb',style:'font-size:13px'},posG);
+  function fd(d){d=Math.round(d);return d===1?'1 day':d+' days';}
+  function fm(m){return (m<0?'−':'')+'$'+Math.abs(m).toFixed(1)+'M';}
+  function r1(){
+    press(posSeg,st1.pos); press(blkSeg,st1.blk);
+    var p=POS[st1.pos], B=BLK[st1.blk].b;
+    posEls.forEach(function(c,i){c.classList.toggle('on',i===st1.pos);});
+    lab.setAttribute('x',p.xy[0]); lab.setAttribute('y',p.xy[1]-16); lab.setAttribute('text-anchor',p.k==='g'?'end':'middle'); lab.textContent='Your ship';
+    var w=waitLate(p.a,B), c=p.already+p.cape;
+    var wCost=w*SHIP, cCost=c*SHIP+p.cape*FUEL-TOLL;
+    var waitWins=w<=c;
+    document.getElementById('exp1').innerHTML='If the block lasts <b>'+BLK[st1.blk].l.replace(' ★ real','')+'</b>, waiting makes you <b>'+fd(w)+' late</b>. Going around makes you <b>'+fd(c)+' late</b>. <span class="est">estimate</span>';
+    var cards=[
+      {n:'Wait in line',late:w,cost:wCost,win:waitWins,rows:[['Days late',fd(w)],['Ship cost',fm(wCost)],['Risk','block lasts longer']]},
+      {n:'Go around Africa',late:c,cost:cCost,win:!waitWins,rows:[['Days late',fd(c)],['Ship cost (fuel, time, minus toll)',fm(cCost)],['Risk','none, but certain delay']]}
+    ];
+    var box=document.getElementById('cards1'); box.innerHTML='';
+    cards.forEach(function(k){
+      var d=document.createElement('div'); d.className='card '+(k.win?'best':'');
+      d.innerHTML='<span class="chip">'+(k.win?'✓ Arrives sooner':'✗ Arrives later')+'</span><h3>'+k.n+'</h3><div class="big">'+Math.round(k.late)+'<small> '+(Math.round(k.late)===1?'day':'days')+' late</small></div><dl class="kv">'+k.rows.slice(1).map(function(r){return '<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>';}).join('')+'</dl><div class="pay">'+(k.win?'Better by '+fd(Math.abs(w-c)):'Worse by '+fd(Math.abs(w-c)))+'</div>';
+      box.appendChild(d);
+    });
+    var real=POS.map(function(q){return waitLate(q.a,6)<=q.already+q.cape;}).every(Boolean);
+    document.getElementById('hind').textContent=(st1.blk===0?'This is what happened: the block lasted 6 days, so every ship that waited did better. ':'On 26 March nobody knew. With a longer block, ships far from the canal win by going around. ')+'The 17 ships that turned around paid for certainty.';
+  }
+  r1();
+
+  // ---- Chapter 3: arrivals wave ----
+  var wsvg=document.getElementById('waveSvg');
+  var DAYS=30, X0=40, W=540, Y0=290, H=250, MAX=16, bw=W/DAYS;
+  function arr(d){ // d = 1..30 April
+    var normal=(d>=3&&d<=8)?0:7, extra=(d>=9&&d<=14)?7:0, cape=(d>=13&&d<=18)?1:0; return {n:normal,e:extra,c:cape};
+  }
+  el('line',{x1:X0,y1:Y0,x2:X0+W,y2:Y0,class:'axis'},wsvg);
+  [0,7,14].forEach(function(v){var y=Y0-v/MAX*H; el('line',{x1:X0,y1:y,x2:X0+W,y2:y,class:'axis','stroke-dasharray':'2 4'},wsvg); var t=el('text',{x:X0-8,y:y+4,class:'tick','text-anchor':'end'},wsvg); t.textContent=v;});
+  [1,8,15,22,29].forEach(function(d){var t=el('text',{x:X0+(d-0.5)*bw,y:Y0+18,class:'tick','text-anchor':'middle'},wsvg); t.textContent=d+' Apr';});
+  var hole=el('rect',{x:X0+2*bw,y:Y0-H,width:6*bw,height:H,fill:'var(--soft)',class:'band',opacity:0},wsvg);
+  wsvg.insertBefore(hole,wsvg.firstChild);
+  var holeT=el('text',{x:X0+5*bw,y:Y0-H+18,class:'tick','text-anchor':'middle',opacity:0},wsvg); holeT.textContent='the hole';
+  var bars=[];
+  for(var d=1;d<=DAYS;d++){
+    var a=arr(d), x=X0+(d-1)*bw+1.5, w=bw-3;
+    var bn=el('rect',{x:x,width:w,y:Y0,height:0,fill:'var(--sea)',class:'bar'},wsvg);
+    var be=el('rect',{x:x,width:w,y:Y0,height:0,fill:'var(--bad)',class:'bar'},wsvg);
+    var bc=el('rect',{x:x,width:w,y:Y0,height:0,fill:'var(--sand)',class:'bar'},wsvg);
+    bars.push({a:a,n:bn,e:be,c:bc});
+  }
+  var cap9=el('g',{class:'band',opacity:0},wsvg);
+  var yc=Y0-9/MAX*H; el('line',{x1:X0,y1:yc,x2:X0+W,y2:yc,stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'6 4'},cap9);
+  var ct=el('text',{x:X0+W,y:yc-6,class:'tick','text-anchor':'end',style:'fill:var(--ink)'},cap9); ct.textContent='terminal limit ~9 a day';
+  var waveCap=document.getElementById('waveCap');
+  var WC=['Normal: ~7 ships a day','3–8 Apr: the hole','9–18 Apr: the wave','Mid–late Apr: stragglers from Africa','The ripple: empties and freight rates'];
+  function setWave(s){
+    bars.forEach(function(b){
+      var normal=s===0?7:b.a.n, extra=s>=2?b.a.e:0, cape=s>=3?b.a.c:0;
+      var y=Y0; function put(r,v){var h=v/MAX*H; y-=h; r.setAttribute('y',y); r.setAttribute('height',h);}
+      put(b.n,normal); put(b.e,extra); put(b.c,cape);
+    });
+    hole.setAttribute('opacity',s>=1?1:0); holeT.setAttribute('opacity',s>=1?1:0); cap9.setAttribute('opacity',s>=2?1:0);
+    waveCap.textContent=WC[s];
+  }
+  setWave(0);
+  bind('[data-chart="wave"]',function(s){setWave(+s.getAttribute('data-w'));});
+
+  // ---- Chapter 4: port plan (simple model) ----
+  var PLANS=[
+    {k:'rush',l:'First come, first served',cap:9,jam:8,slots:false,gap:false,
+     name:'Let them race in',why:'Ships speed up to be first, then wait at anchor. The yard fills and cranes slow down.'},
+    {k:'slots',l:'Berth slots',cap:9,jam:9,slots:true,gap:false,
+     name:'Berth slots',why:'Each ship gets a time. It slows down at sea and arrives when a crane is free. Less fuel, no jam.'},
+    {k:'gap',l:'Slots + clear the yard early',cap:10,jam:10,slots:true,gap:true,
+     name:'Slots + use the quiet week',why:'In the hole week, move boxes out by barge and train and return empties. The terminal can then take ~10 ships a day.'}
+  ];
+  function simPlan(p){
+    var q=0, out=[], back=null, peakA=0, shipDays=0, anchorDays=0;
+    for(var i=0;i<61;i++){ // 1 Apr .. 31 May
+      var d=i+1, a=d<=30?arr(d):{n:7,e:0,c:0}; q+=a.n+a.e+a.c;
+      var anchor=p.slots?Math.min(q,2):q;
+      var cap=(!p.slots&&q>20)?p.jam:p.cap;
+      var done=Math.min(q,cap); q-=done;
+      anchor=p.slots?Math.min(q,2):q; var sea=q-anchor;
+      out.push({a:anchor,s:sea}); peakA=Math.max(peakA,anchor); shipDays+=q; anchorDays+=anchor;
+      if(back===null&&d>14&&q<1)back=d;
+    }
+    return {days:out,peak:Math.round(peakA),back:back,shipDays:shipDays,anchorDays:anchorDays};
+  }
+  var R=PLANS.map(simPlan);
+  function dateOf(d){if(d===null)return 'after May';return d<=30?d+' Apr':(d-30)+' May';}
+  var st2={plan:0};
+  var planSeg=seg('planSeg',PLANS,st2,'plan',r2);
+  var qsvg=document.getElementById('queueSvg'), QX0=36, QW=710, QY0=200, QH=170, QMAX=50, qbw=QW/61;
+  el('line',{x1:QX0,y1:QY0,x2:QX0+QW,y2:QY0,class:'axis'},qsvg);
+  [0,25,50].forEach(function(v){var y=QY0-v/QMAX*QH; if(v)el('line',{x1:QX0,y1:y,x2:QX0+QW,y2:y,class:'axis','stroke-dasharray':'2 4'},qsvg); var t=el('text',{x:QX0-6,y:y+4,class:'tick','text-anchor':'end'},qsvg); t.textContent=v;});
+  [[1,'1 Apr'],[15,'15 Apr'],[31,'1 May'],[46,'16 May'],[61,'31 May']].forEach(function(p){var t=el('text',{x:QX0+(p[0]-0.5)*qbw,y:QY0+18,class:'tick','text-anchor':'middle'},qsvg); t.textContent=p[1];});
+  var qbars=[];
+  for(var j=0;j<61;j++){var x=QX0+j*qbw+0.6,w=qbw-1.2; qbars.push({a:el('rect',{x:x,width:w,y:QY0,height:0,fill:'var(--bad)',class:'bar'},qsvg),s:el('rect',{x:x,width:w,y:QY0,height:0,fill:'var(--sea)',class:'bar'},qsvg)});}
+  function r2(){
+    press(planSeg,st2.plan);
+    var r=R[st2.plan];
+    qbars.forEach(function(b,i){var v=r.days[i], ha=Math.min(v.a,QMAX)/QMAX*QH, hs=Math.min(v.s,QMAX-Math.min(v.a,QMAX))/QMAX*QH;
+      b.a.setAttribute('y',QY0-ha); b.a.setAttribute('height',ha); b.s.setAttribute('y',QY0-ha-hs); b.s.setAttribute('height',hs);});
+    document.getElementById('exp2').innerHTML=PLANS[st2.plan].why+' <span class="est">simple model</span>';
+    var best=R.reduce(function(m,x,i){return x.shipDays<R[m].shipDays?i:m;},0);
+    var worst=R.reduce(function(m,x,i){return x.shipDays>R[m].shipDays?i:m;},0);
+    var box=document.getElementById('cards2'); box.innerHTML='';
+    PLANS.forEach(function(p,i){
+      var x=R[i], cls=i===best?'best':(i===worst?'':'win'), chip=i===best?'✓ Best choice':(i===worst?'✗ Worst: jam':'✓ Better');
+      var d=document.createElement('div'); d.className='card '+cls+(i===st2.plan?'':'');
+      d.style.opacity=i===st2.plan?1:.7;
+      d.innerHTML='<span class="chip">'+chip+'</span><h3>'+p.name+'</h3><div class="big">'+dateOf(x.back)+'<small> back to normal</small></div><dl class="kv"><dt>Most ships at anchor</dt><dd>'+x.peak+'</dd><dt>Ship-days lost waiting</dt><dd>'+Math.round(x.shipDays)+'</dd><dt>…of them at anchor</dt><dd>'+Math.round(x.anchorDays)+'</dd></dl>';
+      box.appendChild(d);
+    });
+  }
+  r2();
+})();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>

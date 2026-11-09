@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Tool: Constrained part allocation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: problem banner and need-vs-get bar, then one Gantt per rule (who gets parts first, what gets parked), then the scoreboard. */
+:root{
+  --bg:#EEF1F3; --surface:#FFFFFF; --ink:#141B22; --muted:#5B6873; --line:#D3DAE0; --track:#E4E9ED;
+  --accent:#1F5FA8; --accent-soft:#DCE8F6;
+  --late:#C8322A; --late-soft:#F8DEDB; --warn:#B87406; --warn-soft:#F7E8CC; --ok:#2C8A55; --ok-soft:#D9EFE2;
+  --l1:#3C9BC2; --l2:#7E6BC4; --l3:#D9A21B; --l4:#2C8A55;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --l1:#5BB6DB; --l2:#A08FE6; --l3:#E2B23C; --l4:#5CC98A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --l1:#5BB6DB; --l2:#A08FE6; --l3:#E2B23C; --l4:#5CC98A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1240px;margin:0 auto;padding-block:26px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5.4vw,52px);line-height:.98;margin:4px 0 0;letter-spacing:-.005em;text-wrap:balance;text-transform:uppercase}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:8px 0 0;color:var(--muted);max-width:66ch}
+h2{font-family:var(--f-display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.01em;margin:0;line-height:1.1}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,.tog:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* verdict */
+.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 18px;align-items:center;border-radius:12px;padding:18px;border:2px solid var(--vc);background:var(--vs)}
+.verdict .big{width:64px;height:64px;border-radius:50%;background:var(--vc);color:var(--surface);display:grid;place-items:center;font:800 32px var(--f-display)}
+.verdict h3{font:800 clamp(23px,3.8vw,33px)/1.04 var(--f-display);text-transform:uppercase;margin:0;color:var(--vc);text-wrap:balance}
+.verdict p{margin:4px 0 0;max-width:72ch}
+.v-late{--vc:var(--late);--vs:var(--late-soft)} .v-warn{--vc:var(--warn);--vs:var(--warn-soft)} .v-ok{--vc:var(--ok);--vs:var(--ok-soft)}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:16px 26px;align-items:end}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl label,.ctl .lab{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.supply{flex:1 1 300px}
+.supply .val{font:800 26px/1 var(--f-display);color:var(--ink)}
+.supply .val small{font:500 13px var(--f-body);color:var(--muted);margin-left:6px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:7px 12px;font-weight:600;font-size:14px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.reset{border:0;background:none;color:var(--accent);font-weight:600;padding:7px 2px;text-decoration:underline;text-underline-offset:3px}
+
+/* scoreboard */
+.sbwrap{overflow-x:auto;margin-top:12px}
+.sb{display:grid;grid-template-columns:minmax(110px,1.1fr) repeat(4,minmax(96px,1fr));min-width:520px}
+.sb > div{padding:9px 8px;border-bottom:1px solid var(--track);display:flex;align-items:center;gap:8px;min-width:0}
+.sb .hd{flex-direction:column;align-items:flex-start;gap:2px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.sb .hd b{font:700 17px/1.05 var(--f-display);text-transform:uppercase;letter-spacing:.01em}
+.sb .hd .wins{font:600 11px var(--f-mono);color:var(--muted)}
+.sb .hd.pick{background:var(--accent-soft);border-radius:8px 8px 0 0}
+.sb .rl{font-weight:600;font-size:14px;line-height:1.2;flex-direction:column;align-items:flex-start;gap:1px}
+.sb .rl small{display:block;font:400 11px var(--f-mono);color:var(--muted)}
+.sb .c.pick{background:var(--accent-soft)}
+.ic{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--surface)}
+.ic.win{background:var(--ok)} .ic.lose{background:var(--late)} .ic.mid{background:var(--track);color:var(--muted)}
+.cv{font:500 13px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.cv.lose{color:var(--late)} .cv.win{color:var(--ok);font-weight:600}
+.pickpill{font:700 9.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:var(--accent);color:var(--surface)}
+
+/* problem */
+.need{display:flex;flex-direction:column;gap:8px}
+.needbar{position:relative;height:34px;border-radius:6px;background:repeating-linear-gradient(135deg,var(--late) 0 4px,var(--late-soft) 4px 9px);border:1px solid var(--late);overflow:hidden}
+.needbar .got{position:absolute;left:0;top:0;bottom:0;background:var(--accent);display:flex;align-items:center;padding-left:10px;color:var(--surface);font:600 13px var(--f-body);white-space:nowrap;overflow:hidden}
+.needbar .shortlab{position:absolute;right:10px;top:50%;transform:translateY(-50%);font:700 13px var(--f-body);color:var(--late);background:var(--surface);padding:1px 7px;border-radius:4px;white-space:nowrap}
+.needscale{display:flex;justify-content:space-between;font:500 11px var(--f-mono);color:var(--muted)}
+.linechips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:6px}
+.lc{border:1px solid var(--line);border-left:5px solid var(--lc);border-radius:7px;padding:8px 10px;min-width:0}
+.lc b{display:block;font-size:14.5px;line-height:1.2}
+.lc span{display:block;font-size:12.5px;color:var(--muted);line-height:1.3}
+
+/* gantts */
+.ghead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 16px;align-items:end}
+.gantts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.gc{border:1px solid var(--line);border-radius:10px;padding:13px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;background:var(--surface)}
+.gc.pick{border:2px solid var(--accent);padding:12px 13px}
+.gc h3{margin:0;font:800 21px/1.05 var(--f-display);text-transform:uppercase;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.gc .how{margin:0;font-size:13.5px;color:var(--muted);line-height:1.35}
+.gt{--lab:118px;display:flex;flex-direction:column}
+.gr{display:grid;grid-template-columns:var(--lab) minmax(0,1fr);align-items:center;min-height:32px;border-bottom:1px solid var(--track)}
+.gr.ax{min-height:20px;border-bottom:1px solid var(--line)}
+.gl{padding-right:8px;min-width:0;display:flex;align-items:center;gap:6px}
+.gl .n{font-size:11px;font-weight:800;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--lc);color:var(--surface)}
+.gl .t{min-width:0;display:flex;flex-direction:column;line-height:1.15}
+.gl .t b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gl .t small{font:500 10.5px var(--f-mono);color:var(--muted);white-space:nowrap}
+.gl .t small.bad{color:var(--late);font-weight:600}
+.gtr{position:relative;height:100%;min-height:inherit}
+.gb{position:absolute;top:50%;height:14px;transform:translateY(-50%);border-radius:3px}
+.gb.built{background:var(--lc)}
+.gb.park{background:repeating-linear-gradient(135deg,var(--late) 0 3px,transparent 3px 6px);border:1px solid var(--late);opacity:.85}
+.runout{position:absolute;top:0;bottom:-1px;border-left:2px dashed var(--late);z-index:3}
+.axl{position:absolute;top:3px;font:600 10px var(--f-mono);white-space:nowrap;color:var(--muted)}
+.axl.ro{color:var(--surface);background:var(--late);padding:0 4px;border-radius:3px;transform:translateX(-50%);top:2px}
+.gfoot{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--track);padding-top:7px}
+.gfoot span{font:500 11px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.gfoot b{font:800 20px/1 var(--f-display);color:var(--late)}
+.gfoot b.ok{color:var(--ok)}
+.keys{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+.keys span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:10px;border-radius:2px;display:inline-block}
+.pickline{margin:10px 0 0;font-size:15px}
+.pickline b{color:var(--accent)}
+
+/* toggles */
+.tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;border:0;background:none;padding:12px 2px;font-weight:700;font-size:15px;color:var(--accent);text-align:left;border-top:1px solid var(--line)}
+.tog:first-child{border-top:0;padding-top:2px}
+.tog .chev{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;font-size:13px;transition:transform .2s ease}
+.tog[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.togbody{padding-bottom:12px}
+/* edit tables */
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:14px}
+th{font:500 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:5px 8px;border-bottom:1px solid var(--track);font-variant-numeric:tabular-nums}
+td input[type=number]{width:84px;border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:4px 6px;font:500 13px var(--f-mono)}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 22px;margin-top:10px}
+.why p{margin:0;max-width:60ch}
+.why b{display:block;font-family:var(--f-display);text-transform:uppercase;font-size:17px;letter-spacing:.02em}
+.foot{font-size:12.5px;color:var(--muted);margin:0}
+
+@media (max-width:900px){.gantts{grid-template-columns:minmax(0,1fr)}.linechips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){
+  .verdict{grid-template-columns:minmax(0,1fr)}
+  .verdict .big{width:46px;height:46px;font-size:24px}
+  .gt{--lab:96px}
+  .gl .n{display:none}
+  .gc{padding:11px}
+  .gc.pick{padding:10px}
+  .sb{grid-template-columns:74px repeat(4,minmax(0,1fr));min-width:0}
+  .sb .hd b{font-size:14px}
+  .sb .hd .wins{font-size:9.5px}
+  .sb .rl{font-size:12.5px}
+  .sb .rl small{display:none}
+  .sb .c{flex-direction:column;align-items:flex-start;gap:3px}
+  .cv{font-size:11.5px;white-space:normal;line-height:1.15}
+  .sb > div{padding:8px 4px}
+  .ic{width:18px;height:18px;font-size:11px}
+  .pickpill{font-size:8.5px;padding:1px 4px}
+}
+@media (prefers-reduced-motion:no-preference){.gb,.needbar .got{transition:width .25s ease,left .25s ease}}
+@media (prefers-reduced-motion:reduce){.tog .chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Hardware procurement · allocation under shortage</div>
+    <h1>Constrained part <em>allocation</em></h1>
+    <p class="lede">One part is short and four vehicle lines need it. Every other part keeps arriving, so a vehicle without the missing part is built and parked until it comes. You decide who gets the parts you have.</p>
+  </header>
+
+  <section id="verdict" class="verdict v-late" aria-live="polite"></section>
+
+  <section class="panel need" aria-label="The problem">
+    <h2>The problem</h2>
+    <div class="needbar" id="needbar" role="img"><div class="got" id="got"></div><span class="shortlab" id="shortlab"></span></div>
+    <div class="needscale"><span>0</span><span id="needtot"></span></div>
+    <div class="controls" style="margin-top:4px">
+      <div class="ctl supply">
+        <label for="supply">Parts you get this quarter</label>
+        <div class="val" id="supply-val"></div>
+        <input type="range" id="supply" min="40" max="100" step="5" value="70">
+      </div>
+      <div class="ctl">
+        <span class="lab" id="part-lab">Missing part</span>
+        <div class="seg" role="group" aria-labelledby="part-lab">
+          <button type="button" data-part="chip" aria-pressed="true">Control chip</button>
+          <button type="button" data-part="cell" aria-pressed="false">Battery cells</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <span class="lab" id="prio-lab">What matters most this quarter</span>
+        <div class="seg" role="group" aria-labelledby="prio-lab" id="prio"></div>
+      </div>
+      <button class="reset" id="reset" type="button">Reset example</button>
+    </div>
+    <div class="linechips" id="linechips"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ghead">
+      <div>
+        <h2>The choices: who gets parts first</h2>
+        <div class="eyebrow" style="margin-top:2px">Each row is a vehicle line, served top to bottom</div>
+      </div>
+      <div class="keys" id="keys"></div>
+    </div>
+    <div class="gantts" id="gantts"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ghead">
+      <div>
+        <h2>Which rule wins</h2>
+        <div class="eyebrow" style="margin-top:2px">Green is best, red is worst</div>
+      </div>
+    </div>
+    <p class="pickline" id="pickline"></p>
+    <div class="sbwrap"><div class="sb" id="sb"></div></div>
+  </section>
+
+  <section class="panel">
+    <h2>Why the rules give different answers</h2>
+    <div class="why" style="margin-top:10px"><p><b>The golden screw</b>A cheap part can stop an expensive vehicle. The body, motors and seats are already bought and installed, so a vehicle missing one part is cash sitting in a parking lot.</p>
+        <p><b>By margin</b>Build the vehicles that earn the most first. It makes the most money this quarter, but cheap lines get nothing, so a launch or a contract can fail.</p>
+        <p><b>By backlog</b>Split the parts in proportion to the orders each line has waiting. No customer waits much longer than another, but every line runs short.</p>
+        <p><b>Launch first</b>Give the new model everything it needs, then fill the rest by margin. The launch stays on time, but the older lines pay for it.</p>
+        <p><b>Must-haves, then margin</b>Cover the hard limits first (the launch minimum and the fleet contract), then fill by margin. Most planners end up here, but the line with the most waiting orders gets cut.</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Edit vehicle lines</h2>
+    <div style="margin-top:10px">
+      <div class="tblwrap"><table>
+        <thead><tr><th>Line</th><th>Plan (units / qtr)</th><th>Margin per vehicle ($)</th><th>Cost of a parked vehicle ($)</th><th>Orders waiting</th><th>Must build (min)</th></tr></thead>
+        <tbody id="ltbl"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <p class="foot">All numbers are illustrative examples (est.) for an electric vehicle maker with four lines and one part kit per vehicle. Fleet contract penalty: $6,000 per van below the minimum.</p>
+</div>
+
+<script>
+const WEEKS=13, PENALTY=6000;
+const DEFAULT_LINES=[
+  {id:'pickup', name:'Pickup truck', tag:'Top margin', plan:6000, margin:14000, cost:52000, backlog:20000, min:0, c:'--l1'},
+  {id:'suv', name:'SUV', tag:'Most orders', plan:9000, margin:11000, cost:44000, backlog:35000, min:0, c:'--l2'},
+  {id:'van', name:'Delivery van', tag:'Fleet contract', plan:5000, margin:5000, cost:36000, backlog:10000, min:2200, c:'--l3'},
+  {id:'compact', name:'New compact', tag:'Launching', plan:4000, margin:-1000, cost:28000, backlog:6000, min:3000, c:'--l4'}
+];
+const RULES=[
+  {id:'margin', name:'By margin', how:'Highest margin per vehicle gets parts first.'},
+  {id:'backlog', name:'By backlog', how:'Parts split by how many orders each line has waiting.'},
+  {id:'launch', name:'Launch first', how:'New model gets its full plan, the rest goes by margin.'},
+  {id:'mixed', name:'Must-haves, then margin', how:'Cover the launch and contract minimums, then go by margin.'}
+];
+const PRIOS=[
+  {id:'profit', name:'Profit now'},
+  {id:'cash', name:'Cash'},
+  {id:'wait', name:'Customers'},
+  {id:'commit', name:'Launch + contract'}
+];
+const PART={chip:{one:'chip',many:'chips',kit:'chip sets',Kit:'Chips'},cell:{one:'cell pack',many:'cell packs',kit:'cell packs',Kit:'Cell packs'}};
+let lines, supplyPct, part='chip', prio='profit';
+function reset(){lines=DEFAULT_LINES.map(l=>({...l}));supplyPct=70;part='chip';prio='profit';
+  document.getElementById('supply').value=70;}
+reset();
+
+/* ---------- allocation rules ---------- */
+function fillInOrder(order,supply,alloc){
+  for(const l of order){const room=l.plan-alloc[l.id];const g=Math.min(room,supply);alloc[l.id]+=g;supply-=g;}
+  return supply;
+}
+function byMarginOrder(ls){return [...ls].sort((a,b)=>b.margin-a.margin);}
+// proportional to weights, capped at caps (water filling)
+function proportional(ls,supply,weight,cap,alloc){
+  let active=ls.filter(l=>cap(l)-alloc[l.id]>0&&weight(l)>0);
+  while(supply>0.5&&active.length){
+    const W=active.reduce((s,l)=>s+weight(l),0);
+    let used=0, capped=false;
+    for(const l of active){const share=supply*weight(l)/W;const room=cap(l)-alloc[l.id];
+      if(share>=room){alloc[l.id]+=room;used+=room;capped=true;}}
+    if(capped){supply-=used;active=active.filter(l=>cap(l)-alloc[l.id]>0);continue;}
+    for(const l of active){alloc[l.id]+=supply*weight(l)/W;}
+    supply=0;
+  }
+  return supply;
+}
+function allocate(rule,supply){
+  const a={};lines.forEach(l=>a[l.id]=0);
+  if(rule==='margin'){fillInOrder(byMarginOrder(lines),supply,a);}
+  else if(rule==='backlog'){proportional(lines,supply,l=>l.backlog,l=>l.plan,a);}
+  else if(rule==='launch'){const launch=lines.find(l=>l.id==='compact');
+    supply=fillInOrder([launch],supply,a);fillInOrder(byMarginOrder(lines),supply,a);}
+  else if(rule==='mixed'){supply=proportional(lines,supply,l=>Math.min(l.min,l.plan),l=>Math.min(l.min,l.plan),a);
+    fillInOrder(byMarginOrder(lines),supply,a);}
+  lines.forEach(l=>a[l.id]=Math.round(a[l.id]));
+  return a;
+}
+function evaluate(a){
+  let profit=0,cash=0,wait=0,parked=0,waitLine=null;
+  for(const l of lines){
+    const b=a[l.id];profit+=b*l.margin;const p=l.plan-b;parked+=p;cash+=p*l.cost;
+    const w=b>0?l.backlog/(b/WEEKS):Infinity;
+    if(l.backlog>0&&w>wait){wait=w;waitLine=l;}
+  }
+  const van=lines.find(l=>l.id==='van'),cmp=lines.find(l=>l.id==='compact');
+  const short=Math.max(0,van.min-a.van);profit-=short*PENALTY;
+  return {profit,cash,wait,waitLine,parked,launch:a.compact>=cmp.min,contract:a.van>=van.min,penalty:short*PENALTY};
+}
+
+/* ---------- formatting ---------- */
+const nf=new Intl.NumberFormat('en-US');
+const fmt=n=>nf.format(Math.round(n));
+function money(x){const s=x<0?'−':'';x=Math.abs(x);
+  if(x>=1e9)return s+'$'+(x/1e9).toFixed(2)+'B';
+  if(x>=1e6)return s+'$'+Math.round(x/1e6)+'M';
+  if(x>=1e3)return s+'$'+Math.round(x/1e3)+'k';return s+'$'+Math.round(x);}
+const fmtWait=w=>w===Infinity?'Line stopped':Math.round(w)+' wks';
+
+/* ---------- render ---------- */
+function render(){
+  const plan=lines.reduce((s,l)=>s+l.plan,0);
+  const supply=Math.round(plan*supplyPct/100);
+  const P=PART[part];
+  document.getElementById('supply-val').innerHTML=`${supplyPct}%<small>${fmt(supply)} of ${fmt(plan)} ${P.kit}</small>`;
+  document.querySelectorAll('[data-part]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.part===part));
+
+  const res=RULES.map(r=>{const a=allocate(r.id,supply);return {r,a,e:evaluate(a)};});
+
+  // metric rows: value getter, better direction
+  const rows=[
+    {id:'profit',name:'Profit this quarter',sub:'after contract penalty',v:x=>x.e.profit,better:'high',show:x=>money(x.e.profit)},
+    {id:'cash',name:'Cash stuck in the lot',sub:'half-built vehicles',v:x=>x.e.cash,better:'low',show:x=>money(x.e.cash)},
+    {id:'wait',name:'Longest customer wait',sub:'worst line',v:x=>x.e.wait,better:'low',show:x=>fmtWait(x.e.wait)},
+    {id:'launch',name:'New model launch',sub:'needs min. build',bool:x=>x.e.launch,show:x=>x.e.launch?'On time':'Slips'},
+    {id:'contract',name:'Fleet contract',sub:'van minimum',bool:x=>x.e.contract,show:x=>x.e.contract?'Met':'Missed'}
+  ];
+  // per cell status
+  const status=rows.map(row=>res.map(x=>{
+    if(row.bool)return row.bool(x)?'win':'lose';
+    const vals=res.map(y=>row.v(y));const best=row.better==='high'?Math.max(...vals):Math.min(...vals);
+    const worst=row.better==='high'?Math.min(...vals):Math.max(...vals);
+    const v=row.v(x);if(best===worst)return 'win';
+    if(v===best)return 'win';if(v===worst)return 'lose';return 'mid';
+  }));
+  const wins=res.map((_,i)=>status.reduce((s,r)=>s+(r[i]==='win'?1:0),0));
+
+  // pick by priority
+  let pickIdx=0;
+  const rank={
+    profit:(x)=>[x.e.profit],
+    cash:(x)=>[-x.e.cash,x.e.profit],
+    wait:(x)=>[-(x.e.wait===Infinity?1e12:x.e.wait),x.e.profit],
+    commit:(x)=>[(x.e.launch?1:0)+(x.e.contract?1:0),x.e.profit]
+  }[prio];
+  res.forEach((x,i)=>{const a=rank(x),b=rank(res[pickIdx]);
+    for(let k=0;k<a.length;k++){if(a[k]>b[k]+1e-6){pickIdx=i;break;}if(a[k]<b[k]-1e-6)break;}});
+  const pick=res[pickIdx];
+
+  // problem
+  const v=document.getElementById('verdict');
+  const shortUnits=plan-supply;
+  document.getElementById('got').style.width=(supply/plan*100)+'%';
+  document.getElementById('got').textContent=`${P.Kit} you get: ${fmt(supply)}`;
+  document.getElementById('shortlab').textContent=shortUnits>0?`Short: ${fmt(shortUnits)}`:'';
+  document.getElementById('shortlab').hidden=shortUnits<=0;
+  document.getElementById('needbar').setAttribute('aria-label',`Need ${fmt(plan)}, get ${fmt(supply)}, short ${fmt(shortUnits)}`);
+  document.getElementById('needtot').textContent=`Plan needs ${fmt(plan)}`;
+  if(shortUnits<=0){
+    v.className='verdict v-ok';
+    v.innerHTML=`<div class="big">✓</div><div><h3>No shortage this quarter</h3><p>Every rule builds the full plan. Move the slider left to cut the ${P.many} you get.</p></div>`;
+  }else{
+    v.className='verdict v-late';
+    v.innerHTML=`<div class="big">!</div><div><h3>Short ${fmt(shortUnits)} ${P.kit}. Who gets the ${fmt(supply)} you have?</h3>
+      <p>Four vehicle lines planned ${fmt(plan)} vehicles. Without the ${P.one}, ${fmt(shortUnits)} of them are built and parked, with the cash already spent. Each rule below picks a different set of vehicles to park.</p></div>`;
+  }
+  document.getElementById('linechips').innerHTML=lines.map(l=>{
+    const why=l.id==='pickup'?`Top margin: ${money(l.margin)} each`:l.id==='suv'?`${fmt(l.backlog)} orders waiting`:l.id==='van'?`Contract: must build ${fmt(l.min)}`:`Launching: needs ${fmt(l.min)}`;
+    return `<div class="lc" style="--lc:var(${l.c})"><b>${l.name}</b><span>Plan ${fmt(l.plan)}</span><span>${why}</span></div>`;}).join('');
+  const pickTxt=document.getElementById('pickline');
+  if(shortUnits>0){
+    const lost=rows.map((row,ri)=>status[ri][pickIdx]==='lose'?row.name.toLowerCase():null).filter(Boolean);
+    const loseTxt=lost.length?` It comes last on ${lost.length>1?lost.slice(0,-1).join(', ')+' and '+lost.at(-1):lost[0]}.`:' It does not come last on anything.';
+    pickTxt.innerHTML=`For ${PRIOS.find(p=>p.id===prio).name.toLowerCase()}, pick <b>${pick.r.name}</b>.${loseTxt}`;
+  }else pickTxt.textContent='No shortage, so all rules tie.';
+
+  // priority buttons
+  document.getElementById('prio').innerHTML=PRIOS.map(p=>`<button type="button" data-prio="${p.id}" aria-pressed="${p.id===prio}">${p.name}</button>`).join('');
+
+  // scoreboard
+  const sb=document.getElementById('sb');
+  let h=`<div class="hd"><span class="eyebrow">Outcome</span></div>`;
+  res.forEach((x,i)=>{h+=`<div class="hd${i===pickIdx&&shortUnits>0?' pick':''}"><b>${x.r.name}</b><span class="wins">Best on ${wins[i]} of ${rows.length}</span>${i===pickIdx&&shortUnits>0?'<span class="pickpill">Your pick</span>':''}</div>`;});
+  rows.forEach((row,ri)=>{
+    h+=`<div class="rl">${row.name}<small>${row.sub}</small></div>`;
+    res.forEach((x,i)=>{const s=status[ri][i];const icon=s==='win'?'✓':s==='lose'?'✕':'–';
+      h+=`<div class="c${i===pickIdx&&shortUnits>0?' pick':''}"><span class="ic ${s}" aria-label="${s==='win'?'best':s==='lose'?'worst':'middle'}">${icon}</span><span class="cv ${s}">${row.show(x)}</span></div>`;});
+  });
+  sb.innerHTML=h;
+
+  // keys
+  document.getElementById('keys').innerHTML=`<span><i class="sw" style="background:var(--muted)"></i>Built</span>
+     <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--late) 0 3px,transparent 3px 6px);border:1px solid var(--late)"></i>Built and parked</span>
+     <span><i class="sw" style="width:3px;border-left:2px dashed var(--late)"></i>${P.Kit} run out</span>`;
+
+  // gantts: x = parts handed out in order. Built pieces before the run-out line, parked pieces after it.
+  const X=n=>(n/plan*100);
+  document.getElementById('gantts').innerHTML=res.map((x,i)=>{
+    const order=serviceOrder(x.r.id);
+    let cb=0,cp=supply;
+    const rws=order.map((l,k)=>{const b=x.a[l.id],p=l.plan-b;
+      const bars=(b>0?`<i class="gb built" style="left:${X(cb)}%;width:${X(b)}%"></i>`:'')+(p>0?`<i class="gb park" style="left:${X(cp)}%;width:${X(p)}%"></i>`:'');
+      cb+=b;cp+=p;
+      const miss=l.min>0&&b<l.min;
+      return `<div class="gr" style="--lc:var(${l.c})"><div class="gl"><span class="n">${k+1}</span><span class="t"><b>${l.name}</b><small class="${miss?'bad':''}">${fmt(b)} of ${fmt(l.plan)}${miss?' ✕ min':''}</small></span></div>
+        <div class="gtr" role="img" aria-label="${l.name}: ${fmt(b)} built, ${fmt(p)} parked">${bars}${shortUnits>0?`<span class="runout" style="left:${X(supply)}%"></span>`:''}</div></div>`;}).join('');
+    const ax=`<div class="gr ax"><div class="gl"><span class="axl" style="position:static">Served</span></div><div class="gtr"><span class="axl" style="left:0">0</span>${shortUnits>0?`<span class="axl ro" style="left:${Math.min(X(supply),88)}%">${fmt(supply)}</span>`:''}</div></div>`;
+    const pk=i===pickIdx&&shortUnits>0;
+    return `<article class="gc${pk?' pick':''}"><h3>${x.r.name}${pk?'<span class="pickpill">Your pick</span>':''}</h3><p class="how">${x.r.how}</p>
+      <div class="gt">${ax}${rws}</div>
+      <div class="gfoot"><span>Cash stuck in parked vehicles</span><b class="${x.e.cash>0?'':'ok'}">${money(x.e.cash)}</b></div></article>`;
+  }).join('');
+}
+function serviceOrder(rule){
+  const m=byMarginOrder(lines);
+  if(rule==='margin')return m;
+  if(rule==='backlog')return [...lines].sort((a,b)=>b.backlog-a.backlog);
+  if(rule==='launch'){const c=lines.find(l=>l.id==='compact');return [c,...m.filter(l=>l!==c)];}
+  const mins=m.filter(l=>l.min>0).sort((a,b)=>(b.id==='compact')-(a.id==='compact'));
+  return [...mins,...m.filter(l=>!(l.min>0))];
+}
+
+/* ---------- edit table ---------- */
+function renderTable(){
+  const f=[['plan',100],['margin',500],['cost',1000],['backlog',500]];
+  document.getElementById('ltbl').innerHTML=lines.map((l,i)=>`<tr><td><b>${l.name}</b><br><span class="eyebrow">${l.tag}</span></td>`+
+    f.map(([k,st])=>`<td><input type="number" id="in-${l.id}-${k}" data-i="${i}" data-k="${k}" step="${st}" value="${l[k]}" aria-label="${l.name} ${k}"></td>`).join('')+
+    `<td>${l.id==='van'||l.id==='compact'?`<input type="number" id="in-${l.id}-min" data-i="${i}" data-k="min" step="100" min="0" value="${l.min}" aria-label="${l.name} minimum">`:'<span class="eyebrow">none</span>'}</td></tr>`).join('');
+}
+document.getElementById('ltbl').addEventListener('input',e=>{const t=e.target;if(!t.dataset.k)return;
+  let v=Number(t.value);if(!isFinite(v))return;const k=t.dataset.k;
+  if(k!=='margin')v=Math.max(0,v);if(k==='plan')v=Math.max(1,v);
+  lines[+t.dataset.i][k]=v;render();});
+document.getElementById('supply').addEventListener('input',e=>{supplyPct=+e.target.value;render();});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.classList.contains('tog')){const open=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',open);document.getElementById(b.getAttribute('aria-controls')).hidden=!open;return;}
+  if(b.dataset.part){part=b.dataset.part;render();}
+  else if(b.dataset.prio){prio=b.dataset.prio;render();}
+  else if(b.id==='reset'){reset();renderTable();render();}});
+renderTable();render();
+</script>
+
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>
