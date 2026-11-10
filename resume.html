@@ -9,195 +9,352 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: same narrow column as the main page. Name, link to work, then resume sections with mono labels and thin dividers. */
+/* Layout: navy hero with impact numbers, a career Gantt across 2016-2026, then each job as a "leg" with one headline number. Hi-vis orange is the only accent. */
 :root{
   color-scheme:light;
-  --bg:#FFFFFF; --ink:#111111; --muted:#5F6368; --faint:#7A7F85; --line:#E3E4E6;
-  --f-text:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --bg:#EEF1F4; --paper:#FFFFFF; --ink:#0E1A2B; --muted:#55606E; --faint:#7C8794; --line:#D3DAE2;
+  --hero:#0E1A2B; --heroink:#EAF0F6; --heromuted:#9AA8B8; --heroline:#24344A;
+  --vis:#F26A1B; --vissoft:#FDE6D8;
+  --c1:#F26A1B; --c2:#2F6FD6; --c3:#7A5AF0; --c4:#1E9E7A; --c5:#C4495B;
+  --f-disp:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-text:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
   padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111214; --ink:#EDEDEE; --muted:#A3A7AD; --faint:#8D9298; --line:#2A2C30; color-scheme:dark}}
+  --bg:#0A111C; --paper:#111B2A; --ink:#E6ECF3; --muted:#A1ADBB; --faint:#8794A3; --line:#223247;
+  --hero:#060B13; --heroink:#EAF0F6; --heromuted:#9AA8B8; --heroline:#1E2C3F;
+  --vis:#FF8A3D; --vissoft:#3A2214;
+  --c1:#FF8A3D; --c2:#6A9BEF; --c3:#A28BFF; --c4:#4CC9A3; --c5:#EE7A8B; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111214; --ink:#EDEDEE; --muted:#A3A7AD; --faint:#8D9298; --line:#2A2C30; color-scheme:dark}
+  --bg:#0A111C; --paper:#111B2A; --ink:#E6ECF3; --muted:#A1ADBB; --faint:#8794A3; --line:#223247;
+  --hero:#060B13; --heroink:#EAF0F6; --heromuted:#9AA8B8; --heroline:#1E2C3F;
+  --vis:#FF8A3D; --vissoft:#3A2214;
+  --c1:#FF8A3D; --c2:#6A9BEF; --c3:#A28BFF; --c4:#4CC9A3; --c5:#EE7A8B; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);-webkit-font-smoothing:antialiased}
-.wrap{max-width:720px;margin:0 auto;padding-block:40px 56px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
-.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px}
-h1{font-size:21px;font-weight:600;margin:0;letter-spacing:-.01em}
-.work{font:400 13px/1.3 var(--f-mono);color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
-.work:hover{border-color:var(--ink)}
-.work:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
-.sub{font-size:15px;color:var(--muted);margin:6px 0 0;line-height:1.45}
-h2{font:400 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:36px 0 0;padding-bottom:10px;border-bottom:1px solid var(--line)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 p{margin:0}
-.summary{font-size:15px;line-height:1.55;color:var(--ink);padding-top:12px}
-.job{padding:14px 0;border-bottom:1px solid var(--line)}
-.row{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:24px;row-gap:2px}
-.co{font-size:16px;font-weight:600;line-height:1.35}
-.role{grid-column:1;font-size:15px;font-weight:500;line-height:1.4}
-.when{grid-column:2;grid-row:1;font:400 12px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap;padding-top:3px;text-align:right}
-.where{grid-column:2;font:400 12px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap;text-align:right}
-.sub-role .role{grid-row:1 / span 2}
-ul{margin:8px 0 0;padding-left:18px}
-li{font-size:14px;line-height:1.5;color:var(--muted);margin-top:5px}
-li::marker{color:var(--faint)}
-.sub-role{margin-top:12px}
-.edu,.list{padding:12px 0 0;display:flex;flex-direction:column;gap:8px}
-.edu .row{font-size:14px;line-height:1.45}
-.edu b{font-weight:600}
-.edu span.d{color:var(--muted)}
-.list p{font-size:14px;line-height:1.5;color:var(--muted)}
-.list b{color:var(--ink);font-weight:500}
-@media (max-width:520px){
-  .wrap{padding-block:28px 44px}
-  h2{margin-top:28px}
-  .row{grid-template-columns:minmax(0,1fr)}
-  .when,.where{grid-column:1;grid-row:auto;text-align:left;padding-top:0}
+.g{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.in{max-width:940px;margin:0 auto}
+.lab{font:500 11px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+
+/* hero */
+.hero{background:var(--hero);color:var(--heroink);padding-block:30px 40px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto 0 0 0;height:6px;background:repeating-linear-gradient(-45deg,var(--vis) 0 14px,transparent 14px 28px)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.tag{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--heromuted)}
+.work{font:500 13px/1 var(--f-mono);color:var(--heroink);text-decoration:none;border:1px solid var(--heroline);padding:9px 12px;border-radius:999px}
+.work:hover{border-color:var(--vis);color:var(--vis)}
+.work:focus-visible{outline:2px solid var(--vis);outline-offset:3px}
+.name{font:800 clamp(64px,12vw,112px)/.85 var(--f-disp);letter-spacing:-.01em;margin:22px 0 0}
+.name span{color:var(--vis)}
+.role-line{font:600 clamp(22px,3.4vw,30px)/1.1 var(--f-disp);letter-spacing:.01em;margin-top:10px;text-transform:uppercase}
+.pitch{max-width:640px;color:var(--heromuted);margin-top:12px;font-size:16px}
+.pitch b{color:var(--heroink);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin-top:28px;background:var(--heroline);border:1px solid var(--heroline);border-radius:10px;overflow:hidden}
+.stat{background:var(--hero);padding:14px 16px 16px;min-width:0}
+.stat b{display:block;font:800 clamp(34px,5vw,44px)/1 var(--f-disp);color:var(--vis);letter-spacing:.01em}
+.stat span{display:block;margin-top:6px;font-size:13px;line-height:1.35;color:var(--heromuted)}
+.stat em{font-style:normal;color:var(--heroink)}
+
+/* sections */
+section{padding-block:36px 0}
+.sh{display:flex;align-items:baseline;gap:12px;margin-bottom:14px}
+.sh h2{font:800 28px/1 var(--f-disp);text-transform:uppercase;letter-spacing:.02em;margin:0}
+.sh .lab{flex:1;border-bottom:1px dashed var(--line);padding-bottom:4px}
+
+/* career gantt: axis runs Jan 2016 to Dec 2026 (11 years) */
+.gantt{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 22px 12px 18px}
+.axis,.gr{display:grid;grid-template-columns:190px minmax(0,1fr);gap:12px;align-items:center}
+.axis .yrs{position:relative;height:18px}
+.axis .yrs span{position:absolute;font:400 11px var(--f-mono);color:var(--faint)}
+.gr{padding:5px 0;border-top:1px solid var(--line)}
+.gl{font-size:13px;line-height:1.25;min-width:0}
+.gl b{font-weight:600}
+.gl i{font-style:normal;color:var(--faint);font-family:var(--f-mono);font-size:11px;display:block}
+.track{position:relative;height:16px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px calc(100% / 11))}
+.seg{position:absolute;top:2px;bottom:2px;border-radius:3px;background:var(--c)}
+.seg.now::after{content:"";position:absolute;right:-6px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--paper)}
+.gnote{font:400 11px var(--f-mono);color:var(--faint);margin-top:10px}
+
+/* legs */
+.leg{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;padding:24px 0;border-top:1px solid var(--line)}
+.leg:first-of-type{border-top:0;padding-top:4px}
+.side{min-width:0}
+.co{font:800 30px/1 var(--f-disp);text-transform:uppercase;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+.co::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--c);flex:none}
+.side .lab{margin-top:8px;display:block}
+.roles{display:flex;flex-direction:column;gap:22px;min-width:0}
+.r h3{font-size:16px;font-weight:600;margin:0;line-height:1.3}
+.meta{font:400 12px var(--f-mono);color:var(--faint);margin-top:3px}
+.hi{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:6px}
+.hi b{font:800 26px/1 var(--f-disp);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
+.hi span{font-size:14px;color:var(--muted);flex:1 1 220px;min-width:0}
+ul{margin:10px 0 0;padding-left:18px}
+li{margin-top:5px;color:var(--muted);font-size:14px}
+li::marker{color:var(--c)}
+
+/* toolkit etc */
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
+.box h3{font:700 18px/1 var(--f-disp);text-transform:uppercase;letter-spacing:.03em;margin:0 0 12px}
+.box h3.next{margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:400 12px/1 var(--f-mono);padding:6px 8px;border:1px solid var(--line);border-radius:4px;color:var(--ink);background:var(--bg)}
+.chip.k{border-color:var(--vis);background:var(--vissoft)}
+.small{font:400 12px/1.6 var(--f-mono);color:var(--faint);margin-top:12px}
+.rows{display:flex;flex-direction:column;gap:10px}
+.rw{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 16px;font-size:14px}
+.rw b{font-weight:600}
+.rw .d{grid-column:1;color:var(--muted);font-size:13px}
+.rw .y{grid-column:2;grid-row:1;font:400 12px var(--f-mono);color:var(--faint);white-space:nowrap}
+.langs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.lg{font-size:13px}
+.lg b{display:block;font:800 22px/1 var(--f-disp)}
+.lg span{color:var(--muted)}
+.end{padding-block:36px 48px;font:400 11px var(--f-mono);color:var(--faint);letter-spacing:.06em;text-transform:uppercase}
+
+@media (max-width:760px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .axis,.gr{grid-template-columns:120px minmax(0,1fr)}
+  .leg{grid-template-columns:minmax(0,1fr);gap:12px}
+  .cols{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:460px){
+  .axis,.gr{grid-template-columns:84px minmax(0,1fr);gap:8px}
+  .gl i{display:none}
+  .axis .yrs span.odd{display:none}
+  .langs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <h1>JR</h1>
-    <a class="work" href="index.html">Tools and stories →</a>
-  </div>
-  <p class="sub">Last-mile, launch and supply chain operations</p>
 
-  <h2>Summary</h2>
-  <p class="summary">Last-mile and launch operations manager with 10 years in supply chain. At Amazon, launched urban same-day nodes and Just Walk Out grocery stores, owning opening-day instock, last-mile delivery, and curbside pickup. At JD.com, scaled the European last-mile network from 1,000 to 20,000 packages/day, grew postcode coverage 7x, and integrated MediaMarkt/Saturn volume into live operations. B.Sc. Mechanical Engineering. Fluent English and German.</p>
+<header class="hero g">
+  <div class="in">
+    <div class="bar">
+      <span class="tag">Resume · 2026</span>
+      <a class="work" href="index.html">Tools and stories →</a>
+    </div>
+    <h1 class="name">JR<span>.</span></h1>
+    <p class="role-line">Last-mile, launch &amp; supply chain operations</p>
+    <p class="pitch"><b>10 years moving goods at scale.</b> I launch networks and stores, plan the capacity behind them, and keep them in stock once they're live. Amazon, JD.com, Bose and Arburg, across Europe and the US.</p>
+    <div class="stats">
+      <div class="stat"><b>20×</b><span><em>1,000 → 20,000</em> packages a day on JD.com's European last mile</span></div>
+      <div class="stat"><b>23</b><span>Amazon Just Walk Out stores launched at <em>97%</em> opening-day instock</span></div>
+      <div class="stat"><b>$75M</b><span>excess inventory freed at Bose, <em>35 days</em> less inventory</span></div>
+      <div class="stat"><b>$3M</b><span>a year saved on Amazon same-day inbound, <em>$0.09</em> less per package</span></div>
+      <div class="stat"><b>93%</b><span>perishable instock across 100 stores, up from <em>80%</em></span></div>
+      <div class="stat"><b>3 wk</b><span>order lead time at Arburg, down from <em>6 weeks</em></span></div>
+    </div>
+  </div>
+</header>
 
-  <h2>Experience</h2>
-  <div class="job">
-    <div class="row">
-      <span class="co">JD.com Europe</span><span class="when">Feb 2026 – Present</span>
-      <span class="role">Capacity Planning Manager, Last-Mile Operations</span><span class="where">Berlin</span>
+<main>
+<section class="g">
+  <div class="in">
+    <div class="sh"><h2>Route</h2><span class="lab">2016 – 2026</span></div>
+    <div class="gantt" role="img" aria-label="Career timeline from 2016 to 2026">
+      <div class="axis"><span></span><div class="yrs">
+        <span style="left:0%">2016</span><span class="odd" style="left:18.2%">2018</span><span style="left:36.4%">2020</span><span class="odd" style="left:54.5%">2022</span><span style="left:72.7%">2024</span><span class="odd" style="left:90.9%">2026</span>
+      </div></div>
+      <div class="gr" style="--c:var(--c5)"><div class="gl"><b>Arburg</b><i>Production planning</i></div><div class="track"><span class="seg" style="left:5.5%;width:16.8%"></span></div></div>
+      <div class="gr" style="--c:var(--c4)"><div class="gl"><b>Bose</b><i>Network planner</i></div><div class="track"><span class="seg" style="left:22.3%;width:9.1%"></span></div></div>
+      <div class="gr" style="--c:var(--c4)"><div class="gl"><b>Bose</b><i>S&amp;OP planning lead</i></div><div class="track"><span class="seg" style="left:31.4%;width:18.1%"></span></div></div>
+      <div class="gr" style="--c:var(--c2)"><div class="gl"><b>Amazon</b><i>Same-day network</i></div><div class="track"><span class="seg" style="left:49.5%;width:7.8%"></span></div></div>
+      <div class="gr" style="--c:var(--c2)"><div class="gl"><b>Amazon</b><i>Store launches</i></div><div class="track"><span class="seg" style="left:57.3%;width:6.3%"></span></div></div>
+      <div class="gr" style="--c:var(--c2)"><div class="gl"><b>Amazon</b><i>Instock, procurement</i></div><div class="track"><span class="seg" style="left:63.6%;width:15.5%"></span></div></div>
+      <div class="gr" style="--c:var(--c2)"><div class="gl"><b>Amazon</b><i>Freight partners</i></div><div class="track"><span class="seg" style="left:79.5%;width:2.8%"></span></div></div>
+      <div class="gr" style="--c:var(--c3)"><div class="gl"><b>Darkchain</b><i>Consulting</i></div><div class="track"><span class="seg" style="left:83.3%;width:7.6%"></span></div></div>
+      <div class="gr" style="--c:var(--c1)"><div class="gl"><b>JD.com</b><i>Last-mile capacity</i></div><div class="track"><span class="seg now" style="left:91.7%;width:7.1%"></span></div></div>
+      <p class="gnote">Irvine · Hartford · Boston · Seattle · New York · Berlin</p>
     </div>
-    <ul>
-      <li>Own weekly DSP capacity across JD.com’s European last-mile network in DE, NL, BE.</li>
-      <li>Scaled DSP capacity from 1,000 to 20,000 packages/day through the March 2026 launch, across 20+ depots.</li>
-      <li>Grew postcode coverage 7x by planning driver, route, and depot capacity for each new delivery area.</li>
-      <li>Integrated MediaMarkt/Saturn store-pickup volume (JD.com acquisition May ’26) into live DSP operations.</li>
-      <li>Model 3PL vs DSP mix and peak vs base utilization to hit cost-per-stop and on-time targets.</li>
-      <li>Weekly readout to European Ops leadership on UTR, utilization, service level, and DSP performance risk.</li>
-    </ul>
   </div>
-  <div class="job">
-    <div class="row">
-      <span class="co">Darkchain</span><span class="when">Mar 2025 – Jan 2026</span>
-      <span class="role">Supply Chain and Operations Consultant</span><span class="where">Berlin</span>
-    </div>
-    <ul>
-      <li>Supply chain and operations for a Berlin agency serving Amazon third-party sellers in the EU.</li>
-      <li>Ran WMS design, inventory policy, and standardized reporting for growth brands; held availability above 95%.</li>
-      <li>Shaped AI agent design for constraint monitoring (openclaw), inventory health, and master-data quality.</li>
-    </ul>
-  </div>
-  <div class="job">
-    <div class="row">
-      <span class="co">Amazon</span><span class="when">Oct 2024 – Jan 2025</span>
-      <span class="role">Supply Chain Manager, AFP Freight Partner Onboarding</span><span class="where">Berlin</span>
-    </div>
-    <ul>
-      <li>Stood up Amazon Freight Partner Germany, bringing independent 3PL carriers into live EU middle-mile.</li>
-      <li>Bridged partner ops with central middle-mile, safety, finance, and legal to run a new business unit.</li>
-      <li>Owned partner performance across on-road KPIs, capacity, and EU regulatory compliance.</li>
-    </ul>
-    <div class="row sub-role">
-      <span class="role">Instock Manager, Omnichannel Procurement</span><span class="when">Jan 2023 – Sep 2024</span>
-      <span class="where">New York City</span>
-    </div>
-    <ul>
-      <li>Integrated Fresh procurement into the SSD network across dark stores, physical stores, and same-day hubs.</li>
-      <li>Cut cross-channel stockouts by 30% by balancing shared grocery inventory between store and online orders.</li>
-      <li>Raised perishable instock from 80% to 93% across 100 stores by fixing the top stockout root causes.</li>
-      <li>Cut dairy waste by 15% (about $1.2M/year) while holding 98% instock by tuning replenishment parameters.</li>
-      <li>Caught instock risk 21 days earlier with daily SQL/QuickSight dashboards and automated email alarms.</li>
-      <li>Improved top perishable vendor fill rate from 83% to 95% through weekly reviews and escalation paths.</li>
-    </ul>
-    <div class="row sub-role">
-      <span class="role">Launch Manager, Amazon Fresh (Just Walk Out)</span><span class="when">Apr 2022 – Dec 2022</span>
-      <span class="where">50% travel</span>
-    </div>
-    <ul>
-      <li>Launched 23 Just Walk Out grocery stores at 97% opening-day instock across 14,000+ ASINs.</li>
-      <li>Owned opening-day readiness for instock, last-mile delivery, and curbside pickup; all launches on schedule.</li>
-      <li>Built a launch inventory model that set initial allocation and safety stock without sales history.</li>
-      <li>Cut launch readiness from 9 to 6 weeks with a standard playbook; scaled cadence from 1/month to 2/week.</li>
-    </ul>
-    <div class="row sub-role">
-      <span class="role">Supply Chain Manager, SSD Urban Same-Day Network</span><span class="when">Jun 2021 – Apr 2022</span>
-      <span class="where">Seattle</span>
-    </div>
-    <ul>
-      <li>Launched new urban same-day nodes, scaling inbound planning from 15 to 80 nodes incl. writing SOPs (2026: 3.5k nodes).</li>
-      <li>Cut cost per package by $0.09 (-120 bps), saving $3M/year, by owning West Coast SSD inbound S&amp;OP.</li>
-      <li>Optimized trailer allocation, consolidation, and delivery timing as volume grew 2.5x (2M to 5M units/week).</li>
-    </ul>
-  </div>
-  <div class="job">
-    <div class="row">
-      <span class="co">Bose</span><span class="when">Jun 2019 – Jun 2021</span>
-      <span class="role">Global Supply Chain S&amp;OP Planning Lead, Center of Excellence</span><span class="where">Boston</span>
-    </div>
-    <ul>
-      <li>Owned the APS stack (SAP APO, Kinaxis, Power BI) for planning across a $3B global portfolio and CM network.</li>
-      <li>Ran monthly S&amp;OP with the C-suite; delivered budget plans and capacity outlooks for VP-level decisions.</li>
-      <li>Enforced global planning governance (safety stock, lead times, forecast) consistently across regions.</li>
-      <li>Freed $75M of excess inventory and cut DIOH by 35 days through tighter EOL and NPI segmentation.</li>
-      <li>Partnered with BI engineering to automate recurring reporting and production dashboards.</li>
-      <li>Built quarterly insight deck presented at global all-hands (~9,000 employees).</li>
-    </ul>
-    <div class="row sub-role">
-      <span class="role">Global Network Planner</span><span class="when">Jun 2018 – Jun 2019</span>
-      <span class="where">Boston</span>
-    </div>
-    <ul>
-      <li>Owned supply and channel planning across company stores, distributors, and partners in 11 countries.</li>
-      <li>Managed allocation, NPI launch phasing, and replenishment for NA, EMEA, APAC retailers ($400M T12M).</li>
-      <li>Built demand forecasts and supply plans for ~600 SKUs across CMs in China, Malaysia, and Mexico.</li>
-    </ul>
-  </div>
-  <div class="job">
-    <div class="row">
-      <span class="co">Arburg</span><span class="when">Aug 2016 – Jun 2018</span>
-      <span class="role">Production Planning Manager</span><span class="where">Irvine, CA / Hartford, CT</span>
-    </div>
-    <ul>
-      <li>Ran production planning and operations for a $30M OEM site, leading a 10-person team across two shifts.</li>
-      <li>Aligned engineering releases, BOM changes, and build plans between German HQ and US manufacturing.</li>
-      <li>Cut order lead time from 6 weeks to 3 with Excel planning tools and daily build-readiness routines.</li>
-    </ul>
-  </div>
+</section>
 
-  <h2>Education</h2>
-  <div class="edu">
-    <div class="row"><span><b>Boston University</b> <span class="d">· Master of Science in Supply Chain Management</span></span><span class="when">2024</span></div>
-    <div class="row"><span><b>California State University Long Beach</b> <span class="d">· M.Sc. Supply Chain Management coursework (credits transferred to BU)</span></span><span class="when">2014 – 2016</span></div>
-    <div class="row"><span><b>Technische Universität Kaiserslautern, Germany</b> <span class="d">· B.Sc. Mechanical Engineering &amp; Business Management</span></span><span class="when">2009 – 2014</span></div>
-  </div>
+<section class="g">
+  <div class="in">
+    <div class="sh"><h2>Experience</h2><span class="lab">Newest first</span></div>
 
-  <h2>Early career &amp; technical research</h2>
-  <div class="list">
-    <div class="row"><p><b>i.am.plus</b> · Student, managed projects around ML dataset training (MTurk) for voice assistant (AI HW devices).</p><span class="when">2015 – 2016</span></div>
-    <div class="row"><p><b>Google</b> · Student, localization work on the Ads recommender systems for DACH region’s Search Team.</p><span class="when">2015</span></div>
-    <div class="row"><p><b>Apple</b> · Student, localization work on Siri for integration of Apple Music DACH region.</p><span class="when">2015</span></div>
-    <div class="row"><p><b>German Research Center for Industrial AI</b> · Research Intern, Smartfactory IoT, Kaiserslautern. Developed a semiconductor-based sensor to detect resin flow fronts, improving the accuracy of manufacturing simulations. Collaboration between MT Aerospace and Fraunhofer Institute for Composite Materials.</p><span class="when">2013 – 2014</span></div>
-    <div class="row"><p><b>Borg Warner GmbH</b> · Working Student, Mainz, Manufacturing Quality Assurance.</p><span class="when">2013</span></div>
-  </div>
+    <div class="leg" style="--c:var(--c1)">
+      <div class="side"><div class="co">JD.com</div><span class="lab">Europe · Berlin</span></div>
+      <div class="roles">
+        <div class="r">
+          <h3>Capacity Planning Manager, Last-Mile Operations</h3>
+          <p class="meta">Feb 2026 – now · DE, NL, BE</p>
+          <div class="hi"><b>1k → 20k</b><span>packages a day through the March 2026 launch, across 20+ depots</span></div>
+          <ul>
+            <li>Own weekly delivery-partner (DSP) capacity for the European last-mile network.</li>
+            <li>Grew postcode coverage 7x by planning drivers, routes and depots for each new area.</li>
+            <li>Brought MediaMarkt/Saturn store-pickup volume into live operations after the May 2026 acquisition.</li>
+            <li>Model 3PL vs DSP mix and peak vs base utilization against cost-per-stop and on-time targets.</li>
+            <li>Weekly readout to European Ops leadership on utilization, service level and partner risk.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-  <h2>Certificates, languages &amp; tech</h2>
-  <div class="list">
-    <p><b>Certificates:</b> CSSC Lean Six Sigma Green Belt, 2024; Harvard Business School, Business Analytics, 2018</p>
-    <p><b>3D-CAD:</b> Solidworks &amp; Siemens NX CAD, 2014</p>
-    <p><b>Languages:</b> English (fluent/C2), German (fluent/C2), Russian (B1), Ukrainian (B1)</p>
-    <p><b>Amazon systems:</b> FMC, AFT Transship, Optimus, RTCT, TNT, YMS, Rodeo, ROAM, FMN, Stowmap, SCOT (Forecasting/Buying Portal), Procurement Portal, WOMBAT, FAB, CORGI, F3AST, Selection Central</p>
-    <p><b>Analytics &amp; data:</b> SQL (Hubble), Datanet, QuickSight, MEGA, Tableau, Power BI, Excel, Smartsheets, Claude Desktop + Code</p>
+    <div class="leg" style="--c:var(--c3)">
+      <div class="side"><div class="co">Darkchain</div><span class="lab">Berlin</span></div>
+      <div class="roles">
+        <div class="r">
+          <h3>Supply Chain and Operations Consultant</h3>
+          <p class="meta">Mar 2025 – Jan 2026</p>
+          <div class="hi"><b>95%+</b><span>availability held for growth brands selling on Amazon in the EU</span></div>
+          <ul>
+            <li>Ran warehouse system design, inventory policy and standard reporting for a Berlin seller agency.</li>
+            <li>Shaped AI agents that watch constraints, inventory health and master-data quality.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--c:var(--c2)">
+      <div class="side"><div class="co">Amazon</div><span class="lab">Seattle · New York · Berlin</span></div>
+      <div class="roles">
+        <div class="r">
+          <h3>Supply Chain Manager, Freight Partner Onboarding</h3>
+          <p class="meta">Oct 2024 – Jan 2025 · Berlin</p>
+          <div class="hi"><b>New unit</b><span>stood up Amazon Freight Partner Germany</span></div>
+          <ul>
+            <li>Brought independent 3PL carriers into live EU middle-mile.</li>
+            <li>Connected partner ops with middle-mile, safety, finance and legal.</li>
+            <li>Owned on-road KPIs, capacity and EU regulatory compliance.</li>
+          </ul>
+        </div>
+        <div class="r">
+          <h3>Instock Manager, Omnichannel Procurement</h3>
+          <p class="meta">Jan 2023 – Sep 2024 · New York</p>
+          <div class="hi"><b>80 → 93%</b><span>perishable instock across 100 stores, by fixing the top stockout causes</span></div>
+          <ul>
+            <li>Cut cross-channel stockouts 30% by balancing shared grocery stock between store and online orders.</li>
+            <li>Cut dairy waste 15% (about $1.2M a year) while holding 98% instock.</li>
+            <li>Spotted instock risk 21 days earlier with daily SQL/QuickSight dashboards and alarms.</li>
+            <li>Raised top perishable vendor fill rate from 83% to 95%.</li>
+          </ul>
+        </div>
+        <div class="r">
+          <h3>Launch Manager, Amazon Fresh (Just Walk Out)</h3>
+          <p class="meta">Apr 2022 – Dec 2022 · 50% travel</p>
+          <div class="hi"><b>23 stores</b><span>launched at 97% opening-day instock across 14,000+ items, all on schedule</span></div>
+          <ul>
+            <li>Owned opening-day readiness for instock, last-mile delivery and curbside pickup.</li>
+            <li>Built a launch inventory model that sets first allocation and safety stock with no sales history.</li>
+            <li>Cut launch readiness from 9 to 6 weeks and scaled cadence from 1 a month to 2 a week.</li>
+          </ul>
+        </div>
+        <div class="r">
+          <h3>Supply Chain Manager, Urban Same-Day Network</h3>
+          <p class="meta">Jun 2021 – Apr 2022 · Seattle</p>
+          <div class="hi"><b>$3M/yr</b><span>saved by cutting $0.09 per package on West Coast inbound</span></div>
+          <ul>
+            <li>Scaled inbound planning from 15 to 80 same-day nodes and wrote the SOPs (3,500 nodes by 2026).</li>
+            <li>Owned West Coast inbound S&amp;OP.</li>
+            <li>Tuned trailers, consolidation and timing as volume grew from 2M to 5M units a week.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--c:var(--c4)">
+      <div class="side"><div class="co">Bose</div><span class="lab">Boston</span></div>
+      <div class="roles">
+        <div class="r">
+          <h3>Global S&amp;OP Planning Lead, Center of Excellence</h3>
+          <p class="meta">Jun 2019 – Jun 2021</p>
+          <div class="hi"><b>$75M</b><span>excess inventory freed and 35 days of inventory cut, through tighter end-of-life and launch planning</span></div>
+          <ul>
+            <li>Owned the planning systems (SAP APO, Kinaxis, Power BI) for a $3B global portfolio.</li>
+            <li>Ran monthly S&amp;OP with the C-suite: budget plans and capacity outlooks.</li>
+            <li>Set global rules for safety stock, lead times and forecasts across regions.</li>
+            <li>Automated reporting with BI engineering; quarterly deck at the global all-hands (~9,000 people).</li>
+          </ul>
+        </div>
+        <div class="r">
+          <h3>Global Network Planner</h3>
+          <p class="meta">Jun 2018 – Jun 2019</p>
+          <div class="hi"><b>11 countries</b><span>supply and channel planning for $400M of retail sales</span></div>
+          <ul>
+            <li>Ran allocation, launch phasing and replenishment for retailers in NA, EMEA and APAC.</li>
+            <li>Built forecasts and supply plans for ~600 SKUs across contract manufacturers in China, Malaysia and Mexico.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="leg" style="--c:var(--c5)">
+      <div class="side"><div class="co">Arburg</div><span class="lab">Irvine, CA · Hartford, CT</span></div>
+      <div class="roles">
+        <div class="r">
+          <h3>Production Planning Manager</h3>
+          <p class="meta">Aug 2016 – Jun 2018</p>
+          <div class="hi"><b>6 → 3 wk</b><span>order lead time, with Excel planning tools and daily build-readiness checks</span></div>
+          <ul>
+            <li>Ran planning and operations for a $30M machine site with a 10-person team over two shifts.</li>
+            <li>Kept engineering releases, BOM changes and build plans in sync between German HQ and the US.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
+
+<section class="g">
+  <div class="in">
+    <div class="sh"><h2>Toolkit</h2><span class="lab">Skills · Systems · Languages</span></div>
+    <div class="cols">
+      <div class="box">
+        <h3>Strong at</h3>
+        <div class="chips">
+          <span class="chip k">Capacity planning</span><span class="chip k">Network launches</span><span class="chip k">S&amp;OP</span><span class="chip k">Instock &amp; replenishment</span>
+          <span class="chip">Last mile</span><span class="chip">Middle mile</span><span class="chip">Carrier &amp; 3PL management</span><span class="chip">Inventory policy</span><span class="chip">Launch allocation</span><span class="chip">Procurement</span>
+        </div>
+        <h3 class="next">Tools</h3>
+        <div class="chips">
+          <span class="chip">SQL</span><span class="chip">QuickSight</span><span class="chip">Tableau</span><span class="chip">Power BI</span><span class="chip">Excel</span><span class="chip">SAP APO</span><span class="chip">Kinaxis</span><span class="chip">Smartsheet</span><span class="chip">Claude Code</span><span class="chip">Solidworks / NX</span>
+        </div>
+        <p class="small">Amazon systems: FMC, AFT Transship, Optimus, RTCT, TNT, YMS, Rodeo, ROAM, FMN, Stowmap, SCOT, Procurement Portal, WOMBAT, FAB, CORGI, F3AST, Selection Central, Hubble, Datanet, MEGA</p>
+      </div>
+      <div class="box">
+        <h3>Languages</h3>
+        <div class="langs">
+          <div class="lg"><b>C2</b><span>English</span></div>
+          <div class="lg"><b>C2</b><span>German</span></div>
+          <div class="lg"><b>B1</b><span>Russian</span></div>
+          <div class="lg"><b>B1</b><span>Ukrainian</span></div>
+        </div>
+        <h3 class="next">Education</h3>
+        <div class="rows">
+          <div class="rw"><b>Boston University</b><span class="y">2024</span><span class="d">M.Sc. Supply Chain Management</span></div>
+          <div class="rw"><b>Cal State Long Beach</b><span class="y">2014 – 16</span><span class="d">M.Sc. coursework, credits moved to BU</span></div>
+          <div class="rw"><b>TU Kaiserslautern</b><span class="y">2009 – 14</span><span class="d">B.Sc. Mechanical Engineering &amp; Business</span></div>
+        </div>
+        <h3 class="next">Certificates</h3>
+        <div class="rows">
+          <div class="rw"><b>Lean Six Sigma Green Belt</b><span class="y">2024</span><span class="d">CSSC</span></div>
+          <div class="rw"><b>Business Analytics</b><span class="y">2018</span><span class="d">Harvard Business School</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="g">
+  <div class="in">
+    <div class="sh"><h2>Early career</h2><span class="lab">AI &amp; research</span></div>
+    <div class="box rows">
+      <div class="rw"><b>i.am.plus</b><span class="y">2015 – 16</span><span class="d">Ran ML dataset training projects for a voice assistant on AI hardware.</span></div>
+      <div class="rw"><b>Google</b><span class="y">2015</span><span class="d">Localized Ads recommender systems for the DACH Search team.</span></div>
+      <div class="rw"><b>Apple</b><span class="y">2015</span><span class="d">Localized Siri for the Apple Music launch in DACH.</span></div>
+      <div class="rw"><b>German Research Center for AI</b><span class="y">2013 – 14</span><span class="d">Built a semiconductor sensor that tracks resin flow, making manufacturing simulations more accurate. With MT Aerospace and Fraunhofer.</span></div>
+      <div class="rw"><b>BorgWarner</b><span class="y">2013</span><span class="d">Manufacturing quality assurance.</span></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="end g"><div class="in">JR · Resume · November 2026</div></footer>
 </body>
 </html>
