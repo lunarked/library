@@ -94,6 +94,11 @@ b,strong{font-weight:600}
 .bh .lab{font:600 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;min-height:1.3em;display:block}
 .bh .lab.prob{color:var(--bad)} .bh .lab.fix{color:var(--good)} .bh .lab.set{color:var(--muted)}
 .bh h3{font-weight:900;font-size:clamp(24px,3vw,36px);line-height:1.05;margin:2px 0 0}
+.bh .mk2{display:inline-block;font:700 11px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:3px 7px;border-radius:3px;margin-right:8px;vertical-align:6px}
+.mtag{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;background:var(--ink);color:var(--bg);font:800 16px/1.25 var(--f-head);padding:6px 11px;border-radius:5px;margin-bottom:12px}
+.mtag small{font:700 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--board)}
+.mtag.fam{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.mtag.fam small{color:var(--amber)}
 .board{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px}
 .board svg{width:100%;height:auto;display:block;overflow:visible}
 .cname{font:800 16px var(--f-head);fill:var(--ink)}
@@ -371,22 +376,22 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
   var NS='http://www.w3.org/2000/svg';
   var CUST=[['Carmaker','var(--cA)',60,50],['Phone maker','var(--cB)',50,30],['Distributor','var(--cC)',30,20],['Medical maker','var(--cD)',20,40]];
   var R={
-    orders:{n:'160 ordered, 100 in stock',a:null},
-    fcfs:{n:'First come, first served',a:[20,50,30,0]},
-    crit:{n:'Critical level of 30',a:[10,50,20,20]},
-    prop:{n:'Proportional',a:[37,31,19,13]},
-    infl:{n:'Proportional, carmaker inflates',a:[49,26,15,10],o:[96,50,30,20]},
-    lin:{n:'Linear',a:[45,35,15,5]},
-    uni:{n:'Uniform',a:[27,27,26,20]},
-    tae:{n:'Turn-and-earn',a:[40,30,20,10]},
-    litt:{n:'Littlewood’s rule',a:[50,30,0,20]},
-    bid:{n:'Bid price $28',a:[60,20,0,20]},
-    aatp:{n:'Allocated ATP',a:[50,15,15,20]},
-    lp:{n:'LP: most margin',a:[60,20,0,20]},
-    lpmin:{n:'LP with a minimum',a:[60,10,10,20]},
-    maxmin:{n:'Max-min fairness',a:[27,27,26,20]},
-    nash:{n:'Nash bargaining',a:[35,25,20,20]},
-    auc:{n:'Auction at $55',a:[60,20,0,20]}
+    orders:{n:'No model yet',fam:'The setup',a:null},
+    fcfs:{n:'First come, first served',fam:'The default, no model',a:[20,50,30,0]},
+    crit:{n:'Critical level policy',fam:'Inventory rationing',tag:'Critical level policy · fair share',a:[10,50,20,20]},
+    prop:{n:'Proportional allocation',fam:'Allocation games',a:[37,31,19,13]},
+    infl:{n:'Proportional allocation',fam:'Allocation games · carmaker inflates its order',a:[49,26,15,10],o:[96,50,30,20]},
+    lin:{n:'Linear allocation',fam:'Allocation games',a:[45,35,15,5]},
+    uni:{n:'Uniform allocation',fam:'Allocation games',a:[27,27,26,20]},
+    tae:{n:'Turn-and-earn',fam:'Allocation games',a:[40,30,20,10]},
+    litt:{n:'Littlewood\u2019s rule',fam:'Revenue management',a:[50,30,0,20]},
+    bid:{n:'Bid-price control',fam:'Revenue management',tag:'EMSR · bid-price control',a:[60,20,0,20]},
+    aatp:{n:'Allocated ATP (aATP)',fam:'Allocation planning in APS',a:[50,15,15,20]},
+    lp:{n:'Linear programming (LP)',fam:'Optimization',a:[60,20,0,20]},
+    lpmin:{n:'LP with a minimum',fam:'Optimization',tag:'LP with a minimum · network flow · MIP · stochastic programming',a:[60,10,10,20]},
+    maxmin:{n:'Max-min fairness',fam:'Fairness theory',a:[27,27,26,20]},
+    nash:{n:'Nash bargaining',fam:'Fairness theory',tag:'Nash bargaining · proportional fairness',a:[35,25,20,20]},
+    auc:{n:'Auction',fam:'Mechanism design',tag:'Auction · mechanism design',a:[60,20,0,20]}
   };
   function margin(a){return a.reduce(function(s,v,i){return s+v*CUST[i][3];},0);}
   function worst(a){var w=1,k=0;a.forEach(function(v,i){var r=v/CUST[i][2];if(r<w){w=r;k=i;}});return [w,k];}
@@ -417,7 +422,7 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
   function render(key){
     if(key===cur)return; cur=key; gen++; var my=gen; var r=R[key];
     fly.innerHTML='';
-    document.getElementById('bn').textContent=r.n;
+    document.getElementById('bn').innerHTML=(r.a?'<span class="mk2">Model</span>':'')+r.n;
     var o=r.o||CUST.map(function(c){return c[2];});
     var jobs=[];
     ROWS.forEach(function(row,ci){
@@ -484,11 +489,19 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
   function setStep(s){
     var d=+s.dataset.d, t=s.querySelector('.t');
     document.querySelectorAll('#days span').forEach(function(x,i){x.className=i<d?'done':i===d?'cur':'';});
-    var bl=document.getElementById('bl'); bl.textContent=t.textContent; bl.className='lab '+(t.classList.contains('prob')?'prob':t.classList.contains('fix')?'fix':'set');
+    var bl=document.getElementById('bl'); bl.textContent=R[s.dataset.r].fam; bl.className='lab set';
     render(s.dataset.r);
   }
 
   var steps=document.querySelectorAll('#story .step');
+  steps.forEach(function(s){
+    if(s.classList.contains('day')||s.dataset.r==='orders')return;
+    var r=R[s.dataset.r], t=s.querySelector('.t'), pc=/pros and cons/i.test(t.textContent);
+    var d=document.createElement('div'); d.className='mtag'+(pc?' fam':'');
+    d.innerHTML=pc?'<small>Model family</small>'+r.fam:'<small>Model</small>'+(r.tag||r.n);
+    t.insertAdjacentElement('afterend',d);
+    if(pc){var h=s.querySelector('h3');if(h)h.remove();}
+  });
   setStep(steps[0]); steps[0].classList.add('on');
   if('IntersectionObserver' in window){
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});setStep(e.target);}});},{rootMargin:(innerWidth<=860?'-64% 0px -16% 0px':'-40% 0px -45% 0px')});
