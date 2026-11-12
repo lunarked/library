@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: one sticky "pile" visual for the whole story (left on desktop, top on phones). Each card re-splits the same 100 chips with a new rule. */
+/* Layout: "a week on the allocation desk". Sticky dispatch board (stock pile -> 4 customer bins with status lights) left on desktop, top on phones; day cards scroll beside it. */
 :root{
   --bg:#F3F3F1; --paper:#FFFFFF; --ink:#141A22; --muted:#5A6370; --line:#D3D6DA; --soft:#E5E7EA;
   --amber:#B86E00; --ambersoft:#F6E6CC; --sky:#2F5C8F; --skysoft:#DCE5F0;
@@ -46,33 +46,33 @@ b,strong{font-weight:600}
 /* Opener */
 .open{background:var(--night);color:var(--nightink);padding-block:60px 50px}
 .open .kick{color:var(--board)}
-.open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:15ch}
+.open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:14ch}
 .open h1 .u{color:#FFB020}
 .dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
 .cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
 .cue::after{content:" ↓"}
-.boardrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;max-width:960px}
-@media (max-width:700px){.boardrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.boardrow div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:10px 12px}
-.boardrow b{display:block;font:600 clamp(24px,3.4vw,36px)/1.05 var(--f-mono);color:var(--board);font-variant-numeric:tabular-nums}
-.boardrow b.r{color:#FF7B6E}
-.boardrow span{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:34px;max-width:960px}
+.week div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:8px 9px;min-width:0}
+.week b{display:block;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.06em}
+.week span{display:block;font:500 13px/1.3 var(--f-head);color:#C4CAD1}
+@media (max-width:700px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}.week div:last-child{grid-column:1 / -1}}
 
 /* Scrolly */
-.scrolly{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:44px;position:relative}
-.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6vh);height:88vh;display:flex;flex-direction:column;justify-content:center;gap:14px;margin:0;min-width:0}
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:44px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5vh);height:90vh;display:flex;flex-direction:column;justify-content:center;gap:12px;margin:0;min-width:0}
 .steps{padding-block:24vh 40vh;min-width:0}
 .step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:60vh;font-size:18px;opacity:.45;transition:opacity .3s}
 .step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
 .step:last-child{margin-bottom:10vh}
 .step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
+.step .t.prob{color:var(--bad)} .step .t.fix{color:var(--good)}
 .step h3{font-size:22px;margin-bottom:8px;line-height:1.2}
 .step p:last-child{margin:0}
-.step.famc{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.step.famc .t{color:var(--board)}
-.step.famc .big{display:block;font:900 64px/.9 var(--f-head);color:var(--board);margin-bottom:6px}
-.step.famc h3{font-size:30px}
-.step.famc .src1{font:600 12.5px var(--f-mono);opacity:.75;margin-top:10px}
+.step .who{font:600 12.5px var(--f-mono);color:var(--muted);margin-top:10px}
+.step.day{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.step.day .t{color:var(--board)}
+.step.day .big{display:block;font:900 58px/.9 var(--f-head);color:var(--board);margin-bottom:8px;letter-spacing:-.01em}
+.step.day h3{font-size:28px}
 .pc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
 .pc h4{font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;color:var(--good)}
 .pc div+div h4{color:var(--bad)}
@@ -84,36 +84,36 @@ b,strong{font-weight:600}
 .diff{margin-top:12px;font-size:16px;line-height:1.4;border-left:5px solid var(--amber);padding:2px 0 2px 12px}
 .diff b{font-family:var(--f-head)}
 
-/* The pile visual */
-.rail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.rail span{height:6px;border-radius:3px;background:var(--soft);transition:background .3s}
-.rail span.done{background:var(--muted)} .rail span.cur{background:var(--amber)}
-.rhead .fam{font:600 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--amber);min-height:1.3em;display:block}
-.rhead h3{font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:1.05;margin:2px 0 4px;min-height:1.05em}
-.rhead p{margin:0;font:500 14px/1.4 var(--f-mono);color:var(--muted);min-height:2.8em}
-.viz{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:22px;align-items:center}
-.pile{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:3px}
-.pile i{display:block;aspect-ratio:1;border-radius:2px;background:var(--soft);transition:background .45s}
-.pilecap{font:600 11.5px var(--f-mono);color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.05em}
-.rows{display:flex;flex-direction:column;gap:12px}
-.row .top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font:800 15.5px var(--f-head);margin-bottom:3px}
-.row .top span{font:600 12px var(--f-mono);color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-.row .top span b{font-weight:700}
-b.hi{color:var(--good)} b.mid{color:var(--amber)} b.lo{color:var(--bad)}
-.trk{height:20px;position:relative;border-radius:4px;background:repeating-linear-gradient(135deg,var(--badsoft) 0 6px,transparent 6px 11px);box-shadow:inset 0 0 0 1px var(--bad);transition:width .6s}
-.trk.idle{background:repeating-linear-gradient(135deg,var(--badsoft) 0 6px,transparent 6px 11px)}
-.trk .f{position:absolute;inset:0 auto 0 0;width:0;border-radius:4px;transition:width .8s cubic-bezier(.3,.7,.3,1)}
-.trk .ph{position:absolute;top:0;bottom:0;right:0;border:2px dashed var(--muted);border-left:0;border-radius:0 4px 4px 0;transition:left .6s}
-.trk .mk{position:absolute;top:-3px;bottom:-3px;width:3px;background:var(--ink);border-radius:2px;transition:left .6s}
+/* Dispatch board */
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.days span{font:600 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;text-align:center;padding:4px 0;border-radius:3px;background:var(--soft);color:var(--muted);transition:background .3s,color .3s}
+.days span.done{background:var(--line);color:var(--ink)} .days span.cur{background:var(--amber);color:#fff}
+.bh .lab{font:600 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;min-height:1.3em;display:block}
+.bh .lab.prob{color:var(--bad)} .bh .lab.fix{color:var(--good)} .bh .lab.set{color:var(--muted)}
+.bh h3{font-weight:900;font-size:clamp(24px,3vw,36px);line-height:1.05;margin:2px 0 0}
+.board{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px}
+.board svg{width:100%;height:auto;display:block;overflow:visible}
+.cname{font:800 16px var(--f-head);fill:var(--ink)}
+.cnum{font:600 12.5px var(--f-mono);fill:var(--muted)}
+.cstat{font:700 11.5px var(--f-mono);letter-spacing:.04em}
+.cell{transition:fill .25s}
 .score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .score>div{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--line);border-radius:6px;padding:8px 12px;transition:border-color .4s}
 .score>div.hi{border-top-color:var(--good)} .score>div.mid{border-top-color:var(--amber)} .score>div.lo{border-top-color:var(--bad)}
 .score span{font:600 11.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block}
-.score b{font:900 28px/1.1 var(--f-head);font-variant-numeric:tabular-nums}
+.score b{font:900 26px/1.1 var(--f-head);font-variant-numeric:tabular-nums}
 .score small{font:600 11.5px var(--f-mono);color:var(--muted);display:block}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:600 12px var(--f-mono);color:var(--muted)}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 
+/* Playbook */
+.play{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.play .r{display:grid;grid-template-columns:70px minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.play .d{font:900 18px var(--f-head);color:var(--amber)}
+.play .p{font-size:16.5px;line-height:1.35;border-left:4px solid var(--bad);padding-left:10px}
+.play .f{font:800 16.5px/1.3 var(--f-head);border-left:4px solid var(--good);padding-left:10px}
+.play .f small{display:block;font:500 12px var(--f-mono);color:var(--muted);margin-top:2px}
+@media (max-width:700px){.play .r{grid-template-columns:minmax(0,1fr);gap:6px}}
 /* After the scroll */
 .sec{padding-block:64px 10px}
 .sec h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 12px;letter-spacing:-.01em}
@@ -174,18 +174,16 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 
 @media (max-width:860px){
   .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
-  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 10px;background:var(--bg);z-index:2;gap:8px;border-bottom:1px solid var(--line)}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:8px 8px;background:var(--bg);z-index:2;gap:6px;border-bottom:1px solid var(--line)}
   .steps{padding-block:6vh 50vh;position:relative;z-index:3}
   .step{margin-bottom:50vh;opacity:1;font-size:17px}
   .step h3{font-size:20px}
-  .step.famc .big{font-size:48px} .step.famc h3{font-size:25px}
+  .step.day .big{font-size:44px} .step.day h3{font-size:24px}
   .pc{gap:8px} .pc ul{font-size:14px}
-  .rhead h3{font-size:24px} .rhead p{font-size:12px;min-height:2.8em}
-  .viz{grid-template-columns:118px minmax(0,1fr);gap:12px}
-  .pile{gap:2px} .pilecap{font-size:10px}
-  .rows{gap:6px} .row .top{font-size:13px;margin-bottom:1px} .row .top span{font-size:10.5px} .trk{height:13px}
-  .score{gap:8px} .score>div{padding:5px 9px} .score b{font-size:20px} .score span,.score small{font-size:10px}
-  .fig .legend{display:none}
+  .days span{font-size:9.5px;padding:3px 0}
+  .bh .lab{font-size:10.5px} .bh h3{font-size:20px}
+  .board{padding:3px}
+  .score{gap:6px} .score>div{padding:4px 8px} .score b{font-size:18px} .score span,.score small{font-size:9.5px}
 }
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -193,107 +191,115 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 <header class="open g">
   <div class="in">
     <div class="kick">Explainer · Allocating scarce supply</div>
-    <h1>100 chips, 160 orders, <span class="u">13 ways</span> to split them</h1>
-    <p class="dek">A chip maker can ship 100 units this week. Its four customers ordered 160. Scroll through the allocation models from research and planning software, and watch each one split the same pile.</p>
-    <div class="boardrow">
-      <div><b>100</b><span>units to ship</span></div>
-      <div><b class="r">160</b><span>units ordered</span></div>
-      <div><b>7</b><span>model families</span></div>
-      <div><b>13</b><span>rules tried</span></div>
+    <h1>One week on the <span class="u">allocation desk</span></h1>
+    <p class="dek">A chip maker can ship 100 units this week. Its customers ordered 160. Follow the planner from Monday to Sunday. Each day brings a new problem, and each fix is a model from supply chain research or planning software.</p>
+    <div class="week">
+      <div><b>Mon</b><span>The shortage hits</span></div>
+      <div><b>Tue</b><span>Orders balloon</span></div>
+      <div><b>Wed</b><span>A late order pays more</span></div>
+      <div><b>Thu</b><span>Sales needs promises</span></div>
+      <div><b>Fri</b><span>Finance wants margin</span></div>
+      <div><b>Sat</b><span>"This is unfair"</span></div>
+      <div><b>Sun</b><span>A broker calls</span></div>
     </div>
-    <div class="cue">Scroll to start</div>
+    <div class="cue">Scroll to start Monday</div>
   </div>
 </header>
 
 <section class="g" style="padding-top:30px">
   <div class="in scrolly" id="story">
-    <figure class="fig" aria-live="polite">
-      <div class="rail" id="rail"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="rhead"><span class="fam" id="vf"></span><h3 id="vn"></h3><p id="vh"></p></div>
-      <div class="viz">
-        <div><div class="pile" id="pile"></div><div class="pilecap">the 100 chips</div></div>
-        <div class="rows" id="rows"></div>
-      </div>
+    <figure class="fig">
+      <div class="days" id="days"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="bh"><span class="lab" id="bl"></span><h3 id="bn"></h3></div>
+      <div class="board"><svg id="bd" viewBox="0 0 600 360" role="img" aria-label="Chips move from the stock pile to four customers. Each customer shows how much of its order is filled."></svg></div>
       <div class="score">
         <div id="sm"><span>Margin earned</span><b id="mg">–</b><small>best possible $4,400</small></div>
         <div id="sw"><span>Worst-served customer</span><b id="ws">–</b><small id="wn">share of its order filled</small></div>
       </div>
-      <div class="legend" id="leg"></div>
     </figure>
 
     <div class="steps">
-      <!-- Setup -->
-      <div class="step" data-r="orders"><span class="t">The shortage</span><h3>Four customers ordered 160 chips. There are 100.</h3><p>The carmaker orders the most and pays the best margin, $50 a unit. The phone maker pays $30 and the distributor $20. The medical device maker is small and pays $40, and its line stops without the part.</p><p>Red stripes on the right show each order. Every rule below has to decide how much of each stripe to fill.</p></div>
-      <div class="step" data-r="fcfs"><span class="t">The default</span><h3>First come, first served</h3><p>With no rule, whoever orders first is filled first. The phone maker and the distributor ordered on Monday. The carmaker and the medical maker ordered on Thursday, when only 20 chips were left. The medical maker gets nothing.</p></div>
+      <div class="step" data-r="orders" data-d="-1"><span class="t">The setup</span><h3>Four customers ordered 160 chips. There are 100.</h3><p>The carmaker orders the most and pays the best margin, $50 a chip. The phone maker pays $30 and the distributor $20. The medical device maker is small and pays $40, and its line stops without the part.</p><p>On the board, each square is 4 chips. Red squares are ordered but not yet filled.</p></div>
 
-      <!-- 1 -->
-      <div class="step famc" data-r="fcfs"><span class="t">Model family 1 of 7 · Operations research</span><span class="big">01</span><h3>Inventory rationing</h3><p>Hold some stock back for the customers who matter most, before their orders arrive.</p><div class="src1">Topkis 1968 · Ha 1997 · Clark and Scarf 1960 · Eppen and Schrage 1981</div></div>
-      <div class="step" data-r="crit"><span class="t">Critical level policy</span><h3>Below 30 units, only top customers are served</h3><p>Topkis (1968) and Ha (1997) showed that with several customer classes, a simple threshold often works best. Here the carmaker and the medical maker are top priority. When stock falls to 30 on Monday, the rest of the distributor's order is refused. On Thursday the medical maker is filled in full.</p></div>
-      <div class="step" data-r="crit"><span class="t">Fair share</span><h3>The same idea across many warehouses</h3><p>Clark and Scarf (1960) and Eppen and Schrage (1981) studied how a central warehouse should feed many sites. The common answer in DRP is fair share: send each site enough so all of them run out on the same day.</p></div>
-      <div class="step" data-r="crit"><span class="t">Family 1 · Pros and cons</span><h3>Inventory rationing</h3>
+      <!-- MON -->
+      <div class="step day" data-r="orders" data-d="0"><span class="t">Monday</span><span class="big">Mon</span><h3>The shortage hits</h3><p>A supplier problem cuts this week's output to 100 chips. The planner does what most teams do by default and ships orders as they come in.</p></div>
+      <div class="step" data-r="fcfs" data-d="0"><span class="t prob">Monday · the problem</span><h3>First come, first served stops the medical line</h3><p>The phone maker and the distributor ordered on Monday morning and are filled in full. The carmaker and the medical maker order on Thursday, when only 20 chips are left. The medical maker gets nothing.</p></div>
+      <div class="step" data-r="crit" data-d="0"><span class="t fix">Monday · the fix: inventory rationing</span><h3>Stop serving low-priority orders below 30 chips</h3><p>Topkis (1968) and Ha (1997) showed that with several classes of customers, a simple threshold often works best. Serve everyone until stock falls to a set level, then keep the rest for top-priority orders. With a level of 30, the medical maker is filled in full on Thursday.</p><p>The same idea runs across warehouses. Clark and Scarf (1960) and Eppen and Schrage (1981) studied how a central warehouse feeds many sites. DRP systems use fair share: each site gets enough so all of them run out on the same day.</p></div>
+      <div class="step" data-r="crit" data-d="0"><span class="t">Monday · pros and cons</span><h3>Inventory rationing</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>One simple threshold</li><li>Protects top customers</li><li>Easy to run in DRP</li></ul></div><div><h4>Weak at</h4><ul><li>Low-priority buyers turned away</li><li>Needs a forecast by class</li><li>Wrong level wastes stock</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it looks ahead and saves stock now for important orders that have not arrived yet.</div></div>
 
-      <!-- 2 -->
-      <div class="step famc" data-r="crit"><span class="t">Model family 2 of 7 · Supply chain economics</span><span class="big">02</span><h3>Allocation games</h3><p>Customers react to the rule. Some rules give them a reason to order more than they need.</p><div class="src1">Cachon and Lariviere 1999 · Lee, Padmanabhan and Whang 1997</div></div>
-      <div class="step" data-r="prop"><span class="t">Proportional</span><h3>Everyone gets the same share of its order</h3><p>100 chips for 160 ordered means each customer gets about 62% of what it asked for. It is easy to explain and looks fair.</p></div>
-      <div class="step" data-r="infl"><span class="t">The catch</span><h3>Ordering more always gets you more</h3><p>Cachon and Lariviere (1999) showed that under a proportional rule, customers gain by inflating orders. If the carmaker orders 96 instead of 60, its share rises from 37 to 49 chips. The others lose, so they inflate too.</p><p>Lee, Padmanabhan and Whang (1997) called this shortage gaming. It is one of four causes of the bullwhip effect. When supply comes back, the fake orders are cancelled.</p></div>
-      <div class="step" data-r="lin"><span class="t">Linear</span><h3>Everyone gives up the same number of chips</h3><p>The shortage is 60, so each customer gets 15 less than it ordered. Small customers lose the most. The medical maker gets 5 of 20.</p></div>
-      <div class="step" data-r="uni"><span class="t">Uniform</span><h3>Equal shares, and spare chips go to the rest</h3><p>Each customer can get up to an equal share. The medical maker needs only 20, so its spare 5 go to the others, who end up with about 27 each. Ordering more than the equal share gains nothing, so there is little reason to inflate.</p></div>
-      <div class="step" data-r="tae"><span class="t">Turn-and-earn</span><h3>Split by each customer's past sales</h3><p>Carmakers use this with their dealers. Each customer's share follows its share of past sales: 40, 30, 20 and 10%. A bigger order changes nothing. To get more, you have to sell more. Many chip suppliers used this in the 2021 shortage.</p></div>
-      <div class="step" data-r="tae"><span class="t">Family 2 · Pros and cons</span><h3>Allocation games</h3>
+      <!-- TUE -->
+      <div class="step day" data-r="crit" data-d="1"><span class="t">Tuesday</span><span class="big">Tue</span><h3>Orders balloon</h3><p>The phone maker and the distributor complain that the threshold favors others. The planner switches to a split that looks fair to everyone.</p></div>
+      <div class="step" data-r="prop" data-d="1"><span class="t">Tuesday · the planner tries</span><h3>Proportional: everyone gets 62% of its order</h3><p>100 chips for 160 ordered means each customer gets about 62% of what it asked for. It is easy to explain and looks fair.</p></div>
+      <div class="step" data-r="infl" data-d="1"><span class="t prob">Tuesday · the problem</span><h3>The carmaker orders 96 instead of 60</h3><p>Cachon and Lariviere (1999) showed that under a proportional rule, a customer always gains by ordering more. The carmaker's share rises from 37 to 49 chips. The others lose, so next week they inflate too.</p><p>Lee, Padmanabhan and Whang (1997) called this shortage gaming. It is one of four causes of the bullwhip effect. When supply comes back, the fake orders are cancelled, and the supplier is left with too much stock.</p></div>
+      <div class="step" data-r="lin" data-d="1"><span class="t prob">Tuesday · another try</span><h3>Linear: everyone gives up 15 chips</h3><p>The shortage is 60, so each customer gets 15 less than it ordered. Asking for more still pays, and the small medical maker now gets only 5 of 20.</p></div>
+      <div class="step" data-r="uni" data-d="1"><span class="t fix">Tuesday · fix one: uniform</span><h3>Equal shares, capped at each order</h3><p>Each customer can get up to an equal share. The medical maker needs only 20, so its spare 5 go to the others, who end up with about 27 each. Ordering more than the equal share gains nothing, so the reason to inflate is gone.</p></div>
+      <div class="step" data-r="tae" data-d="1"><span class="t fix">Tuesday · fix two: turn-and-earn</span><h3>Split by past sales, not by orders</h3><p>Carmakers use this with their dealers. Each customer's share follows its share of past sales: 40, 30, 20 and 10%. A bigger order changes nothing. To get more, a customer has to sell more. Many chip suppliers used this in the 2021 shortage.</p></div>
+      <div class="step" data-r="tae" data-d="1"><span class="t">Tuesday · pros and cons</span><h3>Allocation games</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>Easy to explain</li><li>Needs only orders or past sales</li><li>Uniform and turn-and-earn stop fake orders</li></ul></div><div><h4>Weak at</h4><ul><li>Ignore margin</li><li>Proportional and linear invite fake orders</li><li>Past sales lock out new customers</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it expects customers to react to the rule, and looks for rules that do not reward fake orders.</div></div>
 
-      <!-- 3 -->
-      <div class="step famc" data-r="tae"><span class="t">Model family 3 of 7 · Airlines</span><span class="big">03</span><h3>Revenue management</h3><p>Keep some supply for higher-margin orders that arrive later.</p><div class="src1">Littlewood 1972 · Belobaba 1987, 1989 · bid-price controls</div></div>
-      <div class="step" data-r="litt"><span class="t">Littlewood's rule</span><h3>Protect chips for the late orders that pay more</h3><p>Airlines sell cheap seats early and expensive seats late. Littlewood (1972) showed when to stop selling cheap. Keep protecting another unit as long as the chance of selling it at the high price, times the high price, is more than the low price.</p><p>Here 70 chips are kept for Thursday's carmaker and medical orders. The phone maker gets the 30 left for Monday, and the distributor gets none. If Thursday had been quiet, some chips would be left unsold. <span class="est">est.</span></p></div>
-      <div class="step" data-r="litt"><span class="t">EMSR</span><h3>Many price classes, each with its own limit</h3><p>Belobaba (1987) extended the rule to many fare classes, called EMSR. Each class gets a booking limit, and higher classes can always use the space of lower ones.</p></div>
-      <div class="step" data-r="bid"><span class="t">Bid-price control</span><h3>Accept an order only if it beats the value of the last unit</h3><p>Set one number: the bid price, what the last chip is worth to you. Here it is $28. The carmaker, the medical maker and the phone maker are above it and get chips. The distributor at $20 is refused.</p></div>
-      <div class="step" data-r="bid"><span class="t">Family 3 · Pros and cons</span><h3>Revenue management</h3>
-        <div class="pc"><div><h4>Good at</h4><ul><li>Earns the most per unit</li><li>Built for uncertain demand</li><li>Bid price is one number to check</li></ul></div><div><h4>Weak at</h4><ul><li>Turns away loyal low-margin buyers</li><li>Needs a forecast of late demand</li><li>Protected chips can go unsold</li></ul></div></div>
+      <!-- WED -->
+      <div class="step day" data-r="tae" data-d="2"><span class="t">Wednesday</span><span class="big">Wed</span><h3>A late order pays more</h3><p>The carmaker and the medical maker always order late in the week, and they pay the most. If the planner sells everything early, the best orders find an empty shelf. Airlines solved this problem decades ago.</p></div>
+      <div class="step" data-r="litt" data-d="2"><span class="t fix">Wednesday · the fix: revenue management</span><h3>Littlewood's rule: protect chips for the late, high-margin orders</h3><p>Airlines sell cheap seats early and expensive seats late. Littlewood (1972) showed when to stop selling cheap. Keep protecting another unit as long as the chance of selling it at the high price, times the high price, is more than the low price.</p><p>Here 70 chips are kept for Thursday. The phone maker gets the 30 left for early orders, and the distributor gets none. If Thursday had been quiet, some chips would sit unsold. <span class="est">est.</span></p></div>
+      <div class="step" data-r="bid" data-d="2"><span class="t fix">Wednesday · a simpler version</span><h3>Bid price: accept only orders worth more than $28 a chip</h3><p>Belobaba (1987) extended Littlewood's rule to many price classes, called EMSR. Bid-price control goes further and uses one number: what the last chip is worth. The carmaker, the medical maker and the phone maker are above $28. The distributor at $20 is refused.</p></div>
+      <div class="step" data-r="bid" data-d="2"><span class="t">Wednesday · pros and cons</span><h3>Revenue management</h3>
+        <div class="pc"><div><h4>Good at</h4><ul><li>Earns the most per chip</li><li>Built for uncertain demand</li><li>Bid price is one number to check</li></ul></div><div><h4>Weak at</h4><ul><li>Turns away loyal low-margin buyers</li><li>Needs a forecast of late demand</li><li>Protected chips can go unsold</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it decides by the value of each order and the time it arrives.</div></div>
 
-      <!-- 4 -->
-      <div class="step famc" data-r="bid"><span class="t">Model family 4 of 7 · Planning software</span><span class="big">04</span><h3>Allocated ATP</h3><p>Split short supply into quotas by customer group, then promise each order against its group's quota.</p><div class="src1">Kilger and Meyr · Meyr 2009 · SAP APO and IBP · Kinaxis</div></div>
-      <div class="step" data-r="aatp"><span class="t">Quotas, then promises</span><h3>Strategic 50, key 35, other 15</h3><p>Customers are grouped into segments, and each segment gets a quota before orders arrive. The carmaker is strategic and gets 50. The medical maker and the phone maker share the key quota of 35, and the medical maker orders first. The distributor gets the other 15.</p></div>
-      <div class="step" data-r="aatp"><span class="t">The weak spot</span><h3>Quotas can sit unused while others wait</h3><p>Quotas are set on a forecast. If the carmaker orders less than planned, its quota sits idle while the phone maker waits. Most systems add rules to borrow from other groups or release unused quota after a set date.</p><p>This is the logic behind product allocation in SAP APO and IBP and priority-based allocation in Kinaxis.</p></div>
-      <div class="step" data-r="aatp"><span class="t">Family 4 · Pros and cons</span><h3>Allocated ATP</h3>
+      <!-- THU -->
+      <div class="step day" data-r="bid" data-d="3"><span class="t">Thursday</span><span class="big">Thu</span><h3>Sales needs promises now</h3><p>Customers want a firm delivery date the moment they order. The planner cannot hold a meeting for every order, so the rules have to live in the planning system.</p></div>
+      <div class="step" data-r="aatp" data-d="3"><span class="t fix">Thursday · the fix: allocated ATP</span><h3>Quotas by customer group, set before orders arrive</h3><p>Kilger and Meyr describe allocated ATP. Customers are grouped into segments, and each segment gets a quota of the short supply: strategic 50, key 35, other 15. Each order is promised in seconds against its group's quota. The medical maker orders first in the key group and takes 20, so the phone maker gets 15.</p><p>This is the logic behind product allocation in SAP APO and IBP and priority-based allocation in Kinaxis.</p></div>
+      <div class="step" data-r="aatp" data-d="3"><span class="t prob">Thursday · the catch</span><h3>Quotas can sit unused while others wait</h3><p>Quotas are set on a forecast. If the carmaker orders less than planned, its quota sits idle while the phone maker waits. Most systems add rules to borrow from other groups or release unused quota after a set date. Meyr (2009) found that segmenting this way can still earn more than first come, first served.</p></div>
+      <div class="step" data-r="aatp" data-d="3"><span class="t">Thursday · pros and cons</span><h3>Allocated ATP</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>Fast, firm promises per order</li><li>Mixes strategy with daily speed</li><li>Built into SAP, Kinaxis, Oracle</li></ul></div><div><h4>Weak at</h4><ul><li>Quotas go stale</li><li>Unused quota strands supply</li><li>Segments become political</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it splits the work in two. Plan the quotas ahead, then promise each order in seconds.</div></div>
 
-      <!-- 5 -->
-      <div class="step famc" data-r="aatp"><span class="t">Model family 5 of 7 · Applied math</span><span class="big">05</span><h3>Optimization</h3><p>Write down the goal and the limits, and let a solver find the best split.</p><div class="src1">LP and MIP · network flow · stochastic programming</div></div>
-      <div class="step" data-r="lp"><span class="t">Linear programming</span><h3>The solver fills the best margins first</h3><p>The goal is the most margin. The limits are 100 chips and no more than each order. The carmaker is filled first, then the medical maker, then the phone maker. The distributor gets nothing.</p></div>
-      <div class="step" data-r="lpmin"><span class="t">Add a rule, see its cost</span><h3>A minimum of 10 for the distributor costs $100</h3><p>Say the distributor has a contract for at least 10 chips. Add that as a limit. The solver takes 10 from the phone maker, and margin drops from $4,400 to $4,300. The model shows the price of each promise.</p></div>
-      <div class="step" data-r="lpmin"><span class="t">Bigger models</span><h3>Networks, yes/no choices and uncertain demand</h3><p>Network flow models add plants, warehouses and freight lanes. Mixed-integer programs add whole-number choices, like full trucks. Stochastic programming plans against several demand scenarios at once and may hold a few chips back until demand is clearer.</p></div>
-      <div class="step" data-r="lpmin"><span class="t">Family 5 · Pros and cons</span><h3>Optimization</h3>
+      <!-- FRI -->
+      <div class="step day" data-r="aatp" data-d="4"><span class="t">Friday</span><span class="big">Fri</span><h3>Finance wants the most margin</h3><p>The CFO asks for the split that earns the most. That is a job for a solver.</p></div>
+      <div class="step" data-r="lp" data-d="4"><span class="t fix">Friday · the fix: optimization</span><h3>A linear program fills the best margins first</h3><p>The goal is the most margin. The limits are 100 chips and no more than each order. The solver fills the carmaker, then the medical maker, then the phone maker. Margin reaches the maximum of $4,400, and the distributor gets nothing.</p></div>
+      <div class="step" data-r="lpmin" data-d="4"><span class="t fix">Friday · add a rule, see its cost</span><h3>A minimum of 10 for the distributor costs $100</h3><p>The distributor has a contract for at least 10 chips. Add that as a limit. The solver takes 10 from the phone maker, and margin drops to $4,300. The model shows the price of each promise.</p><p>Bigger models add plants, warehouses and freight lanes (network flow), yes/no choices like full trucks (MIP), and several demand scenarios at once (stochastic programming).</p></div>
+      <div class="step" data-r="lpmin" data-d="4"><span class="t">Friday · pros and cons</span><h3>Optimization</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>Best result for the stated goal</li><li>Handles thousands of parts and sites</li><li>Shows the cost of each rule</li></ul></div><div><h4>Weak at</h4><ul><li>Only as good as its data</li><li>Needs experts and software</li><li>Starves small customers unless told not to</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it searches every possible split for the best one, instead of following a fixed rule.</div></div>
 
-      <!-- 6 -->
-      <div class="step famc" data-r="lpmin"><span class="t">Model family 6 of 7 · Economics and computer science</span><span class="big">06</span><h3>Fairness rules</h3><p>Formal definitions of what a fair split means, so the rule can be explained and defended.</p><div class="src1">Max-min fairness · proportional fairness (Kelly 1997) · Nash bargaining (Nash 1950)</div></div>
-      <div class="step" data-r="maxmin"><span class="t">Max-min fairness</span><h3>Raise the smallest share as high as it can go</h3><p>Give the least-served customer as much as possible, then the next, like filling cups with water. The medical maker's cup is full at 20, and the rest settle at about 27. It is the same split as the uniform rule.</p></div>
-      <div class="step" data-r="nash"><span class="t">Nash bargaining</span><h3>Start from what each is owed, then share the rest</h3><p>Nash (1950) defined a fair deal starting from each side's fallback. Here each customer has a contract minimum (the dark marks). They get that first, and the other 60 chips are split equally.</p><p>Proportional fairness, from network research (Kelly 1997), depends on how you weigh each customer. Weighed by order size, it gives the proportional split.</p></div>
-      <div class="step" data-r="nash"><span class="t">Family 6 · Pros and cons</span><h3>Fairness rules</h3>
+      <!-- SAT -->
+      <div class="step day" data-r="lpmin" data-d="5"><span class="t">Saturday</span><span class="big">Sat</span><h3>"This is unfair"</h3><p>The distributor's CEO calls. They have bought from this supplier for 20 years and now get a third of their order. The planner needs a split that can be defended in plain words.</p></div>
+      <div class="step" data-r="maxmin" data-d="5"><span class="t fix">Saturday · fix one: max-min fairness</span><h3>Raise the smallest share as high as it can go</h3><p>Give the least-served customer as much as possible, then the next, like filling cups with water. The medical maker's cup is full at 20, and the rest settle at about 27. It is the same split as Tuesday's uniform rule.</p></div>
+      <div class="step" data-r="nash" data-d="5"><span class="t fix">Saturday · fix two: Nash bargaining</span><h3>Start from what each is owed, then share the rest</h3><p>Nash (1950) defined a fair deal starting from each side's fallback. Here each customer first gets its contract minimum: 20, 10, 5 and 5. The other 60 chips are split equally.</p><p>Proportional fairness, from network research (Kelly 1997), weighs each customer. Weighed by order size, it gives Tuesday's proportional split.</p></div>
+      <div class="step" data-r="nash" data-d="5"><span class="t">Saturday · pros and cons</span><h3>Fairness rules</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>Clear, defensible definitions</li><li>Protects small and critical buyers</li><li>Good for long-term relationships</li></ul></div><div><h4>Weak at</h4><ul><li>Ignores margin</li><li>You still have to pick a definition</li><li>Big customers may feel shortchanged</li></ul></div></div>
         <div class="diff"><b>What makes it different:</b> it starts from a definition of fair and lets the math follow from it.</div></div>
 
-      <!-- 7 -->
-      <div class="step famc" data-r="nash"><span class="t">Model family 7 of 7 · Mechanism design</span><span class="big">07</span><h3>Auctions and bids</h3><p>Let price decide who gets supply, instead of a rule set by the seller.</p><div class="src1">Vickrey 1961 · Myerson 1981</div></div>
-      <div class="step" data-r="auc"><span class="t">Auction</span><h3>Fill the highest bids until the chips run out</h3><p>The carmaker bids $90 a unit, the medical maker $75, the phone maker $55 and the distributor $35. The phone maker gets the last 20 chips, and its bid sets the price at $55 for everyone. The seller keeps the extra that customers were willing to pay.</p></div>
-      <div class="step" data-r="auc"><span class="t">Mechanism design</span><h3>Set the rules so telling the truth pays</h3><p>Vickrey (1961) and Myerson (1981) showed how to design auctions where bidding your true value is your best move. Auctions work best for spot capacity: chip brokers, cloud spot servers, freight spot rates and power markets.</p></div>
-      <div class="step" data-r="auc"><span class="t">Family 7 · Pros and cons</span><h3>Auctions and bids</h3>
+      <!-- SUN -->
+      <div class="step day" data-r="nash" data-d="6"><span class="t">Sunday</span><span class="big">Sun</span><h3>A broker calls</h3><p>A broker offers $90 a chip for anything the planner can spare. It raises a question the rules so far have avoided: why not let price decide?</p></div>
+      <div class="step" data-r="auc" data-d="6"><span class="t fix">Sunday · the option: an auction</span><h3>Fill the highest bids until the chips run out</h3><p>The carmaker bids $90, the medical maker $75, the phone maker $55 and the distributor $35. The phone maker gets the last 20 chips, and its bid sets the price at $55 for everyone. Every buyer pays $55 a chip, more than it pays under any fixed rule.</p><p>Vickrey (1961) and Myerson (1981) showed how to design auctions where bidding your true value is your best move.</p></div>
+      <div class="step" data-r="auc" data-d="6"><span class="t">Sunday · pros and cons</span><h3>Auctions and bids</h3>
         <div class="pc"><div><h4>Good at</h4><ul><li>Supply goes to who values it most</li><li>Price shows how short supply is</li><li>Hard to game when well designed</li></ul></div><div><h4>Weak at</h4><ul><li>Deep pockets win every time</li><li>Price spikes hurt trust</li><li>Rare with long-term customers</li></ul></div></div>
-        <div class="diff"><b>What makes it different:</b> the seller sets no priority. Customers show what the part is worth to them through their bids.</div></div>
+        <div class="diff"><b>What makes it different:</b> the seller sets no priority. Customers show what the part is worth through their bids. It fits spot capacity better than long-term customers.</div></div>
     </div>
   </div>
 </section>
 
 <section class="g sec"><div class="in">
+  <div class="kick">The planner's playbook</div>
+  <h2>Seven problems, seven families of models</h2>
+  <p class="intro">Each model in this story was built to fix a specific problem. Start from the problem you have.</p>
+  <div class="play">
+    <div class="r"><span class="d">Mon</span><div class="p">Important orders arrive late and find an empty shelf</div><div class="f">Inventory rationing<small>critical level, fair share</small></div></div>
+    <div class="r"><span class="d">Tue</span><div class="p">Customers order more than they need to get a bigger share</div><div class="f">Allocation games<small>uniform, turn-and-earn</small></div></div>
+    <div class="r"><span class="d">Wed</span><div class="p">Higher-margin orders come later than low-margin ones</div><div class="f">Revenue management<small>Littlewood, EMSR, bid price</small></div></div>
+    <div class="r"><span class="d">Thu</span><div class="p">Every order needs a firm promise in seconds</div><div class="f">Allocated ATP<small>quotas by customer segment</small></div></div>
+    <div class="r"><span class="d">Fri</span><div class="p">Many parts, sites and limits, and one goal to maximize</div><div class="f">Optimization<small>LP, MIP, stochastic programming</small></div></div>
+    <div class="r"><span class="d">Sat</span><div class="p">The split has to be defended as fair</div><div class="f">Fairness rules<small>max-min, Nash, proportional fairness</small></div></div>
+    <div class="r"><span class="d">Sun</span><div class="p">Spare capacity with no long-term customer attached</div><div class="f">Auctions<small>spot prices, mechanism design</small></div></div>
+  </div>
+</div></section>
+<section class="g sec"><div class="in">
   <div class="kick">All 13 rules</div>
   <h2>Same 100 chips, very different results</h2>
-  <p class="intro">Sorted by margin. No rule earns the most and also serves every customer well.</p>
+  <p class="intro">All 13 rules from the week, sorted by margin. No rule earns the most and also serves every customer well.</p>
   <div class="lbh"><span>Rule</span><span>Who got the chips</span><span>Margin</span><span>Worst</span></div>
   <div class="lb" id="lb"></div>
   <div class="legend" style="margin-top:14px" id="leg2"></div>
@@ -362,62 +368,105 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 
 <script>
 (function(){
+  var NS='http://www.w3.org/2000/svg';
   var CUST=[['Carmaker','var(--cA)',60,50],['Phone maker','var(--cB)',50,30],['Distributor','var(--cC)',30,20],['Medical maker','var(--cD)',20,40]];
   var R={
-    orders:{n:'160 ordered, 100 to ship',f:'The setup',h:'Red stripes = each customer’s order',a:null,fam:-1},
-    fcfs:{n:'First come, first served',f:'The default',h:'Monday orders filled first; Thursday gets what is left',a:[20,50,30,0],fam:-1},
-    crit:{n:'Critical level',f:'1 · Inventory rationing',h:'Below 30 units, only carmaker and medical maker',a:[10,50,20,20],fam:0},
-    prop:{n:'Proportional',f:'2 · Allocation games',h:'Each gets about 62% of its order',a:[37,31,19,13],fam:1},
-    infl:{n:'Proportional, inflated',f:'2 · Allocation games',h:'Carmaker orders 96 instead of 60 (dashed = fake)',a:[49,26,15,10],o:[96,50,30,20],fam:1},
-    lin:{n:'Linear',f:'2 · Allocation games',h:'Each gets 15 less than it ordered',a:[45,35,15,5],fam:1},
-    uni:{n:'Uniform',f:'2 · Allocation games',h:'Equal shares of about 27 (dark mark), capped at the order',a:[27,27,26,20],water:26.7,fam:1},
-    tae:{n:'Turn-and-earn',f:'2 · Allocation games',h:'Split by past sales: 40 / 30 / 20 / 10%',a:[40,30,20,10],fam:1},
-    litt:{n:'Littlewood’s rule',f:'3 · Revenue management',h:'70 protected for Thursday’s high-margin orders',a:[50,30,0,20],fam:2},
-    bid:{n:'Bid price $28',f:'3 · Revenue management',h:'Accept only orders above $28 margin a unit',a:[60,20,0,20],fam:2},
-    aatp:{n:'Allocated ATP',f:'4 · Planning software',h:'Quotas: strategic 50 · key 35 · other 15',a:[50,15,15,20],fam:3},
-    lp:{n:'LP: most margin',f:'5 · Optimization',h:'max 50C + 30P + 20D + 40M, total ≤ 100',a:[60,20,0,20],fam:4},
-    lpmin:{n:'LP with a minimum',f:'5 · Optimization',h:'Same goal, plus distributor ≥ 10',a:[60,10,10,20],fam:4},
-    maxmin:{n:'Max-min fairness',f:'6 · Fairness rules',h:'Raise the smallest share first (water filling)',a:[27,27,26,20],water:26.7,fam:5},
-    nash:{n:'Nash bargaining',f:'6 · Fairness rules',h:'Contract minimums (dark marks) first, then equal shares',a:[35,25,20,20],min:[20,10,5,5],fam:5},
-    auc:{n:'Auction',f:'7 · Auctions and bids',h:'Highest bids first; price clears at $55',a:[60,20,0,20],fam:6}
+    orders:{n:'160 ordered, 100 in stock',a:null},
+    fcfs:{n:'First come, first served',a:[20,50,30,0]},
+    crit:{n:'Critical level of 30',a:[10,50,20,20]},
+    prop:{n:'Proportional',a:[37,31,19,13]},
+    infl:{n:'Proportional, carmaker inflates',a:[49,26,15,10],o:[96,50,30,20]},
+    lin:{n:'Linear',a:[45,35,15,5]},
+    uni:{n:'Uniform',a:[27,27,26,20]},
+    tae:{n:'Turn-and-earn',a:[40,30,20,10]},
+    litt:{n:'Littlewood’s rule',a:[50,30,0,20]},
+    bid:{n:'Bid price $28',a:[60,20,0,20]},
+    aatp:{n:'Allocated ATP',a:[50,15,15,20]},
+    lp:{n:'LP: most margin',a:[60,20,0,20]},
+    lpmin:{n:'LP with a minimum',a:[60,10,10,20]},
+    maxmin:{n:'Max-min fairness',a:[27,27,26,20]},
+    nash:{n:'Nash bargaining',a:[35,25,20,20]},
+    auc:{n:'Auction at $55',a:[60,20,0,20]}
   };
   function margin(a){return a.reduce(function(s,v,i){return s+v*CUST[i][3];},0);}
   function worst(a){var w=1,k=0;a.forEach(function(v,i){var r=v/CUST[i][2];if(r<w){w=r;k=i;}});return [w,k];}
   function cls(r){return r>=.6?'hi':r>=.3?'mid':'lo';}
   function money(m){return '$'+m.toLocaleString('en-US');}
+  function el(t,at,p){var e=document.createElementNS(NS,t);for(var k in at)e.setAttribute(k,at[k]);if(p)p.appendChild(e);return e;}
 
-  var LEG=CUST.map(function(c){return '<span><i style="background:'+c[1]+'"></i>'+c[0]+'</span>';}).join('');
-  document.getElementById('leg').innerHTML=LEG; document.getElementById('leg2').innerHTML=LEG;
+  // Build board
+  var svg=document.getElementById('bd');
+  el('text',{x:94,y:72,'text-anchor':'middle','class':'cname'},svg).textContent='In stock';
+  var stockN=el('text',{x:94,y:92,'text-anchor':'middle','class':'cnum'},svg);
+  var pile=[];for(var i=0;i<100;i++){pile.push(el('rect',{x:14+(i%10)*16,y:102+Math.floor(i/10)*16,width:13,height:13,rx:2,fill:'var(--ink)','class':'cell'},svg));}
+  el('text',{x:94,y:282,'text-anchor':'middle','class':'cnum'},svg).textContent='1 square = 1 chip';
+  var ROWS=[];
+  CUST.forEach(function(c,ci){
+    var y0=12+ci*88, g=el('g',{},svg);
+    var light=el('circle',{cx:222,cy:y0+9,r:7,fill:'var(--line)'},g);
+    el('text',{x:236,y:y0+14,'class':'cname'},g).textContent=c[0];
+    var num=el('text',{x:590,y:y0+14,'text-anchor':'end','class':'cnum'},g);
+    var st=el('text',{x:590,y:y0+40,'text-anchor':'end','class':'cstat'},g);
+    var cells=[];for(var k=0;k<24;k++){cells.push(el('rect',{x:236+(k%12)*21,y:y0+24+Math.floor(k/12)*22,width:18,height:19,rx:3,'class':'cell'},g));}
+    ROWS.push({y0:y0,light:light,num:num,st:st,cells:cells});
+  });
+  var fly=el('g',{},svg);
 
-  var pile=document.getElementById('pile'); for(var i=0;i<100;i++)pile.appendChild(document.createElement('i'));
-  var rowsEl=document.getElementById('rows');
-  rowsEl.innerHTML=CUST.map(function(c){return '<div class="row"><div class="top">'+c[0]+'<span></span></div><div class="trk"><div class="f" style="background:'+c[1]+'"></div><div class="ph" style="display:none"></div><div class="mk mw" style="display:none"></div><div class="mk mn" style="display:none"></div></div></div>';}).join('');
-  var rowEls=rowsEl.querySelectorAll('.row'), timers=[];
-
-  var cur=null;
+  function cellsFor(n){return Math.round(n/4);}
+  var gen=0, cur=null;
   function render(key){
-    if(key===cur)return; cur=key; var r=R[key];
-    document.getElementById('vf').textContent=r.f;
-    document.getElementById('vn').textContent=r.n;
-    document.getElementById('vh').textContent=r.h;
-    document.querySelectorAll('#rail span').forEach(function(s,i){s.className=i<r.fam?'done':i===r.fam?'cur':'';});
-    var o=r.o||CUST.map(function(c){return c[2];}), max=Math.max.apply(null,o);
-    timers.forEach(clearTimeout); timers=[];
-    var cells=pile.children, idx=0;
-    if(r.a){r.a.forEach(function(v,ci){for(var k=0;k<v;k++){(function(el,col,d){timers.push(setTimeout(function(){el.style.background=col;},d));})(cells[idx],CUST[ci][1],idx*6);idx++;}});}
-    for(;idx<100;idx++)cells[idx].style.background='';
-    rowEls.forEach(function(el,i){
-      var trk=el.querySelector('.trk'), f=el.querySelector('.f'), ph=el.querySelector('.ph'), mw=el.querySelector('.mw'), mn=el.querySelector('.mn'), lab=el.querySelector('.top span');
-      trk.style.width=(o[i]/max*100)+'%';
-      var real=CUST[i][2];
+    if(key===cur)return; cur=key; gen++; var my=gen; var r=R[key];
+    fly.innerHTML='';
+    document.getElementById('bn').textContent=r.n;
+    var o=r.o||CUST.map(function(c){return c[2];});
+    var jobs=[];
+    ROWS.forEach(function(row,ci){
+      var real=CUST[ci][2], nOrd=cellsFor(o[ci]), nReal=cellsFor(real), nGot=r.a?Math.min(cellsFor(r.a[ci]),nOrd):0;
+      row.cells.forEach(function(c,k){
+        if(k>=nOrd){c.setAttribute('display','none');return;}
+        c.removeAttribute('display');
+        c.setAttribute('fill','var(--badsoft)');
+        c.setAttribute('stroke',k>=nReal?'var(--muted)':'var(--bad)');
+        c.setAttribute('stroke-dasharray',k>=nReal?'4 3':'none');
+        c.setAttribute('stroke-width','1.5');
+        if(k<nGot)jobs.push({c:c,col:CUST[ci][1]});
+      });
       if(r.a){
-        var a=r.a[i], fr=a/real;
-        f.style.width=(a/o[i]*100)+'%';
-        lab.innerHTML=a+' of '+o[i]+' · <b class="'+cls(fr)+'">'+Math.round(fr*100)+'%</b>';
-      } else { f.style.width='0'; lab.textContent='ordered '+o[i]; }
-      if(r.o&&o[i]>real){ph.style.display='';ph.style.left=(real/o[i]*100)+'%';} else ph.style.display='none';
-      if(r.water&&r.water<o[i]){mw.style.display='';mw.style.left='calc('+(r.water/o[i]*100)+'% - 1px)';} else mw.style.display='none';
-      if(r.min){mn.style.display='';mn.style.left='calc('+(r.min[i]/o[i]*100)+'% - 1px)';} else mn.style.display='none';
+        var a=r.a[ci], fr=a/real;
+        row.num.textContent=a+' of '+o[ci]+' · '+Math.round(fr*100)+'%';
+        var col=fr>=.8?'var(--good)':fr>=.5?'var(--amber)':'var(--bad)';
+        var word=fr>=.8?'SERVED':fr>=.5?'SHORT':fr>0?'BADLY SHORT':'NOTHING';
+        row.st.textContent=word; row.st.setAttribute('fill',col); row.light.setAttribute('fill',col);
+      } else {
+        row.num.textContent='ordered '+o[ci]; row.st.textContent='WAITING'; row.st.setAttribute('fill','var(--muted)'); row.light.setAttribute('fill','var(--line)');
+      }
+    });
+    // pile full, then drains as chips fly
+    pile.forEach(function(p){p.setAttribute('fill','var(--ink)');});
+    var shipped=0, total=r.a?100:0, perJob=jobs.length?total/jobs.length:0;
+    stockN.textContent='100 chips';
+    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+    jobs.forEach(function(j,idx){
+      var delay=reduce?0:idx*45, dur=reduce?0:460;
+      var bx=+j.c.getAttribute('x')+9, by=+j.c.getAttribute('y')+9, sx=94, sy=180;
+      var dot=reduce?null:el('circle',{cx:sx,cy:sy,r:6,fill:j.col},fly);
+      if(dot)dot.setAttribute('opacity','0');
+      var t0=null;
+      function step(ts){
+        if(my!==gen)return;
+        if(t0===null)t0=ts;
+        var t=Math.min(1,(ts-t0-delay)/Math.max(dur,1));
+        if(t<0){requestAnimationFrame(step);return;}
+        if(dot){var e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;dot.setAttribute('opacity','1');dot.setAttribute('cx',sx+(bx-sx)*e);dot.setAttribute('cy',sy+(by-sy)*e-Math.sin(e*Math.PI)*40);}
+        if(t<1){requestAnimationFrame(step);return;}
+        if(dot)dot.remove();
+        j.c.setAttribute('fill',j.col); j.c.setAttribute('stroke','none');
+        shipped+=perJob; var left=Math.max(0,Math.round(100-shipped));
+        if(idx===jobs.length-1)left=0;
+        pile.forEach(function(p,pi){p.setAttribute('fill',pi<left?'var(--ink)':'var(--soft)');});
+        stockN.textContent=left+' chips';
+      }
+      requestAnimationFrame(step);
     });
     var sm=document.getElementById('sm'), sw=document.getElementById('sw');
     if(r.a){
@@ -432,14 +481,22 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
       document.getElementById('wn').textContent='share of its order filled'; sm.className='';sw.className='';
     }
   }
+  function setStep(s){
+    var d=+s.dataset.d, t=s.querySelector('.t');
+    document.querySelectorAll('#days span').forEach(function(x,i){x.className=i<d?'done':i===d?'cur':'';});
+    var bl=document.getElementById('bl'); bl.textContent=t.textContent; bl.className='lab '+(t.classList.contains('prob')?'prob':t.classList.contains('fix')?'fix':'set');
+    render(s.dataset.r);
+  }
 
   var steps=document.querySelectorAll('#story .step');
-  render(steps[0].dataset.r); steps[0].classList.add('on');
+  setStep(steps[0]); steps[0].classList.add('on');
   if('IntersectionObserver' in window){
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});render(e.target.dataset.r);}});},{rootMargin:(innerWidth<=860?'-62% 0px -18% 0px':'-40% 0px -45% 0px')});
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});setStep(e.target);}});},{rootMargin:(innerWidth<=860?'-64% 0px -16% 0px':'-40% 0px -45% 0px')});
     steps.forEach(function(s){io.observe(s);});
   } else steps.forEach(function(s){s.classList.add('on');});
 
+  var LEG=CUST.map(function(c){return '<span><i style="background:'+c[1]+'"></i>'+c[0]+'</span>';}).join('');
+  document.getElementById('leg2').innerHTML=LEG;
   var LB=[['First come, first served','Default','fcfs'],['Critical level','Inventory rationing','crit'],['Proportional','Allocation games','prop'],['Linear','Allocation games','lin'],['Uniform / max-min','Allocation games, fairness','uni'],['Turn-and-earn','Allocation games','tae'],['Littlewood’s rule','Revenue management','litt'],['Bid price','Revenue management','bid'],['Allocated ATP','Planning software','aatp'],['LP: most margin','Optimization','lp'],['LP with a minimum','Optimization','lpmin'],['Nash bargaining','Fairness rules','nash'],['Auction','Mechanism design','auc']];
   LB.forEach(function(x){x.m=margin(R[x[2]].a);x.w=worst(R[x[2]].a)[0];});
   LB.sort(function(a,b){return b.m-a.m||b.w-a.w;});
