@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: navy hero with impact numbers, a career Gantt across 2016-2026, then each job as a "leg" with one headline number. Hi-vis orange is the only accent. */
+/* Layout: navy hero with impact numbers, a career Gantt, then Experience as a scroll story: sticky chart left, role cards right. Hi-vis orange is the main accent. */
 :root{
   color-scheme:light;
   --bg:#EEF1F4; --paper:#FFFFFF; --ink:#0E1A2B; --muted:#55606E; --faint:#7C8794; --line:#D3DAE2;
@@ -79,23 +79,6 @@ section{padding-block:36px 0}
 .seg.now::after{content:"";position:absolute;right:-6px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--c);box-shadow:0 0 0 3px var(--paper)}
 .gnote{font:400 11px var(--f-mono);color:var(--faint);margin-top:10px}
 
-/* legs */
-.leg{display:grid;grid-template-columns:190px minmax(0,1fr);gap:20px;padding:24px 0;border-top:1px solid var(--line)}
-.leg:first-of-type{border-top:0;padding-top:4px}
-.side{min-width:0}
-.co{font:800 30px/1 var(--f-disp);text-transform:uppercase;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
-.co::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--c);flex:none}
-.side .lab{margin-top:8px;display:block}
-.roles{display:flex;flex-direction:column;gap:22px;min-width:0}
-.r h3{font-size:16px;font-weight:600;margin:0;line-height:1.3}
-.meta{font:400 12px var(--f-mono);color:var(--faint);margin-top:3px}
-.hi{display:flex;align-items:baseline;gap:6px 12px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:6px}
-.hi b{font:800 26px/1 var(--f-disp);color:var(--ink);letter-spacing:.01em;white-space:nowrap}
-.hi span{font-size:14px;color:var(--muted);flex:1 1 220px;min-width:0}
-ul{margin:10px 0 0;padding-left:18px}
-li{margin-top:5px;color:var(--muted);font-size:14px}
-li::marker{color:var(--c)}
-
 /* toolkit etc */
 .cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .box{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px 18px;min-width:0}
@@ -119,7 +102,6 @@ li::marker{color:var(--c)}
 @media (max-width:760px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   .axis,.gr{grid-template-columns:120px minmax(0,1fr)}
-  .leg{grid-template-columns:minmax(0,1fr);gap:12px}
   .cols{grid-template-columns:minmax(0,1fr)}
 }
 @media (max-width:460px){
@@ -128,6 +110,105 @@ li::marker{color:var(--c)}
   .axis .yrs span.odd{display:none}
   .langs{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+
+/* scrolly experience: sticky visual left, cards right; on phones the visual sticks on top and cards pass over it */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:start}
+.viz{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;display:flex;align-items:center;z-index:1}
+.vizbox{width:100%;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:18px 20px 20px}
+.vt-track{position:relative;height:8px;background:var(--bg);border-radius:4px}
+.vt-seg{position:absolute;top:0;bottom:0;border-radius:4px;background:var(--line);transition:background .4s}
+.vt-seg.past{background:color-mix(in srgb,var(--c) 45%,var(--line))}
+.vt-seg.cur{background:var(--c);box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--c)}
+.vt-yrs{display:flex;justify-content:space-between;font:400 11px var(--f-mono);color:var(--faint);margin-top:6px}
+.layers{position:relative;margin-top:16px;min-height:330px}
+.layer{position:absolute;inset:0;opacity:0;transition:opacity .45s ease;pointer-events:none}
+.layer.on{opacity:1}
+.vk{font:500 11px/1.3 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
+.vbig{font:800 clamp(44px,6vw,64px)/1 var(--f-disp);margin-top:6px;letter-spacing:.01em}
+.vbig small{font-size:.45em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.vnote{font-size:12px;color:var(--faint);margin-top:12px}
+.hb{display:grid;grid-template-columns:64px minmax(0,1fr) 56px;gap:10px;align-items:center;margin-top:14px;font-size:13px}
+.hb-l{color:var(--muted)}
+.hb b{font:700 18px/1 var(--f-disp);text-align:right}
+.hb-t{height:22px;background:var(--bg);border-radius:4px;overflow:hidden}
+.fill{display:block;height:100%;width:var(--w);background:var(--c);border-radius:4px;transform-origin:left;transform:scaleX(0);transition:transform .8s cubic-bezier(.2,.7,.2,1) .15s}
+.fill.grey{background:var(--faint);opacity:.45}
+.layer.on .fill{transform:scaleX(1)}
+.regions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.regions div{background:var(--bg);border-radius:8px;padding:12px}
+.regions b{display:block;font:800 22px/1 var(--f-disp)}
+.dots{color:var(--c);letter-spacing:3px;font-size:14px}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:14px;font-size:13px}
+.flow span{border:1px solid var(--line);border-radius:4px;padding:6px 8px}
+.flow i{font-style:normal;color:var(--c);font-weight:700}
+.stack{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.stack>div{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.stack i{display:block;height:34px;border-radius:4px}
+.st-before i{background:var(--faint);opacity:.45;width:100%}
+.st-after i{background:var(--c);width:62%;transform-origin:left;transform:scaleX(0);transition:transform .8s cubic-bezier(.2,.7,.2,1) .15s}
+.layer.on .st-after i{transform:scaleX(1)}
+.stack em{font:700 16px/1 var(--f-disp);font-style:normal;color:var(--ink)}
+.st-before{grid-template-columns:64px minmax(0,1fr) 0 !important}
+.grid80{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;margin-top:16px}
+.grid80 i{aspect-ratio:1;max-width:100%;border-radius:2px;background:var(--line);transition:background .3s}
+.grid80 i.s{background:var(--ink)}
+.layer.on .grid80 i.a{background:var(--c)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--ink);margin-right:5px;vertical-align:-1px}
+.sw.add{background:var(--c)}
+.stores{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;margin-top:14px}
+.stores i{aspect-ratio:1/1.1;max-width:100%;background:var(--c);clip-path:polygon(50% 0,100% 35%,100% 100%,0 100%,0 35%);opacity:0;transition:opacity .25s}
+.layer.on .stores i{opacity:1}
+.line{width:100%;height:150px;margin-top:10px;display:block}
+.gl2{stroke:var(--line);stroke-width:1}
+.ax{font:400 10px var(--f-mono);fill:var(--faint)}
+.area{fill:var(--c);opacity:.12}
+.ln{fill:none;stroke:var(--c);stroke-width:3;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.pt{fill:var(--c)}
+.mini{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.mini span{font-size:12px;border:1px solid var(--line);border-radius:4px;padding:5px 8px;color:var(--muted)}
+.mini b{color:var(--ink);font-weight:600}
+.net{display:flex;align-items:center;gap:14px;margin-top:18px}
+.net .col{display:flex;flex-direction:column;gap:8px;flex:1}
+.node{border:1px solid var(--line);border-radius:6px;padding:9px 10px;font-size:13px;text-align:center;background:var(--bg)}
+.node.main{background:var(--c);color:#fff;border-color:var(--c);font-weight:600;padding:22px 10px}
+.arrow{font:800 30px var(--f-disp);color:var(--c)}
+.gauge{position:relative;height:26px;background:var(--bg);border-radius:13px;margin-top:20px;overflow:visible}
+.gauge .fill{border-radius:13px}
+.tick{position:absolute;top:-6px;bottom:-6px;width:2px;background:var(--ink)}
+.gscale{display:flex;justify-content:space-between;font:400 11px var(--f-mono);color:var(--faint);margin-top:6px}
+.cols-chart{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:end;height:150px;margin:14px 0 26px;border-bottom:1px solid var(--line)}
+.cols-chart div{display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
+.fill-v{display:block;height:var(--h);background:var(--c);border-radius:4px 4px 0 0;transform-origin:bottom;transform:scaleY(0);transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.cols-chart div:nth-child(2) .fill-v{transition-delay:.08s}.cols-chart div:nth-child(3) .fill-v{transition-delay:.16s}.cols-chart div:nth-child(4) .fill-v{transition-delay:.24s}.cols-chart div:nth-child(5) .fill-v{transition-delay:.32s}
+.layer.on .fill-v{transform:scaleY(1)}
+.cols-chart span{position:absolute;bottom:-20px;left:0;right:0;text-align:center;font:400 11px var(--f-mono);color:var(--faint)}
+.cards{position:relative;z-index:2;padding-block:22vh 30vh}
+.card{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:10px;padding:18px 20px;margin-bottom:55vh;box-shadow:0 6px 20px rgba(14,26,43,.06);opacity:.45;transition:opacity .3s}
+.card:last-child{margin-bottom:0}
+.card.on{opacity:1}
+.ck{font:500 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot{width:9px;height:9px;border-radius:2px;background:var(--c);flex:none}
+.card h3{font:800 24px/1.05 var(--f-disp);text-transform:uppercase;letter-spacing:.01em;margin:8px 0 0}
+.card .meta{font:400 12px var(--f-mono);color:var(--faint);margin-top:4px}
+.card .lead{font-size:15px;color:var(--ink);margin-top:10px;font-weight:500}
+.card ul{margin:8px 0 0;padding-left:18px}
+.card li{margin-top:5px;color:var(--muted);font-size:14px}
+.card li::marker{color:var(--c)}
+@media (max-width:760px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .viz{height:auto;top:env(safe-area-inset-top,0px);padding-block:8px;background:var(--bg)}
+  .vizbox{padding:12px 14px 14px}
+  .layers{min-height:250px;margin-top:10px}
+  .vbig{font-size:40px}
+  .line{height:100px}
+  .cols-chart{height:100px}
+  .grid80{gap:3px}
+  .net .node.main{padding:14px 8px}
+  .cards{padding-block:24px 40vh}
+  .card{margin-bottom:60vh;opacity:1}
+}
+@media (prefers-reduced-motion:reduce){.layer,.fill,.fill-v,.st-after i,.stores i,.card,.vt-seg{transition:none}}
 </style>
 </head>
 <body>
@@ -174,129 +255,195 @@ li::marker{color:var(--c)}
   </div>
 </section>
 
-<section class="g">
+<section class="g" id="experience">
   <div class="in">
-    <div class="sh"><h2>Experience</h2><span class="lab">Newest first</span></div>
+    <div class="sh"><h2>Experience</h2><span class="lab">Scroll through 10 years · 2016 → now</span></div>
+  </div>
+  <div class="in scrolly">
+    <div class="viz" aria-hidden="true">
+      <div class="vizbox">
+        <div class="vt">
+          <div class="vt-track">
+            <span class="vt-seg" data-i="0" style="left:5.5%;width:16.8%;--c:var(--c5)"></span>
+            <span class="vt-seg" data-i="1" style="left:22.3%;width:9.1%;--c:var(--c4)"></span>
+            <span class="vt-seg" data-i="2" style="left:31.4%;width:18.1%;--c:var(--c4)"></span>
+            <span class="vt-seg" data-i="3" style="left:49.5%;width:7.8%;--c:var(--c2)"></span>
+            <span class="vt-seg" data-i="4" style="left:57.3%;width:6.3%;--c:var(--c2)"></span>
+            <span class="vt-seg" data-i="5" style="left:63.6%;width:15.5%;--c:var(--c2)"></span>
+            <span class="vt-seg" data-i="6" style="left:79.5%;width:2.8%;--c:var(--c2)"></span>
+            <span class="vt-seg" data-i="7" style="left:83.3%;width:7.6%;--c:var(--c3)"></span>
+            <span class="vt-seg" data-i="8" style="left:91.7%;width:7.1%;--c:var(--c1)"></span>
+          </div>
+          <div class="vt-yrs"><span>2016</span><span>2021</span><span>2026</span></div>
+        </div>
+        <div class="layers">
 
-    <div class="leg" style="--c:var(--c1)">
-      <div class="side"><div class="co">JD.com</div><span class="lab">Europe · Berlin</span></div>
-      <div class="roles">
-        <div class="r">
-          <h3>Capacity Planning Manager, Last-Mile Operations</h3>
-          <p class="meta">Feb 2026 – now · DE, NL, BE</p>
-          <div class="hi"><b>1k → 20k</b><span>packages a day through the March 2026 launch, across 20+ depots</span></div>
-          <ul>
-            <li>Own weekly delivery-partner (DSP) capacity for the European last-mile network.</li>
-            <li>Grew postcode coverage 7x by planning drivers, routes and depots for each new area.</li>
-            <li>Brought MediaMarkt/Saturn store-pickup volume into live operations after the May 2026 acquisition.</li>
-            <li>Model 3PL vs DSP mix and peak vs base utilization against cost-per-stop and on-time targets.</li>
-            <li>Weekly readout to European Ops leadership on utilization, service level and partner risk.</li>
-          </ul>
+          <!-- 0 Arburg: lead time -->
+          <div class="layer on" data-i="0" style="--c:var(--c5)">
+            <p class="vk">Arburg · Order lead time</p>
+            <p class="vbig">6 → 3 <small>weeks</small></p>
+            <div class="hb"><span class="hb-l">Before</span><div class="hb-t"><i class="fill grey" style="--w:100%"></i></div><b>6 wk</b></div>
+            <div class="hb"><span class="hb-l">After</span><div class="hb-t"><i class="fill" style="--w:50%"></i></div><b>3 wk</b></div>
+            <p class="vnote">Half the wait for a customer's machine.</p>
+          </div>
+
+          <!-- 1 Bose planner: regions -->
+          <div class="layer" data-i="1" style="--c:var(--c4)">
+            <p class="vk">Bose · Supply and channel planning</p>
+            <p class="vbig">11 <small>countries</small></p>
+            <div class="regions">
+              <div><b>NA</b><span class="dots">●●●</span></div>
+              <div><b>EMEA</b><span class="dots">●●●●●</span></div>
+              <div><b>APAC</b><span class="dots">●●●</span></div>
+            </div>
+            <div class="flow"><span>Factories in China · Malaysia · Mexico</span><i>→</i><span>~600 SKUs</span><i>→</i><span>$400M retail sales</span></div>
+          </div>
+
+          <!-- 2 Bose S&OP: inventory freed -->
+          <div class="layer" data-i="2" style="--c:var(--c4)">
+            <p class="vk">Bose · Days of inventory on hand</p>
+            <p class="vbig">$75M <small>freed</small></p>
+            <div class="stack"><div class="st-before"><span>Before</span><i></i></div><div class="st-after"><span>After</span><i></i><em>$75M freed</em></div></div>
+            <div class="mini"><span><b>−35</b> days of stock</span><span><b>$3B</b> portfolio</span></div>
+            <p class="vnote">Tighter launch and end-of-life planning. Bars are illustrative.</p>
+          </div>
+
+          <!-- 3 Amazon SSD: nodes -->
+          <div class="layer" data-i="3" style="--c:var(--c2)">
+            <p class="vk">Amazon · Same-day nodes planned</p>
+            <p class="vbig">15 → 80 <small>nodes</small></p>
+            <div class="grid80" data-on="15" data-total="80"></div>
+            <div class="legend"><span><i class="sw"></i>Start</span><span><i class="sw add"></i>Added</span><span>$3M a year saved</span></div>
+          </div>
+
+          <!-- 4 Amazon JWO: stores -->
+          <div class="layer" data-i="4" style="--c:var(--c2)">
+            <p class="vk">Amazon Fresh · Just Walk Out launches</p>
+            <p class="vbig">23 <small>stores</small></p>
+            <div class="stores" data-n="23"></div>
+            <div class="hb"><span class="hb-l">Ready in</span><div class="hb-t"><i class="fill grey" style="--w:100%"></i></div><b>9 wk</b></div>
+            <div class="hb"><span class="hb-l">Now</span><div class="hb-t"><i class="fill" style="--w:66.7%"></i></div><b>6 wk</b></div>
+            <p class="vnote">97% instock on opening day. All on schedule.</p>
+          </div>
+
+          <!-- 5 Amazon instock: line -->
+          <div class="layer" data-i="5" style="--c:var(--c2)">
+            <p class="vk">Amazon · Perishable instock, 100 stores</p>
+            <p class="vbig">80 → 93%</p>
+            <svg class="line" viewBox="0 0 320 130" preserveAspectRatio="none">
+              <line x1="0" y1="20" x2="320" y2="20" class="gl2"/><line x1="0" y1="65" x2="320" y2="65" class="gl2"/><line x1="0" y1="110" x2="320" y2="110" class="gl2"/>
+              <text x="2" y="16" class="ax">95%</text><text x="2" y="106" class="ax">80%</text>
+              <path class="area" d="M0,110 L60,104 L110,92 L160,74 L210,56 L260,44 L320,38 L320,130 L0,130 Z"/>
+              <path class="ln" d="M0,110 L60,104 L110,92 L160,74 L210,56 L260,44 L320,38"/>
+              <circle cx="320" cy="38" r="4" class="pt"/>
+            </svg>
+            <div class="mini"><span><b>−30%</b> stockouts</span><span><b>−15%</b> dairy waste</span><span><b>21 days</b> earlier warning</span></div>
+          </div>
+
+          <!-- 6 Amazon AFP: diagram -->
+          <div class="layer" data-i="6" style="--c:var(--c2)">
+            <p class="vk">Amazon Freight Partner · Germany</p>
+            <p class="vbig">New <small>business unit</small></p>
+            <div class="net">
+              <div class="col"><span class="node">Carrier</span><span class="node">Carrier</span><span class="node">Carrier</span></div>
+              <div class="arrow">→</div>
+              <div class="col"><span class="node main">EU middle mile</span></div>
+            </div>
+            <div class="mini"><span>Safety</span><span>Finance</span><span>Legal</span><span>KPIs</span></div>
+          </div>
+
+          <!-- 7 Darkchain: availability -->
+          <div class="layer" data-i="7" style="--c:var(--c3)">
+            <p class="vk">Darkchain · Availability for growth brands</p>
+            <p class="vbig">95%+</p>
+            <div class="gauge"><i class="fill" style="--w:95%"></i><span class="tick" style="left:95%"></span></div>
+            <div class="gscale"><span>0%</span><span>Target 95%</span><span>100%</span></div>
+            <div class="mini"><span>Warehouse system</span><span>Inventory policy</span><span>AI monitoring</span></div>
+          </div>
+
+          <!-- 8 JD.com: growth -->
+          <div class="layer" data-i="8" style="--c:var(--c1)">
+            <p class="vk">JD.com Europe · Packages a day</p>
+            <p class="vbig">1k → 20k</p>
+            <div class="cols-chart">
+              <div><i class="fill-v" style="--h:5%"></i><span>Start</span></div>
+              <div><i class="fill-v" style="--h:18%"></i><span></span></div>
+              <div><i class="fill-v" style="--h:40%"></i><span></span></div>
+              <div><i class="fill-v" style="--h:65%"></i><span></span></div>
+              <div><i class="fill-v" style="--h:100%"></i><span>Launch</span></div>
+            </div>
+            <div class="mini"><span><b>7×</b> postcodes</span><span><b>20+</b> depots</span><span><b>3</b> countries</span></div>
+            <p class="vnote">Steps between start and launch are illustrative.</p>
+          </div>
+
         </div>
       </div>
     </div>
 
-    <div class="leg" style="--c:var(--c3)">
-      <div class="side"><div class="co">Darkchain</div><span class="lab">Berlin</span></div>
-      <div class="roles">
-        <div class="r">
-          <h3>Supply Chain and Operations Consultant</h3>
-          <p class="meta">Mar 2025 – Jan 2026</p>
-          <div class="hi"><b>95%+</b><span>availability held for growth brands selling on Amazon in the EU</span></div>
-          <ul>
-            <li>Ran warehouse system design, inventory policy and standard reporting for a Berlin seller agency.</li>
-            <li>Shaped AI agents that watch constraints, inventory health and master-data quality.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="leg" style="--c:var(--c2)">
-      <div class="side"><div class="co">Amazon</div><span class="lab">Seattle · New York · Berlin</span></div>
-      <div class="roles">
-        <div class="r">
-          <h3>Supply Chain Manager, Freight Partner Onboarding</h3>
-          <p class="meta">Oct 2024 – Jan 2025 · Berlin</p>
-          <div class="hi"><b>New unit</b><span>stood up Amazon Freight Partner Germany</span></div>
-          <ul>
-            <li>Brought independent 3PL carriers into live EU middle-mile.</li>
-            <li>Connected partner ops with middle-mile, safety, finance and legal.</li>
-            <li>Owned on-road KPIs, capacity and EU regulatory compliance.</li>
-          </ul>
-        </div>
-        <div class="r">
-          <h3>Instock Manager, Omnichannel Procurement</h3>
-          <p class="meta">Jan 2023 – Sep 2024 · New York</p>
-          <div class="hi"><b>80 → 93%</b><span>perishable instock across 100 stores, by fixing the top stockout causes</span></div>
-          <ul>
-            <li>Cut cross-channel stockouts 30% by balancing shared grocery stock between store and online orders.</li>
-            <li>Cut dairy waste 15% (about $1.2M a year) while holding 98% instock.</li>
-            <li>Spotted instock risk 21 days earlier with daily SQL/QuickSight dashboards and alarms.</li>
-            <li>Raised top perishable vendor fill rate from 83% to 95%.</li>
-          </ul>
-        </div>
-        <div class="r">
-          <h3>Launch Manager, Amazon Fresh (Just Walk Out)</h3>
-          <p class="meta">Apr 2022 – Dec 2022 · 50% travel</p>
-          <div class="hi"><b>23 stores</b><span>launched at 97% opening-day instock across 14,000+ items, all on schedule</span></div>
-          <ul>
-            <li>Owned opening-day readiness for instock, last-mile delivery and curbside pickup.</li>
-            <li>Built a launch inventory model that sets first allocation and safety stock with no sales history.</li>
-            <li>Cut launch readiness from 9 to 6 weeks and scaled cadence from 1 a month to 2 a week.</li>
-          </ul>
-        </div>
-        <div class="r">
-          <h3>Supply Chain Manager, Urban Same-Day Network</h3>
-          <p class="meta">Jun 2021 – Apr 2022 · Seattle</p>
-          <div class="hi"><b>$3M/yr</b><span>saved by cutting $0.09 per package on West Coast inbound</span></div>
-          <ul>
-            <li>Scaled inbound planning from 15 to 80 same-day nodes and wrote the SOPs (3,500 nodes by 2026).</li>
-            <li>Owned West Coast inbound S&amp;OP.</li>
-            <li>Tuned trailers, consolidation and timing as volume grew from 2M to 5M units a week.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="leg" style="--c:var(--c4)">
-      <div class="side"><div class="co">Bose</div><span class="lab">Boston</span></div>
-      <div class="roles">
-        <div class="r">
-          <h3>Global S&amp;OP Planning Lead, Center of Excellence</h3>
-          <p class="meta">Jun 2019 – Jun 2021</p>
-          <div class="hi"><b>$75M</b><span>excess inventory freed and 35 days of inventory cut, through tighter end-of-life and launch planning</span></div>
-          <ul>
-            <li>Owned the planning systems (SAP APO, Kinaxis, Power BI) for a $3B global portfolio.</li>
-            <li>Ran monthly S&amp;OP with the C-suite: budget plans and capacity outlooks.</li>
-            <li>Set global rules for safety stock, lead times and forecasts across regions.</li>
-            <li>Automated reporting with BI engineering; quarterly deck at the global all-hands (~9,000 people).</li>
-          </ul>
-        </div>
-        <div class="r">
-          <h3>Global Network Planner</h3>
-          <p class="meta">Jun 2018 – Jun 2019</p>
-          <div class="hi"><b>11 countries</b><span>supply and channel planning for $400M of retail sales</span></div>
-          <ul>
-            <li>Ran allocation, launch phasing and replenishment for retailers in NA, EMEA and APAC.</li>
-            <li>Built forecasts and supply plans for ~600 SKUs across contract manufacturers in China, Malaysia and Mexico.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="leg" style="--c:var(--c5)">
-      <div class="side"><div class="co">Arburg</div><span class="lab">Irvine, CA · Hartford, CT</span></div>
-      <div class="roles">
-        <div class="r">
-          <h3>Production Planning Manager</h3>
-          <p class="meta">Aug 2016 – Jun 2018</p>
-          <div class="hi"><b>6 → 3 wk</b><span>order lead time, with Excel planning tools and daily build-readiness checks</span></div>
-          <ul>
-            <li>Ran planning and operations for a $30M machine site with a 10-person team over two shifts.</li>
-            <li>Kept engineering releases, BOM changes and build plans in sync between German HQ and the US.</li>
-          </ul>
-        </div>
-      </div>
+    <div class="cards">
+      <article class="card" data-i="0" style="--c:var(--c5)">
+        <p class="ck"><span class="dot"></span>Arburg · Irvine, CA / Hartford, CT</p>
+        <h3>Production Planning Manager</h3>
+        <p class="meta">Aug 2016 – Jun 2018</p>
+        <p class="lead">Ran planning and operations for a $30M machine site, with 10 people over two shifts.</p>
+        <ul><li>Cut order lead time from 6 weeks to 3 with Excel planning tools and daily build-readiness checks.</li><li>Kept engineering releases, BOM changes and build plans in sync between German HQ and the US.</li></ul>
+      </article>
+      <article class="card" data-i="1" style="--c:var(--c4)">
+        <p class="ck"><span class="dot"></span>Bose · Boston</p>
+        <h3>Global Network Planner</h3>
+        <p class="meta">Jun 2018 – Jun 2019</p>
+        <p class="lead">Planned supply and channels for stores, distributors and partners in 11 countries, about $400M of sales.</p>
+        <ul><li>Ran allocation, launch phasing and replenishment for retailers in NA, EMEA and APAC.</li><li>Built forecasts and supply plans for ~600 SKUs made in China, Malaysia and Mexico.</li></ul>
+      </article>
+      <article class="card" data-i="2" style="--c:var(--c4)">
+        <p class="ck"><span class="dot"></span>Bose · Boston</p>
+        <h3>Global S&amp;OP Planning Lead</h3>
+        <p class="meta">Jun 2019 – Jun 2021 · Center of Excellence</p>
+        <p class="lead">Freed $75M of excess inventory and cut 35 days of stock with tighter launch and end-of-life planning.</p>
+        <ul><li>Owned the planning systems (SAP APO, Kinaxis, Power BI) for a $3B portfolio.</li><li>Ran monthly S&amp;OP with the C-suite and set global rules for safety stock, lead times and forecasts.</li><li>Presented the quarterly insight deck at the global all-hands (~9,000 people).</li></ul>
+      </article>
+      <article class="card" data-i="3" style="--c:var(--c2)">
+        <p class="ck"><span class="dot"></span>Amazon · Seattle</p>
+        <h3>Supply Chain Manager, Urban Same-Day</h3>
+        <p class="meta">Jun 2021 – Apr 2022</p>
+        <p class="lead">Scaled inbound planning from 15 to 80 same-day nodes and wrote the SOPs. The network has 3,500 nodes today.</p>
+        <ul><li>Saved $3M a year by cutting $0.09 per package on West Coast inbound.</li><li>Tuned trailers, consolidation and timing as volume grew from 2M to 5M units a week.</li></ul>
+      </article>
+      <article class="card" data-i="4" style="--c:var(--c2)">
+        <p class="ck"><span class="dot"></span>Amazon Fresh · 50% travel</p>
+        <h3>Launch Manager, Just Walk Out</h3>
+        <p class="meta">Apr 2022 – Dec 2022</p>
+        <p class="lead">Launched 23 grocery stores at 97% opening-day instock across 14,000+ items, all on schedule.</p>
+        <ul><li>Built a launch inventory model that sets first allocation and safety stock with no sales history.</li><li>Cut readiness from 9 to 6 weeks and scaled from 1 launch a month to 2 a week.</li></ul>
+      </article>
+      <article class="card" data-i="5" style="--c:var(--c2)">
+        <p class="ck"><span class="dot"></span>Amazon · New York</p>
+        <h3>Instock Manager, Omnichannel Procurement</h3>
+        <p class="meta">Jan 2023 – Sep 2024</p>
+        <p class="lead">Raised perishable instock from 80% to 93% across 100 stores by fixing the top stockout causes.</p>
+        <ul><li>Cut cross-channel stockouts 30% by sharing grocery stock between store and online orders.</li><li>Cut dairy waste 15% (about $1.2M a year) while holding 98% instock.</li><li>Spotted risk 21 days earlier with daily SQL dashboards and alarms; raised vendor fill rate from 83% to 95%.</li></ul>
+      </article>
+      <article class="card" data-i="6" style="--c:var(--c2)">
+        <p class="ck"><span class="dot"></span>Amazon · Berlin</p>
+        <h3>Supply Chain Manager, Freight Partner Onboarding</h3>
+        <p class="meta">Oct 2024 – Jan 2025</p>
+        <p class="lead">Stood up Amazon Freight Partner Germany, bringing independent carriers into live EU middle-mile.</p>
+        <ul><li>Connected partner ops with middle-mile, safety, finance and legal.</li><li>Owned on-road KPIs, capacity and EU compliance.</li></ul>
+      </article>
+      <article class="card" data-i="7" style="--c:var(--c3)">
+        <p class="ck"><span class="dot"></span>Darkchain · Berlin</p>
+        <h3>Supply Chain and Operations Consultant</h3>
+        <p class="meta">Mar 2025 – Jan 2026</p>
+        <p class="lead">Held availability above 95% for growth brands selling on Amazon in the EU.</p>
+        <ul><li>Ran warehouse system design, inventory policy and standard reporting.</li><li>Shaped AI agents that watch constraints, inventory health and master data.</li></ul>
+      </article>
+      <article class="card" data-i="8" style="--c:var(--c1)">
+        <p class="ck"><span class="dot"></span>JD.com Europe · Berlin · Now</p>
+        <h3>Capacity Planning Manager, Last Mile</h3>
+        <p class="meta">Feb 2026 – now · DE, NL, BE</p>
+        <p class="lead">Scaled delivery capacity from 1,000 to 20,000 packages a day through the March 2026 launch, across 20+ depots.</p>
+        <ul><li>Grew postcode coverage 7x by planning drivers, routes and depots for each new area.</li><li>Brought MediaMarkt/Saturn store-pickup volume into live operations.</li><li>Weekly readout to European Ops leadership on utilization, service and partner risk.</li></ul>
+      </article>
     </div>
   </div>
 </section>
@@ -356,5 +503,30 @@ li::marker{color:var(--c)}
 </main>
 
 <footer class="end g"><div class="in">JR · Resume · November 2026</div></footer>
+
+<script>
+(function(){
+  var layers=[].slice.call(document.querySelectorAll('.layer'));
+  var cards=[].slice.call(document.querySelectorAll('.card'));
+  var segs=[].slice.call(document.querySelectorAll('.vt-seg'));
+  var g=document.querySelector('.grid80');
+  if(g){var on=+g.dataset.on,t=+g.dataset.total,h='';for(var k=0;k<t;k++)h+='<i class="'+(k<on?'s':'a')+'" style="transition-delay:'+(k<on?0:(k-on)*14)+'ms"></i>';g.innerHTML=h;}
+  var st=document.querySelector('.stores');
+  if(st){var n=+st.dataset.n,h2='';for(var j=0;j<n;j++)h2+='<i style="transition-delay:'+(j*35)+'ms"></i>';st.innerHTML=h2;}
+  function show(i){
+    layers.forEach(function(l){l.classList.toggle('on',+l.dataset.i===i)});
+    cards.forEach(function(c){c.classList.toggle('on',+c.dataset.i===i)});
+    segs.forEach(function(s){var d=+s.dataset.i;s.classList.toggle('cur',d===i);s.classList.toggle('past',d<i)});
+  }
+  show(0);
+  if(!('IntersectionObserver' in window))return;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)show(+e.target.dataset.i)})},{rootMargin:'-45% 0px -45% 0px'});
+  cards.forEach(function(c){io.observe(c)});
+  function mob(){io.disconnect();var m=window.matchMedia('(max-width:760px)').matches;
+    io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)show(+e.target.dataset.i)})},{rootMargin:m?'-60% 0px -30% 0px':'-45% 0px -45% 0px'});
+    cards.forEach(function(c){io.observe(c)});}
+  mob();window.addEventListener('resize',mob);
+})();
+</script>
 </body>
 </html>
