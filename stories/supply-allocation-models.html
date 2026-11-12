@@ -130,6 +130,17 @@ b,strong{font-weight:600}
 .lb .r{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr) 92px 78px;gap:12px;align-items:center}
 .lb .nm{font:800 16px/1.2 var(--f-head)}
 .lb .nm small{display:block;font:500 11.5px var(--f-mono);color:var(--muted)}
+.lb .why{grid-column:1 / -1;font-size:15.5px;line-height:1.4;color:var(--muted);margin-top:-4px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.lb .why b{color:var(--ink);font-family:var(--f-head);font-weight:700}
+.prof{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0 30px}
+@media (max-width:900px){.prof{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.prof{grid-template-columns:minmax(0,1fr)}}
+.pf{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--line);border-radius:6px;padding:12px 14px;min-width:0}
+.pf h3{font-size:18px;margin-bottom:6px}
+.pf dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 10px;margin:0;font:500 12.5px/1.35 var(--f-mono)}
+.pf dt{color:var(--muted)} .pf dd{margin:0;text-align:right;color:var(--ink)}
+.pf .hi{color:var(--good);font-weight:700} .pf .lo{color:var(--bad);font-weight:700}
+.sub2{font:800 clamp(20px,2.4vw,26px)/1.2 var(--f-head);margin-top:6px}
 .sb{display:flex;height:22px;border-radius:3px;overflow:hidden;background:var(--soft)}
 .sb i{display:flex;align-items:center;justify-content:center;font:700 11px var(--f-mono);font-style:normal;color:#fff;overflow:hidden}
 .pillv{font:800 15px var(--f-head);text-align:center;padding:4px 6px;border-radius:4px;font-variant-numeric:tabular-nums}
@@ -305,6 +316,15 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
   <div class="kick">All 13 rules</div>
   <h2>Same 100 chips, very different results</h2>
   <p class="intro">All 13 rules from the week, sorted by margin. No rule earns the most and also serves every customer well.</p>
+  <h3 class="sub2">What decides who wins</h3>
+  <p class="intro" style="margin-top:6px">Each rule looks at a different trait. Green is a trait that helps that customer, red one that hurts.</p>
+  <div class="prof">
+    <div class="pf" style="border-top-color:var(--cA)"><h3>Carmaker</h3><dl><dt>Ordered</dt><dd>60 (largest)</dd><dt>Margin / chip</dt><dd class="hi">$50 (best)</dd><dt>Orders on</dt><dd class="lo">Thursday (late)</dd><dt>Past sales</dt><dd class="hi">40%</dd><dt>Priority</dt><dd class="hi">Top</dd><dt>Segment</dt><dd class="hi">Strategic</dd><dt>Contract min.</dt><dd>20</dd><dt>Bid</dt><dd class="hi">$90</dd></dl></div>
+    <div class="pf" style="border-top-color:var(--cB)"><h3>Phone maker</h3><dl><dt>Ordered</dt><dd>50</dd><dt>Margin / chip</dt><dd>$30</dd><dt>Orders on</dt><dd class="hi">Monday (early)</dd><dt>Past sales</dt><dd>30%</dd><dt>Priority</dt><dd>Normal</dd><dt>Segment</dt><dd>Key</dd><dt>Contract min.</dt><dd>10</dd><dt>Bid</dt><dd>$55</dd></dl></div>
+    <div class="pf" style="border-top-color:var(--cC)"><h3>Distributor</h3><dl><dt>Ordered</dt><dd>30</dd><dt>Margin / chip</dt><dd class="lo">$20 (lowest)</dd><dt>Orders on</dt><dd class="hi">Monday (early)</dd><dt>Past sales</dt><dd>20%</dd><dt>Priority</dt><dd class="lo">Low</dd><dt>Segment</dt><dd class="lo">Other</dd><dt>Contract min.</dt><dd>5</dd><dt>Bid</dt><dd class="lo">$35 (lowest)</dd></dl></div>
+    <div class="pf" style="border-top-color:var(--cD)"><h3>Medical maker</h3><dl><dt>Ordered</dt><dd class="hi">20 (smallest)</dd><dt>Margin / chip</dt><dd>$40</dd><dt>Orders on</dt><dd class="lo">Thursday (late)</dd><dt>Past sales</dt><dd class="lo">10%</dd><dt>Priority</dt><dd class="hi">Top (line stops)</dd><dt>Segment</dt><dd>Key</dd><dt>Contract min.</dt><dd>5</dd><dt>Bid</dt><dd>$75</dd></dl></div>
+  </div>
+  <h3 class="sub2">Who got the chips, and why</h3>
   <div class="lbh"><span>Rule</span><span>Who got the chips</span><span>Margin</span><span>Worst</span></div>
   <div class="lb" id="lb"></div>
   <div class="legend" style="margin-top:14px" id="leg2"></div>
@@ -510,12 +530,25 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 
   var LEG=CUST.map(function(c){return '<span><i style="background:'+c[1]+'"></i>'+c[0]+'</span>';}).join('');
   document.getElementById('leg2').innerHTML=LEG;
-  var LB=[['First come, first served','Default','fcfs'],['Critical level','Inventory rationing','crit'],['Proportional','Allocation games','prop'],['Linear','Allocation games','lin'],['Uniform / max-min','Allocation games, fairness','uni'],['Turn-and-earn','Allocation games','tae'],['Littlewood’s rule','Revenue management','litt'],['Bid price','Revenue management','bid'],['Allocated ATP','Planning software','aatp'],['LP: most margin','Optimization','lp'],['LP with a minimum','Optimization','lpmin'],['Nash bargaining','Fairness rules','nash'],['Auction','Mechanism design','auc']];
+  var LB=[
+    ['First come, first served','Default','fcfs','<b>Looks at order day.</b> The phone maker and the distributor ordered Monday and were filled in full. By Thursday only 20 chips were left, so the medical maker got nothing.'],
+    ['Critical level','Inventory rationing','crit','<b>Looks at priority.</b> Low-priority orders stop when 30 chips are left, so the distributor is cut off at 20. The 30 are kept for top priority: the medical maker is filled first, the carmaker gets the last 10.'],
+    ['Proportional','Allocation games','prop','<b>Looks at order size.</b> Everyone gets the same 62% of what it ordered. No trait matters, which is why customers learn to inflate orders.'],
+    ['Linear','Allocation games','lin','<b>Looks at order size.</b> Everyone gives up 15 chips. That hurts the smallest order most, so the medical maker keeps only 5 of 20.'],
+    ['Uniform / max-min','Allocation games, fairness','uni','<b>Looks at equal shares.</b> Everyone can get up to about 27. The medical maker needs only 20 and is full. The carmaker\u2019s large order is cut the most.'],
+    ['Turn-and-earn','Allocation games','tae','<b>Looks at past sales.</b> Shares follow last year: 40, 30, 20 and 10%. The medical maker\u2019s small history caps it at 10.'],
+    ['Littlewood\u2019s rule','Revenue management','litt','<b>Looks at margin and order day.</b> 70 chips are kept for Thursday\u2019s high-margin orders. The 30 early chips go to the phone maker ($30) before the distributor ($20), which gets none.'],
+    ['Bid price','Revenue management','bid','<b>Looks at margin.</b> An order is accepted only if its margin beats $28 a chip. The distributor earns $20, so it is refused. The others are served best margin first.'],
+    ['Allocated ATP','Planning software','aatp','<b>Looks at segment.</b> Strategic quota 50 goes to the carmaker. The key quota of 35 is shared, and the medical maker ordered first, so the phone maker gets 15. The distributor gets the other quota of 15.'],
+    ['LP: most margin','Optimization','lp','<b>Looks at margin.</b> The solver fills $50, then $40, then $30 orders. Chips run out before the distributor\u2019s $20 order.'],
+    ['LP with a minimum','Optimization','lpmin','<b>Looks at margin and contracts.</b> Same as the LP, but the distributor\u2019s contract forces 10 chips, which come from the phone maker.'],
+    ['Nash bargaining','Fairness rules','nash','<b>Looks at contract minimums.</b> Each first gets its minimum (20, 10, 5, 5). The other 60 are split equally, up to each order.'],
+    ['Auction','Mechanism design','auc','<b>Looks at bids.</b> The highest bids are filled first: $90, $75, then $55. The distributor\u2019s $35 bid is the lowest, so it gets nothing.']];
   LB.forEach(function(x){x.m=margin(R[x[2]].a);x.w=worst(R[x[2]].a)[0];});
   LB.sort(function(a,b){return b.m-a.m||b.w-a.w;});
   document.getElementById('lb').innerHTML=LB.map(function(x){
     var a=R[x[2]].a, mc=x.m>=4200?'hi':x.m>=3600?'mid':'lo';
-    return '<div class="r"><div class="nm">'+x[0]+'<small>'+x[1]+'</small></div><div class="sb">'+a.map(function(v,i){return v?'<i style="width:'+v+'%;background:'+CUST[i][1]+'">'+(v>=8?v:'')+'</i>':'';}).join('')+'</div><div class="pillv '+mc+'">'+money(x.m)+'</div><div class="pillv '+cls(x.w)+'">'+Math.round(x.w*100)+'%</div></div>';
+    return '<div class="r"><div class="nm">'+x[0]+'<small>'+x[1]+'</small></div><div class="sb">'+a.map(function(v,i){return v?'<i style="width:'+v+'%;background:'+CUST[i][1]+'">'+(v>=8?v:'')+'</i>':'';}).join('')+'</div><div class="pillv '+mc+'">'+money(x.m)+'</div><div class="pillv '+cls(x.w)+'">'+Math.round(x.w*100)+'%</div><div class="why">'+x[3]+'</div></div>';
   }).join('');
 
   var G=[
