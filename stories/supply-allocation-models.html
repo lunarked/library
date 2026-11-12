@@ -51,11 +51,14 @@ b,strong{font-weight:600}
 .dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
 .cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
 .cue::after{content:" ↓"}
-.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-top:34px;max-width:960px}
-.week div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:8px 9px;min-width:0}
-.week b{display:block;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.06em}
-.week span{display:block;font:500 13px/1.3 var(--f-head);color:#C4CAD1}
-@media (max-width:700px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}.week div:last-child{grid-column:1 / -1}}
+.gapbars{max-width:640px;margin:6px 0 26px}
+.gb{display:grid;grid-template-columns:78px minmax(0,1fr) 46px;gap:10px;align-items:center;margin-bottom:10px}
+.gb span{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:#C4CAD1}
+.gb b{font:900 24px var(--f-head);color:var(--nightink);text-align:right}
+.bar{height:26px;border-radius:4px}
+.bar.o{width:100%;background:repeating-linear-gradient(135deg,#5A2420 0 7px,#3A1815 7px 13px);box-shadow:inset 0 0 0 1.5px #FF7B6E}
+.bar.s{width:62.5%;background:#FFB020}
+.short{margin:0 0 0 88px;font:800 18px var(--f-head);color:#FF7B6E}
 
 /* Scrolly */
 .scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:44px;position:relative}
@@ -191,18 +194,14 @@ hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 <header class="open g">
   <div class="in">
     <div class="kick">Explainer · Allocating scarce supply</div>
-    <h1>One week on the <span class="u">allocation desk</span></h1>
-    <p class="dek">A chip maker can ship 100 units this week. Its customers ordered 160. Follow the planner from Monday to Sunday. Each day brings a new problem, and each fix is a model from supply chain research or planning software.</p>
-    <div class="week">
-      <div><b>Mon</b><span>The shortage hits</span></div>
-      <div><b>Tue</b><span>Orders balloon</span></div>
-      <div><b>Wed</b><span>A late order pays more</span></div>
-      <div><b>Thu</b><span>Sales needs promises</span></div>
-      <div><b>Fri</b><span>Finance wants margin</span></div>
-      <div><b>Sat</b><span>"This is unfair"</span></div>
-      <div><b>Sun</b><span>A broker calls</span></div>
+    <h1>Not enough chips for everyone. <span class="u">Who gets them?</span></h1>
+    <div class="gapbars">
+      <div class="gb"><span>Ordered</span><div class="bar o"></div><b>160</b></div>
+      <div class="gb"><span>In stock</span><div class="bar s"></div><b>100</b></div>
+      <p class="short">60 chips short</p>
     </div>
-    <div class="cue">Scroll to start Monday</div>
+    <p class="dek">Follow one week at a chip maker. Each day the planner tries a new way to split the 100 chips between four customers.</p>
+    <div class="cue">Scroll to start the week</div>
   </div>
 </header>
 
