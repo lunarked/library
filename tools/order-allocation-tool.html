@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Tool: Order allocation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: the customer's ask (quantity + date) first, then what we can promise as answer cards, then free capacity by week, then where space is tight at each step. */
+:root{
+  --bg:#EEF1F3; --surface:#FFFFFF; --ink:#141B22; --muted:#5B6873; --line:#D3DAE0; --track:#E4E9ED;
+  --accent:#1F5FA8; --accent-soft:#DCE8F6;
+  --late:#C8322A; --late-soft:#F8DEDB; --warn:#B87406; --warn-soft:#F7E8CC; --ok:#2C8A55; --ok-soft:#D9EFE2;
+  --firm:#5146B8; --slack:#B5AEEA; --free:#EFA22F; --freeink:#4A2E00; --new:#14A38B; --newink:#FFFFFF;
+  --wait:#C9D1D8; --make:#3C9BC2; --ship:#1F5FA8; --wh:#D9A21B; --truck:#7E6BC4;
+  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --firm:#7C70E0; --slack:#4B4578; --free:#E8A93A; --freeink:#2A1A00; --new:#2CC2A6; --newink:#06201B;
+  --wait:#34404B; --make:#5BB6DB; --ship:#6FA8EA; --wh:#E2B23C; --truck:#A08FE6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
+  --accent:#6FA8EA; --accent-soft:#1B2B40;
+  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
+  --firm:#7C70E0; --slack:#4B4578; --free:#E8A93A; --freeink:#2A1A00; --new:#2CC2A6; --newink:#06201B;
+  --wait:#34404B; --make:#5BB6DB; --ship:#6FA8EA; --wh:#E2B23C; --truck:#A08FE6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:1000px;margin:0 auto;padding-block:26px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5.4vw,52px);line-height:.98;margin:4px 0 0;text-transform:uppercase;text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent)}
+.lede{margin:8px 0 0;color:var(--muted);max-width:66ch}
+h2{font-family:var(--f-display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.01em;margin:0;line-height:1.1}
+.sub{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* the ask */
+.controls{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:end;margin-top:12px}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
+.ctl label{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
+.qty button{border:0;background:var(--track);width:40px;height:40px;font-size:20px;font-weight:700}
+.qty input{width:84px;height:40px;border:0;text-align:center;font:700 20px var(--f-display);background:transparent;-moz-appearance:textfield}
+.qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit{font-size:14px;color:var(--muted);padding:0 10px}
+select{appearance:none;-webkit-appearance:none;height:42px;border:1px solid var(--line);border-radius:7px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235B6873' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;padding:0 36px 0 12px;font-weight:600;font-size:15px;min-width:180px}
+
+/* answer cards */
+.answers{display:flex;flex-direction:column;gap:10px}
+.ans{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.ans.lead{border:2px solid var(--vc);background:var(--vs);padding:16px}
+.v-warn{--vc:var(--warn);--vs:var(--warn-soft)}
+.v-ok{--vc:var(--ok);--vs:var(--ok-soft)} .v-late{--vc:var(--late);--vs:var(--late-soft)}
+.ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800;color:var(--surface)}
+.ans.lead .ic{width:48px;height:48px;font-size:24px}
+.ic.win{background:var(--ok)} .ic.lose{background:var(--late)} .ic.mid{background:var(--warn)}
+.ans h3{margin:0;font:800 clamp(19px,3vw,25px)/1.08 var(--f-display);text-transform:uppercase;text-wrap:balance}
+.ans.lead h3{font-size:clamp(23px,3.8vw,32px);color:var(--vc)}
+.ans p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.tag{font:700 10px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;background:var(--track);color:var(--muted)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.ask{background:var(--warn-soft);color:var(--warn)}
+.say{margin-top:4px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:15px}
+.say b{display:block;font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+
+/* trip gantt */
+.g-track{position:relative;height:30px;background:var(--track);border-radius:5px;margin-top:6px}
+.g-seg{position:absolute;top:5px;bottom:5px;border-radius:3px}
+.g-seg.wait{background:repeating-linear-gradient(135deg,var(--wait) 0 4px,transparent 4px 8px)}
+.g-dia{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%) rotate(45deg);border:2px solid var(--surface)}
+.g-need{position:absolute;top:-6px;bottom:-6px;border-left:2px dashed var(--late);z-index:2}
+.g-axis{position:relative;height:18px;font:500 10.5px var(--f-mono);color:var(--muted);margin-top:4px}
+.g-axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.g-axis span:first-child{transform:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:5px}
+.trace{margin-top:10px;font-size:14px}
+
+/* weeks */
+.weeks{display:flex;flex-direction:column;gap:10px}
+.wk{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) auto;gap:12px;align-items:center}
+.wk .wl{font-weight:700;font-size:14px;line-height:1.2}
+.wk .wl small{display:block;font:500 11px var(--f-mono);color:var(--muted)}
+.wk .bar{position:relative;height:22px;background:var(--track);border-radius:4px;overflow:hidden}
+.wk .fill{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.wk .need{position:absolute;top:0;bottom:0;border-left:2px dashed var(--ink)}
+.wk .val{font:600 13px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:76px;text-align:right}
+
+/* capacity grid */
+.grid{display:grid;grid-template-columns:52px repeat(5,minmax(0,1fr)) 54px;gap:5px 4px;align-items:center}
+.ch{font-size:12px;line-height:1.15;text-align:center;padding-bottom:6px}
+.ch b{display:block;font:700 14px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
+.ch span{color:var(--muted);font-size:11px}
+.dl{font:600 11px/1.1 var(--f-mono)}
+.dl small{display:block;color:var(--muted);font-weight:500}
+.cell{height:24px;display:flex;border-radius:4px;overflow:hidden;min-width:0}
+.cell.none{border-top:1px dashed var(--line);height:0;border-radius:0;margin:0 4px}
+.cell.traced{outline:2px solid var(--ink);outline-offset:1px}
+.b{height:100%;display:flex;align-items:center;justify-content:center;font:600 9px var(--f-mono);overflow:hidden;white-space:nowrap;min-width:0;border-right:1px solid var(--surface)}
+.b:last-child{border-right:0}
+.b.firm{background:var(--firm);color:#fff} .b.slack{background:var(--slack);color:var(--ink)}
+.b.new{background:var(--new);color:var(--newink)} .b.free{background:var(--free);color:var(--freeink)}
+.cust{font:600 10px/1.15 var(--f-mono);text-align:center;color:var(--muted);min-width:0;overflow:hidden}
+.cust .nb{display:inline-block;background:var(--new);color:var(--newink);border-radius:3px;padding:2px 4px;outline:2px solid var(--ink);outline-offset:1px}
+.day{font:600 10px/1.1 var(--f-mono);height:26px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);padding:0 2px;min-width:0;overflow:hidden;white-space:nowrap}
+.day:hover{border-color:var(--accent)}
+.day.soon{color:var(--muted);background:var(--track);border-style:dashed;text-decoration:line-through}
+.day.sel{border:2px solid var(--accent);background:var(--accent-soft)}
+.day.arr{background:var(--new);color:var(--newink);border:2px solid var(--ink);font-weight:700}
+.pickbox{border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0 0 14px}
+.pickbox.res{margin:14px 0 0}
+.pickbox.v-ok,.pickbox.v-late,.pickbox.v-warn{border-color:var(--vc);background:var(--vs)}
+.pb-hint{grid-column:1/-1;color:var(--muted)}
+.pb-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.pb-top b{font:800 19px/1.1 var(--f-display);text-transform:uppercase}
+.pb-x{border:0;background:none;font-size:22px;line-height:1;padding:0 4px;color:var(--muted)}
+.qty.sm button{width:36px;height:36px} .qty.sm input{height:36px;width:70px;font-size:18px}
+.pb-res{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14px}
+.qty{width:max-content}
+.v-warn{--vc:var(--warn);--vs:var(--warn-soft)}
+#pb-res{display:flex;flex-direction:column;gap:10px}
+.pb-line{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14px}
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px}
+.step b{font-weight:700} .step .sbody>span{color:var(--muted)} .step .sdot{color:#fff}
+.sdot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;line-height:1;font-weight:800;color:#fff}
+.step.ok .sdot{background:var(--ok)} .step.bad .sdot{background:var(--late)} .step.bad{border-color:var(--late)}
+.pb-sub{font:700 15px var(--f-display);text-transform:uppercase;margin-top:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600}
+.chip.late{opacity:.55;cursor:not-allowed;text-decoration:line-through}
+.chip.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.cell.short{outline:2px solid var(--late);outline-offset:1px}
+.note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
+
+@media (max-width:560px){
+  .day{font-size:8.5px;height:24px}
+  .panel{padding:12px}
+  .ans{grid-template-columns:auto minmax(0,1fr)}
+  .ans .tag{grid-column:2;justify-self:start}
+  .wk{grid-template-columns:78px minmax(0,1fr) auto;gap:8px}
+  .wk .val{min-width:0;font-size:12px}
+  .grid{grid-template-columns:38px repeat(5,minmax(0,1fr)) 40px;gap:5px 3px}
+  .ch b{font-size:12px} .ch span{font-size:9.5px}
+  .dl{font-size:10px} .b{font-size:8px} .cust{font-size:8.5px}
+  select{min-width:0;width:100%}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Tool · Order allocation</div>
+    <h1>What can we <em>promise</em> this customer?</h1>
+    <p class="lede">For use on a customer call. Enter how much they want. The tool checks booked space at the plant, trucks, the ship and the warehouse, and shows the earliest date you can promise.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="h-ask">
+    <h2 id="h-ask">The customer asks for</h2>
+    <div class="controls">
+      <div class="ctl"><label for="qty">Quantity</label>
+        <div class="qty"><button type="button" id="minus" aria-label="Less">−</button><input id="qty" type="number" inputmode="numeric" min="10" max="600" step="10" value="100"><button type="button" id="plus" aria-label="More">+</button><span class="unit">units</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-ans">
+    <h2 id="h-ans">Earliest dates</h2>
+    <p class="sub">The fastest date with swaps (another customer may get late), the date where every customer stays on time, and the date with free space only.</p>
+    <div class="answers" id="answers"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-wk">
+    <h2 id="h-wk">Free capacity by week</h2>
+    <p class="sub">Most units we can still promise for delivery by each date. The dashed line is this customer's quantity.</p>
+    <div class="weeks" id="weeks"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-trip">
+    <h2 id="h-trip">The order's trip</h2>
+    <p class="sub">The earliest delivery with free space only, step by step.</p>
+    <div class="g-track" id="trip"></div>
+    <div class="g-axis" id="axis"></div>
+    <div class="legend">
+      <span><i style="background:repeating-linear-gradient(135deg,var(--wait) 0 3px,transparent 3px 6px);border:1px solid var(--wait)"></i>Waiting for space</span>
+      <span><i style="background:var(--make)"></i>Made</span>
+      <span><i style="background:var(--ship)"></i>At sea</span>
+      <span><i style="background:var(--wh)"></i>Warehouse</span>
+      <span><i style="background:var(--truck)"></i>Truck to customer</span>
+    </div>
+    <div class="trace" id="trace"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-grid">
+    <h2 id="h-grid">Where space is tight</h2>
+    <p class="sub">Booked space at each step, day by day. Set a quantity, then tap a date under Arrives to see the route an order takes to arrive that day.</p>
+    <div class="pickbox" id="pick"></div>
+    <div class="grid" id="grid"></div>
+    <div class="pickbox res" id="pickres"><b class="pb-sub" id="pb-day2"></b><div id="pb-res"></div></div>
+    <div class="legend">
+      <span><i style="background:var(--firm)"></i>Booked, fixed date</span>
+      <span><i style="background:var(--slack)"></i>Booked, can move</span>
+      <span><i style="background:var(--new)"></i>This order</span>
+      <span><i style="background:var(--free)"></i>Free (% of space)</span>
+      <span><i style="border:2px solid var(--ink)"></i>Route</span>
+      <span><i style="border:2px solid var(--late)"></i>Route step that is full</span>
+      <span><i style="background:var(--track);border:1px dashed var(--muted)"></i>Too soon to make new, stock only</span>
+    </div>
+    <p class="note">Bookings shown are example data.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+const H=40;
+const WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const BASE=new Date();BASE.setHours(12,0,0,0);
+const TODAY=BASE.getDay();
+const dateOf=d=>{const x=new Date(BASE);x.setDate(x.getDate()+d);return x};
+const wd=d=>WD[(TODAY+d)%7];
+const dayLabel=d=>{if(d===0)return'Today';const x=dateOf(d);return WD[x.getDay()]+' '+x.getDate()+' '+MO[x.getMonth()]};
+const short=d=>{if(d===0)return'Today';const x=dateOf(d);return x.getDate()+' '+MO[x.getMonth()]};
+const isWk=d=>true;                       // plant and trucks run every day
+const isBiz=d=>{const w=((TODAY+d)%7+7)%7;return w>=1&&w<=5};
+const isShip=d=>((d%3)+3)%3===1;          // a ship leaves every 3 days (tomorrow, then every 3rd day)
+
+const LEGS=['P','T1','O','W','T2'];
+function cap(leg,d){
+  if(leg==='P')return 200;
+  if(leg==='T1')return 200;
+  if(leg==='O')return isShip(d)?600:0;
+  if(leg==='W')return 600;
+  if(leg==='T2')return 200;
+}
+const nextWk=d=>d;
+// example bookings, generated so every step runs about 80-85% full
+let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const NAMES=['ALB','HEX','NRD','OSL','BRX','TVO','KAI','DUN','PIR','ZEN','MOR','KIP','VEN','ORA','LUX','RIO','SOL','FAR','GEM','JUN','KEL','MAX','NOX','PAX','ROV','SKY','TAL','UMA','VIX','YAK','BEA','CRU','DAX','ELM','FIG','HOP'];
+let ni=0;const code=()=>{const n=NAMES[ni%NAMES.length]+(ni>=NAMES.length?Math.floor(ni/NAMES.length)+1:'');ni++;return n};
+const pair=()=>{const tot=160+Math.round(rnd()*1)*10;const a=Math.round(tot*(0.35+rnd()*0.3)/10)*10;return[a,tot-a]};
+const slackRel=()=>rnd()<0.4?0:3+Math.floor(rnd()*8);
+// stock already moving: in the warehouse (trucks today to day 2), at sea on the last ship (lands day 2), at port for tomorrow's ship (lands day 5)
+const PRE=[];
+[[0,0],[1,0],[2,0]].forEach(([t2,a])=>pair().forEach(q=>PRE.push({c:code(),q,a,t2,nbRel:slackRel()})));
+[3,4,5].forEach(t2=>pair().forEach(q=>PRE.push({c:code(),q,a:2,t2,nbRel:slackRel(),sea:true})));
+pair().forEach(q=>PRE.push({c:code(),q,a:5,t2:6,nbRel:slackRel(),port:true,o:1}));
+PRE.forEach(o=>{o.del=o.t2+1;o.nb=o.del+o.nbRel});
+const ORD=[];
+for(let d=0;d<H-8;d++)pair().forEach(q=>ORD.push({c:code(),q,r:d,nbRel:slackRel()}));
+
+function empty(){const s={};LEGS.forEach(l=>s[l]=Array.from({length:H},()=>[]));return s}
+const used=(s,l,d)=>s[l][d].reduce((a,b)=>a+b.q,0);
+const fits=(s,l,d,q)=>{const c=cap(l,d);return c>0&&c-used(s,l,d)>=q};
+function route(s,q,r,air){
+  const pd=[];let need=q,p=r,p0=-1;
+  while(need>0&&p<H){const f=cap('P',p)-used(s,'P',p);if(cap('P',p)>0&&f>0){const take=Math.min(f,need);pd.push({d:p,q:take});need-=take;if(p0<0)p0=p}if(need>0)p++}
+  if(need>0)return null;
+  let t1=p;while(t1<H&&!fits(s,'T1',t1,q))t1++;if(t1>=H)return null;
+  let o=t1,a;
+  if(air){while(o<H&&!isWk(o))o++;a=o+2}else{while(o<H&&!fits(s,'O',o,q))o++;a=o+4}
+  if(a>=H)return null;
+  for(let t2=a+1;t2<H-1;t2++){
+    if(!fits(s,'T2',t2,q))continue;
+    let ok=true;for(let d=a;d<t2;d++)if(!fits(s,'W',d,q)){ok=false;break}
+    if(ok)return{p0,p,pd,t1,o,a,t2,del:t2+1,air:!!air};
+  }
+  return null;
+}
+function place(s,rt,c,q,k){
+  const b={c,q,k};rt.pd.forEach(x=>s.P[x.d].push({c,q:x.q,k}));if(rt.t1>=0)s.T1[rt.t1].push(b);
+  if(!rt.air&&rt.o>=0)s.O[rt.o].push(b);
+  for(let d=rt.a;d<rt.t2;d++)s.W[d].push(b);
+  s.T2[rt.t2].push(b);
+}
+function preload(s){PRE.forEach(o=>{const t2=nextWk(o.t2);const b={c:o.c,q:o.q,k:o.nb>o.del?'slack':'firm'};if(o.port)s.O[o.o].push(b);for(let d=o.a;d<t2;d++)s.W[d].push(b);s.T2[t2].push(b)})}
+(()=>{const s=empty();preload(s);ORD.forEach(o=>{const rt=route(s,o.q,o.r,false);o.nb=rt?rt.del+o.nbRel:99;if(rt)place(s,rt,o.c,o.q,'x')})})();
+const INFO=(()=>{const s=empty();preload(s);const info={};
+  ORD.forEach(o=>{const rt=route(s,o.q,o.r,false);info[o.c]={del:rt?rt.del:99,slack:rt?o.nb-rt.del:0};if(rt)place(s,rt,o.c,o.q,'x')});return info})();
+const kind=c=>{const p=PRE.find(o=>o.c===c);if(p)return p.nb>p.del?'slack':'firm';return INFO[c].slack>0?'slack':'firm'};
+// re-plan a moved order: whole if it fits, otherwise in smaller lots; returns the last arrival day
+function rePlace(s,c,q,r){
+  const whole=route(s,q,r,false);if(whole){place(s,whole,c,q,kind(c));return whole.del}
+  let left=q,last=null;
+  for(let i=0;i<20&&left>0;i++){let m=0,rt=null;for(let x=Math.min(left,200);x>=10;x-=10){const t=route(s,x,r,false);if(t){m=x;rt=t;break}}
+    if(!rt)return null;place(s,rt,c,m,kind(c));left-=m;last=Math.max(last||0,rt.del)}
+  return left>0?null:last;
+}
+function book(S){const s=empty();preload(s);ORD.filter(o=>!S.includes(o.c)).forEach(o=>{const rt=route(s,o.q,o.r,false);if(rt)place(s,rt,o.c,o.q,kind(o.c))});return s}
+const BASEBOOK=book([]);
+const clone=s=>{const n={};LEGS.forEach(l=>n[l]=s[l].map(a=>a.slice()));return n};
+
+function standard(q,air){const s=clone(BASEBOOK);const nr=route(s,q,0,air);if(nr)place(s,nr,'NEW',q,'new');return{s,nr}}
+function stdPlan(q){const P=planFor(q);if(P.left>0||!P.legs.length)return{s:P.s,nr:null,legs:[]};const last=P.legs.reduce((a,b)=>b.del>a.del?b:a);return{s:P.s,nr:last,legs:P.legs}}
+function maxOne(s,D){let best=0;for(let q=10;q<=600;q+=10){const r=route(s,q,0,false);if(r&&r.del<=D)best=q;else break}return best}
+const ATP={};
+function maxBy(D){if(ATP[D]!=null)return ATP[D];const s=clone(BASEBOOK);let tot=0;for(let i=0;i<30;i++){const m=maxOne(s,D);if(!m)break;place(s,route(s,m,0,false),'NEW',m,'new');tot+=m}return ATP[D]=tot}
+function fullBy(q){for(let d=1;d<H-1;d++)if(maxBy(d)>=q)return d;return null}
+function planFor(q){const s=clone(BASEBOOK);const legs=[];let left=q;for(let i=0;i<30&&left>0;i++){const D=fullBy(q)||H;let m=Math.min(left,maxOne(s,D));if(!m)break;const r=route(s,m,0,false);place(s,r,'NEW',m,'new');legs.push(r);left-=m}return{s,legs,left}}
+function withMoves(q){
+  const cand=ORD.filter(o=>INFO[o.c].slack>0).map(o=>o.c);
+  const sets=[];cand.forEach((a,i)=>{sets.push([a]);cand.slice(i+1).forEach(b=>sets.push([a,b]))});
+  let best=null;
+  for(const S of sets){
+    const s=book(S);const nr=route(s,q,0,false);if(!nr)continue;place(s,nr,'NEW',q,'new');
+    const moved=[];let ok=true;
+    for(const c of S){const o=ORD.find(x=>x.c===c);const rt=route(s,o.q,o.r,false);if(!rt||rt.del>o.nb){ok=false;break}place(s,rt,c,o.q,kind(c));moved.push({c,to:rt.del,nb:o.nb})}
+    if(!ok)continue;
+    if(!best||nr.del<best.nr.del||(nr.del===best.nr.del&&S.length<best.moved.length))best={s,nr,moved};
+  }
+  return best;
+}
+
+// ---------- UI ----------
+const $=id=>document.getElementById(id);
+const st={q:100,nb:6};
+const clampQ=v=>Math.max(10,Math.min(600,Math.round((+v||10)/10)*10));
+$('qty').addEventListener('change',e=>{const v=clampQ(e.target.value);if(v===st.q)return;st.q=v;render()});
+$('qty').addEventListener('input',e=>{if(+e.target.value>=10){const v=clampQ(e.target.value);if(v!==st.q){st.q=v;render()}}});
+$('minus').onclick=()=>{st.q=clampQ(st.q-10);render()};
+$('plus').onclick=()=>{st.q=clampQ(st.q+10);render()};
+
+function card(cls,ic,icCls,title,text,tag,tagCls){return'<div class="ans '+cls+'"><span class="ic '+icCls+'">'+ic+'</span><div><h3>'+title+'</h3><p>'+text+'</p></div>'+(tag?'<span class="tag '+(tagCls||'')+'">'+tag+'</span>':'')+'</div>'}
+
+// candidates that free space on a full step without making their own customer late
+function candidates(x,np,S,any){
+  let codes=[];
+  if(x.l==='STOCK')codes=PRE.filter(o=>o.a<=np.t2-1).map(o=>o.c);
+  else{codes=[...new Set(BASEBOOK[x.l][x.d].filter(b=>b.c!=='NEW'&&(x.l==='O'||!PRECODES.includes(b.c))).map(b=>b.c))];
+    if(x.l==='T2')codes=codes.concat(BASEBOOK.T2[x.d].filter(b=>PRECODES.includes(b.c)).map(b=>'DL:'+b.c))}
+  return codes.filter(c=>!S.includes(c)&&!S.includes(c.replace('DL:',''))&&!S.includes('DL:'+c)&&(any||kind(c.replace('DL:',''))==='slack')).sort((a,b)=>(kind(a.replace('DL:',''))==='slack'?0:1)-(kind(b.replace('DL:',''))==='slack'?0:1));
+}
+function bestSwap(q,D,any){
+  let S=[];
+  for(let k=0;k<6;k++){
+    const sw=withSwaps(q,D,S);if(!sw)return null;
+    if(sw.allFit)return any||sw.moved.every(m=>m.ok)?{S,sw}:null;
+    const bad=sw.steps.find(x=>!x.ok);let pickC=null;
+    for(const c of candidates(bad,sw.np,S,any)){const t=withSwaps(q,D,[...S,c]);if(!t||(!any&&!t.moved.every(m=>m.ok)))continue;
+      const tb=t.steps.find(x=>x.l===bad.l&&x.d===bad.d);if(tb&&tb.free>bad.free){pickC=c;break}}
+    if(!pickC)return null;S=[...S,pickC];
+  }
+  return null;
+}
+function earliestSwap(q,until,any){
+  for(let D=1;D<until;D++){
+    if(jit(q,D))return{D,S:[],free:true};
+    const b=bestSwap(q,D,any);if(b)return{D,S:b.S,sw:b.sw};
+  }
+  return null;
+}
+let LASTSWAP=null;
+function render(){
+  $('qty').value=st.q;
+  if(pick.q!==st.q){pick.q=st.q;pick.swaps=[]}
+  const q=st.q;
+  const A=stdPlan(q);
+  const freeD=A.nr?A.nr.del:null;
+  const E=earliestSwap(q,freeD||H-2,false);           // swaps where everyone stays on time
+  const L=earliestSwap(q,(E?E.D:freeD)||H-2,true);    // any swap, someone may be late
+  const onD=E&&(!freeD||E.D<freeD)?E.D:freeD;
+  LASTSWAP=null;let h='',btn=[];
+  const nm=c=>c.startsWith('DL:')?c.slice(3)+' (later truck)':c;
+  const lateTxt=e=>e.sw.moved.map(m=>m.c+' '+(m.ok?'still on time ('+short(m.to)+')':(m.to!=null?(m.to-m.nb)+' days late':'no new date'))).join(', ');
+  if(L&&(!onD||L.D<onD)){
+    h+=card('lead v-warn','!','mid',q+' units by '+dayLabel(L.D),'Fastest with swaps. Takes from '+L.S.map(nm).join(', ')+'. '+lateTxt(L)+'.','Others get late','ask');
+    btn.push(['sw-late','Show this swap in the grid',L]);
+  }
+  if(E&&(!freeD||E.D<freeD)){
+    h+=card(L&&L.D<E.D?'':'lead v-ok','✓','win',q+' units by '+dayLabel(E.D),'With swaps where every customer stays on time: '+E.S.map(nm).join(', ')+'. '+lateTxt(E)+'.','Swaps, all on time','ok');
+    btn.push(['sw-ok','Show this swap in the grid',E]);
+  }else if(!(L&&(!onD||L.D<onD))){
+    h+=card('lead v-ok','✓','win',q+' units by '+(freeD?dayLabel(freeD):'no date'),'Earliest date you can promise. Swapping does not make it faster.','Swaps','ok');
+  }
+  h+=card('','✓','win',q+' units by '+(freeD?dayLabel(freeD):'no date in the next weeks'),'Earliest through the supply chain using free space only. Nothing else moves.'+(A.legs.length>1?' Comes in '+A.legs.length+' deliveries.':''),'Free space','ok');
+  $('answers').innerHTML=h+btn.map(([id,t])=>'<button type="button" class="reset" id="'+id+'">'+t+' ('+(id==='sw-late'?'fastest':'all on time')+')</button>').join('');
+  btn.forEach(([id,t,e])=>{$(id).onclick=()=>{pick.d=e.D;pick.swaps=e.S.slice();renderGrid();$('h-grid').scrollIntoView({behavior:'smooth'})}});
+  const D=freeD||0,okA=true;
+
+  // weeks
+  const fridays=[];for(let d=1;d<=28&&fridays.length<4;d++)if((TODAY+d)%7===5)fridays.push(d);
+  const MAXQ=Math.max(q,...fridays.map(maxBy))*1.05;
+  $('weeks').innerHTML=fridays.map(d=>{
+    const m=maxBy(d);const col=m>=q?'var(--ok)':m>0?'var(--warn)':'var(--late)';
+    return'<div class="wk"><div class="wl">By '+dayLabel(d)+'<small>'+(m>=q?'fits':'short by '+(q-m))+'</small></div><div class="bar"><div class="fill" style="width:'+(m/MAXQ*100)+'%;background:'+col+'"></div><div class="need" style="left:'+(q/MAXQ*100)+'%"></div></div><div class="val">'+m+' units</div></div>';
+  }).join('');
+
+  // trip
+  const MAX=28,X=d=>Math.min(d,MAX)/MAX*100;
+  let t='';
+  if(A.nr){const r=A.nr;
+    [['wait',0,r.p0],['',r.p0,r.p+1,'var(--make)'],['wait',r.p+1,r.o],['',r.o,r.a,'var(--ship)'],['',r.a,r.t2,'var(--wh)'],['',r.t2,r.del,'var(--truck)']].forEach(([c,a,b,col])=>{if(b>a)t+='<div class="g-seg '+c+'" style="left:'+X(a)+'%;width:'+(X(b)-X(a))+'%;'+(col?'background:'+col:'')+'"></div>'});
+    t+='<div class="g-dia" style="left:'+X(r.del)+'%;background:'+(okA?'var(--ok)':'var(--late)')+'"></div>';
+    $('trace').textContent=(A.legs.length>1?'Last of '+A.legs.length+' deliveries. ':'')+'Made '+(r.p0===r.p?dayLabel(r.p):dayLabel(r.p0)+' to '+dayLabel(r.p))+', ship '+dayLabel(r.o)+', warehouse '+dayLabel(r.a)+', truck '+dayLabel(r.t2)+', delivered '+dayLabel(r.del)+'.';
+  }else $('trace').textContent='No free space in the next weeks.';
+  $('trip').innerHTML=t;
+  $('axis').innerHTML=[0,7,14,21,28].map(d=>'<span style="left:'+X(d)+'%">'+short(d)+'</span>').join('');
+
+  LASTA=A;renderGrid();
+}
+let LASTA=null;
+const pick={d:null,q:100,swaps:[]};
+
+const LEGN={STOCK:'Stock that can still make it',P:'Plant',T1:'Truck to port',O:'Ship',W:'Warehouse',T2:'Truck to customer'};
+const PRECODES=PRE.map(o=>o.c);
+function jit(q,D){ // latest start that still arrives by D, so the order flows just in time
+  for(let r=D;r>=0;r--){const s=clone(BASEBOOK);const rt=route(s,q,0+r,false);if(rt&&rt.del<=D){
+      for(let t2=D-1;t2>rt.t2;t2--){if(!fits(s,'T2',t2,q))continue;let ok=true;for(let d=rt.a;d<t2;d++)if(!fits(s,'W',d,q)){ok=false;break}if(ok){rt.t2=t2;rt.del=t2+1;break}}
+      place(s,rt,'NEW',q,'new');return{s,r:rt}}}
+  return null;
+}
+// latest dates each step must happen for the order to arrive by D, ignoring who is booked
+function needPath(q,D,st){
+  let t2=D-1;while(t2>=0&&!isWk(t2))t2--;
+  if(t2<1)return null;
+  let o=t2-5;while(o>=0&&!isShip(o))o--;
+  if(o<0)return{wOnly:true,pd:[],p0:-1,p:-1,t1:-1,o:-1,a:0,t2,del:t2+1,air:false}; // too late to make new: ship from stock already in the warehouse
+  const a=o+4;
+  let t1=o;while(t1>=0&&!isWk(t1))t1--; if(t1<0)return null;
+  const pd=[];let need=q,d=t1;
+  while(need>0&&d>=0){const f=cap('P',d)-used(st,'P',d);if(cap('P',d)>0&&f>0){const take=Math.min(f,need);pd.unshift({d,q:take});need-=take}d--}
+  if(need>0){const last=pd.length&&pd[pd.length-1].d===t1?pd[pd.length-1]:null;if(last)last.q+=need;else pd.push({d:t1,q:need})}
+  if(!isWk(t1))return null;
+  return{p0:pd[0].d,p:pd[pd.length-1].d,pd,t1,o,a,t2,del:t2+1,air:false};
+}
+function stepList(np,q){
+  const L=np.pd.map(x=>({l:'P',d:x.d,n:x.q}));
+  L.push({l:'T1',d:np.t1,n:q},{l:'O',d:np.o,n:q});
+  for(let d=np.a;d<np.t2;d++)L.push({l:'W',d,n:q});
+  L.push({l:'T2',d:np.t2,n:q});
+  return L;
+}
+function delayPlace(s,o,from){ // put an order already in the warehouse on a later truck
+  for(let t2=from;t2<H-1;t2++){if(!fits(s,'T2',t2,o.q))continue;let ok=true;for(let d=o.a;d<t2;d++)if(!fits(s,'W',d,o.q)){ok=false;break}
+    if(ok){const b={c:o.c,q:o.q,k:kind(o.c)};for(let d=o.a;d<t2;d++)s.W[d].push(b);s.T2[t2].push(b);return t2+1}}
+  return null;
+}
+function withSwaps(q,D,ALL){
+  const S=ALL.filter(c=>!c.startsWith('DL:')),DL=ALL.filter(c=>c.startsWith('DL:')).map(c=>c.slice(3));
+  const s=clone(BASEBOOK);
+  LEGS.forEach(l=>s[l].forEach((arr,d)=>{s[l][d]=arr.filter(b=>!S.includes(b.c)&&!DL.includes(b.c))}));
+  const delayed=np=>DL.map(c=>{const o=PRE.find(z=>z.c===c);const to=delayPlace(s,o,np.t2+1);return{c,to,nb:o.nb,ok:to!=null&&to<=o.nb,delay:true}});
+  const np=needPath(q,D,s);if(!np)return null;
+  if(np.wOnly){
+    const inTime=c=>{const o=PRE.find(z=>z.c===c);return o&&o.a<=np.t2-1};
+    const stock=S.filter(inTime).reduce((a,c)=>a+PRE.find(o=>o.c===c).q,0);
+    const tA=S.filter(inTime).map(c=>PRE.find(o=>o.c===c).a);if(tA.length)np.a=Math.max(...tA);
+    const tf=cap('T2',np.t2)-used(s,'T2',np.t2);
+    const steps=[{l:'STOCK',d:0,n:q,free:stock,ok:stock>=q},{l:'T2',d:np.t2,n:q,free:tf,ok:tf>=q}];
+    place(s,np,'NEW',q,'new');
+    const moved=delayed(np).concat(S.map(c=>{const o=PRE.find(z=>z.c===c)||ORD.find(z=>z.c===c);const to=rePlace(s,c,o.q,PRECODES.includes(c)?0:o.r);return{c,to,nb:o.nb,ok:to!=null&&to<=o.nb,give:PRECODES.includes(c)}}));
+    return{s,np,steps,moved,allFit:steps.every(x=>x.ok)};
+  }
+  const steps=stepList(np,q).map(x=>{const f=cap(x.l,x.d)-used(s,x.l,x.d);return{...x,free:f,ok:f>=x.n}});
+  place(s,np,'NEW',q,'new');
+  const moved=delayed(np).concat(S.map(c=>{const P0=PRE.find(z=>z.c===c),o=P0||ORD.find(z=>z.c===c);const to=rePlace(s,c,o.q,P0?0:o.r);return{c,to,nb:o.nb,ok:to!=null&&to<=o.nb,give:!!P0}}));
+  return{s,np,steps,moved,allFit:steps.every(x=>x.ok)};
+}
+function renderGrid(){
+  const A=LASTA;
+  let s,r=null,res=null,np=null,sw=null;
+  if(pick.d!=null){
+    res=jit(pick.q,pick.d);
+    if(res){s=res.s;r=res.r}
+    else{sw=withSwaps(pick.q,pick.d,pick.swaps);np=sw&&sw.np;
+      if(np){s=sw.s;r=np}
+      else{const e=standard(pick.q,false);s=e.s;r=e.nr}}
+  }else s=clone(BASEBOOK);
+  let g='<div></div>'+[['Plant','200 a day'],['Truck','to port, daily'],['Ship','every 3 days'],['Warehouse','600 spaces'],['Truck','to customer, daily']].map(([a,b])=>'<div class="ch"><b>'+a+'</b><span>'+b+'</span></div>').join('')+'<div class="ch"><b>Arrives</b><span>tap a day</span></div>';
+  const rows=Math.min(H-2,Math.max(21,r?r.del+1:0,pick.d!=null?pick.d+1:0));
+  const tr=r?{T1:r.t1,O:r.o,T2:r.t2}:{};
+  const ideal=route(empty(),pick.q,0,false);const soonD=ideal?ideal.del:0;
+  for(let d=0;d<rows;d++){
+    const x=dateOf(d);
+    g+='<div class="dl">'+(d===0?'Today':wd(d))+'<small>'+x.getDate()+' '+MO[x.getMonth()]+'</small></div>';
+    LEGS.forEach(l=>{
+      const c=cap(l,d);if(c===0){g+='<div class="cell none"></div>';return}
+      let inner='',u=0;const tot=Math.max(c,used(s,l,d));
+      s[l][d].forEach(b=>{u+=b.q;inner+='<div class="b '+b.k+'" style="flex:'+b.q+'" title="'+b.c+' '+b.q+'">'+(b.q/tot>=.28?(b.c==='NEW'?'THIS':b.c):'')+'</div>'});
+      const fr=c-u;if(fr>0)inner+='<div class="b free" style="flex:'+fr+'">'+(fr/c>=.3?Math.round(fr/c*100)+'%':'')+'</div>';
+      const on=r&&(tr[l]===d||(l==='P'&&r.pd.some(x=>x.d===d))||(l==='W'&&d>=r.a&&d<r.t2));
+      g+='<div class="cell'+(on?' traced':'')+(on&&fr<0?' short':'')+'">'+inner+'</div>';
+    });
+    const arr=r&&r.del===d;
+    const sel=pick.d===d;
+    g+='<button type="button" class="day'+(sel?' sel':'')+(arr?' arr':'')+(d<soonD?' soon':'')+'" data-d="'+d+'" aria-pressed="'+sel+'">'+x.getDate()+' '+MO[x.getMonth()]+'</button>';
+  }
+  $('grid').innerHTML=g;
+  document.querySelectorAll('#grid .day').forEach(b=>b.onclick=()=>{const d=+b.dataset.d;pick.d=pick.d===d?null:d;pick.swaps=[];renderGrid()});
+  const d=pick.d,pb=$('pick');
+  $('pb-q').value=pick.q;
+  $('pb-day').textContent=d==null?'Tap a date under Arrives':'Arrive by '+dayLabel(d)+'. Result below the grid.';
+  let cls='',h='';
+  if(d==null){h=''}
+  else if(res){cls='v-ok';h='<div class="pb-line"><span class="ic win">✓</span><div><b>Fits.</b> '+pathText(r)+'</div></div>'}
+  else if(!np){cls='v-late';h='<div class="pb-line"><span class="ic lose">✕</span><div><b>Too soon for any order.</b> The next ship leaves '+dayLabel(ideal.o)+' and is 4 days at sea, so the earliest any order can arrive is '+dayLabel(soonD)+'. '+(r?'With today\'s bookings, the earliest for '+pick.q+' units is '+dayLabel(r.del)+'. The grid shows that route.':'')+'</div></div>'}
+  else{
+    const E=stdPlan(pick.q).nr;
+    const lateMoves=sw.moved.filter(m=>!m.ok);
+    cls=sw.allFit?(lateMoves.length?'v-warn':'v-ok'):'v-late';
+    h+='<div class="pb-line"><span class="ic '+(sw.allFit?(lateMoves.length?'mid':'win'):'lose')+'">'+(sw.allFit?(lateMoves.length?'!':'✓'):'✕')+'</span><div>'+
+      (sw.allFit?'<b>Fits with swaps.</b> ':'<b>Does not fit by '+short(d)+'.</b> '+(E?'With free space only, earliest is '+dayLabel(E.del)+' (in smaller deliveries). ':''))+
+      (np.wOnly?(sw.allFit?'Uses stock already on its way. Path: '+pathText(np):'Too late to make new units. Take stock from other customers that is already in the warehouse, on a truck, or on a ship that lands in time.'):'Latest path needed: '+pathText(np))+'</div></div>';
+    // steps
+    const seen={};
+    h+='<div class="steps">'+sw.steps.filter(x=>{const k=x.l+(x.l==='W'?'':x.d);if(x.l==='W'&&x.ok){if(seen.W)return false;seen.W=1}return true}).map(x=>{
+      const base=x.l==='STOCK'?PRE.map(o=>({c:o.c})):BASEBOOK[x.l][x.d].filter(b=>b.c!=='NEW'&&(x.l==='O'||!PRECODES.includes(b.c)));
+      const codes=[...new Set(base.map(b=>b.c))].sort((a,b)=>(kind(a)==='slack'?0:1)-(kind(b)==='slack'?0:1));
+      let chips='';
+      if(!x.ok||x.l==='STOCK'||(x.l==='T2'&&pick.swaps.some(c=>c.startsWith('DL:')))){
+        chips='<div class="chips">'+codes.map(c=>{const o=ORD.find(z=>z.c===c)||PRE.find(z=>z.c===c);const on=pick.swaps.includes(c);
+          return'<button type="button" class="chip'+(on?' on':'')+'" data-c="'+c+'" aria-pressed="'+on+'">'+(x.l==='STOCK'?(on?'Taken from ':'Take from '):(on?'Swapped ':'Swap '))+c+' · '+o.q+(x.l==='STOCK'?' · '+stageOf(o,np):'')+' · '+(kind(c)==='slack'?'can move':'fixed date')+'</button>'}).join('')+
+          (x.l==='T2'?BASEBOOK.T2[x.d].filter(b=>PRECODES.includes(b.c)&&!pick.swaps.includes(b.c)).map(b=>{const k='DL:'+b.c,on=pick.swaps.includes(k);return'<button type="button" class="chip'+(on?' on':'')+'" data-c="'+k+'" aria-pressed="'+on+'">'+(on?'Moved ':'Move ')+b.c+' · '+b.q+' to a later truck · '+(kind(b.c)==='slack'?'can move':'fixed date')+'</button>'}).join(''):'')+
+          (codes.length||x.l==='T2'?'':'<span class="pb-hint">No customer orders here to swap.</span>')+'</div>';
+      }
+      if(x.l==='STOCK')chips=chips.replace(/<button type="button" class="chip([^"]*)" data-c="(\w+)"/g,(m,cl,c)=>{const o=PRE.find(z=>z.c===c);return o&&o.a>np.t2-1?'<button type="button" disabled class="chip late'+cl+'" data-c="'+c+'"':m});
+      return'<div class="step '+(x.l==='STOCK'&&x.ok?'ok':x.ok?'ok':'bad')+'"><span class="sdot">'+(x.ok?'✓':'✕')+'</span><div class="sbody"><b>'+LEGN[x.l]+(x.l==='STOCK'?'':' '+short(x.d))+'</b> <span>'+(x.l==='STOCK'?'needs '+x.n+', taken so far '+x.free:'needs '+x.n+', free '+Math.max(0,x.free))+'</span>'+chips+'</div></div>';
+    }).join('')+'</div>';
+    if(sw.moved.length)h+='<b class="pb-sub">Swapped orders</b><div class="steps">'+sw.moved.map(m=>'<div class="step '+(m.ok?'ok':'bad')+'"><span class="sdot">'+(m.ok?'✓':'✕')+'</span><div class="sbody"><b>'+m.c+(m.give?' gives its stock. Its replacement arrives ':m.delay?' goes on a later truck and arrives ':' moves to ')+(m.to!=null?short(m.to):'no slot')+',</b> <span>its customer needs it by '+short(m.nb)+(m.ok?', still on time':(m.to!=null?', '+(m.to-m.nb)+' days late':''))+'</span><div class="chips"><button type="button" class="chip on" data-c="'+(m.delay?'DL:':'')+m.c+'">Undo</button></div></div></div>').join('')+'</div>';
+  }
+  pb.className='pickbox';$('pickres').className='pickbox res'+(cls?' '+cls:'');$('pickres').hidden=d==null;$('pb-day2').textContent=d==null?'':'Result: arrive by '+dayLabel(d);
+  $('pb-res').innerHTML=h;
+  document.querySelectorAll('#pb-res .chip').forEach(b=>b.onclick=()=>{const c=b.dataset.c;pick.swaps=pick.swaps.includes(c)?pick.swaps.filter(z=>z!==c):[...pick.swaps,c];renderGrid()});
+}
+(function(){
+  $('pick').innerHTML='<div class="pb-top"><div class="qty sm"><button type="button" id="pb-m" aria-label="Less">−</button><input id="pb-q" type="number" inputmode="numeric" min="10" max="400" step="10" value="100"><button type="button" id="pb-p" aria-label="More">+</button><span class="unit">units</span></div><b id="pb-day"></b></div>';
+  const cq=v=>Math.max(10,Math.min(400,Math.round((+v||10)/10)*10));
+  $('pb-m').onclick=()=>{st.q=cq(st.q-10);render()};
+  $('pb-p').onclick=()=>{st.q=cq(st.q+10);render()};
+  const setQ=e=>{const v=cq(e.target.value);if(v===st.q)return;st.q=v;render()};
+  $('pb-q').onchange=setQ;
+  $('pb-q').oninput=e=>{if(+e.target.value>=10)setQ(e)};
+})();
+function stageOf(o,np){
+  if(o.port)return o.a>np.t2-1?'at port, ship '+short(o.o)+', too late':'at port, ship '+short(o.o);
+  if(o.a>0)return o.a>np.t2-1?'at sea, lands '+short(o.a)+', too late':'at sea, lands '+short(o.a);
+  const t2=nextWk(o.t2);return t2===0?'on truck today':'in warehouse';
+}
+function pathText(r){
+  if(r.wOnly)return (r.a>0?'At sea, lands '+short(r.a)+', warehouse':'In the warehouse now')+', truck '+short(r.t2)+', arrives '+short(r.del)+'.';
+  return 'Made '+(r.p0===r.p?short(r.p):short(r.p0)+' to '+short(r.p))+', truck to port '+short(r.t1)+', ship '+short(r.o)+', warehouse '+short(r.a)+(r.t2-r.a>1?' to '+short(r.t2-1):'')+', truck '+short(r.t2)+', arrives '+short(r.del)+'.';
+}
+render();
+})();
+</script>
+
+<a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
+<style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
+</body>
+</html>
