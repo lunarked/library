@@ -7,6 +7,7 @@ window.SPEC = {
   desc: 'Set the master production schedule against demand and line capacity, explode it through the BOM into part requirements and order dates, and see how many devices you can build today.',
   notice: 'Every tab is filled with sample data for a portable speaker with 30 parts. Type over it, or start blank.',
   headCap: 'Clear to build today',
+  download: {href: 'production-planning.xlsx', label: 'Download Excel'},
   tones: {good: ['Covered'], warn: ['Order soon', 'Over capacity', 'Below safety'], bad: ['Late', 'Stock out']},
   notes: [
     'Demand each week is the larger of forecast and firm orders. Finished stock is last week\'s stock plus the build less demand. Below safety means finished stock falls under the safety level; Stock out means it goes below zero.',

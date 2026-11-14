@@ -1154,6 +1154,10 @@ function bars(host, d, ch) {
 
 /* ---------- header ---------- */
 function buildHeader() {
+  if (SPEC.download) {
+    var bar = document.querySelector('.top .actions'), copyBtn = $('btn-copy');
+    bar.insertBefore(h('a', {class: 'btn', href: SPEC.download.href, download: '', text: SPEC.download.label || 'Download Excel'}), copyBtn);
+  }
   ['brand', 'marketplace'].forEach(function (k) {
     var el = $('b-' + k);
     el.addEventListener('input', function () { state.biz[k] = el.value; edit(); });
