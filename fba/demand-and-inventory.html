@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en" data-look="sheet">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demand and Inventory Workbook</title>
+<style>
+
+:root{
+  /* Layout: a compact product header with launch status, then a four-tab workbook.
+     Tinted cells are inputs and everything else is calculated. The content leads: one text face, hairlines, one accent.
+     The other two themes (sheet, label) swap these tokens and a few layout rules. */
+  --bg:#F6F7F9; --surface:#FFFFFF; --ink:#1B1F27; --ink-2:#4A5261; --muted:#677082; --line:#E2E6EC;
+  --accent:#2456C9; --on-accent:#FFFFFF; --field:#F3F5F9; --field-line:#D5DBE5; --series:#2F6BDB; --track:#E1E7F2;
+  --good:#0B6B34; --good-bg:#DCF2E3; --warn:#7A4E00; --warn-bg:#FFEDBF; --bad:#A3201B; --bad-bg:#FBDDDB; --idle:#556072; --idle-bg:#E9ECF1;
+  --btn-line:#CBD2DC; --note-bg:#EEF3FD; --note-fg:#33415C; --note-line:#D5E0F7;
+  --top-bg:transparent; --top-fg:var(--ink); --top-muted:var(--muted); --top-pad:0px; --top-focus:var(--accent);
+  --band-bg:transparent; --band-fg:var(--ink); --head-fill:transparent;
+  --radius:6px; --radius-in:4px; --rule:1px solid var(--btn-line); --in-border:1px solid var(--field-line); --in-bottom:1px solid var(--field-line);
+  --font-body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; --font-display:var(--font-body); --font-num:var(--font-body);
+  --cap:500 12px/1.3 var(--font-body); --cap-case:none; --cap-track:0em;
+  --h1:600 18px/1.2 var(--font-display); --tab:500 14px/1.1 var(--font-display); --head-case:none; --head-track:0em;
+  --h2:600 16px/1.25 var(--font-display); --h2-case:none; --h2-track:0em;
+  --linput:500 14.5px/1.3 var(--font-body); --big:600 22px/1.1 var(--font-body);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1115; --surface:#171A20; --ink:#E9ECF1; --ink-2:#B4BBC7; --muted:#8B93A1; --line:#2A2F38;
+    --accent:#8FB0FF; --on-accent:#0F1115; --field:#1F242C; --field-line:#363D48; --series:#6C88F5; --track:#2A3344;
+    --good:#6FD99A; --good-bg:#10301E; --warn:#F3C45A; --warn-bg:#382A06; --bad:#FF938A; --bad-bg:#3A1614; --idle:#A3ACBB; --idle-bg:#202632;
+    --btn-line:#3A414D; --note-bg:#18202F; --note-fg:#B9C4D9; --note-line:#2A3650;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1115; --surface:#171A20; --ink:#E9ECF1; --ink-2:#B4BBC7; --muted:#8B93A1; --line:#2A2F38;
+  --accent:#8FB0FF; --on-accent:#0F1115; --field:#1F242C; --field-line:#363D48; --series:#6C88F5; --track:#2A3344;
+  --good:#6FD99A; --good-bg:#10301E; --warn:#F3C45A; --warn-bg:#382A06; --bad:#FF938A; --bad-bg:#3A1614; --idle:#A3ACBB; --idle-bg:#202632;
+  --btn-line:#3A414D; --note-bg:#18202F; --note-fg:#B9C4D9; --note-line:#2A3650;
+  color-scheme:dark;
+}
+
+/* theme: spreadsheet */
+:root[data-look="sheet"]{
+  --bg:#F1F3F4; --surface:#FFFFFF; --ink:#1F2328; --ink-2:#444B54; --muted:#5F6672; --line:#D9DEE3;
+  --accent:#0F766E; --on-accent:#FFFFFF; --field:#FFF8E1; --field-line:#E3D5A3; --series:#12968A; --track:#CFE8E4;
+  --btn-line:#BFC6CE; --note-bg:#FFF8E1; --note-fg:#5C4A00; --note-line:#E3D5A3;
+  --top-bg:#1B2A41; --top-fg:#FFFFFF; --top-muted:#C3CEDD; --top-pad:10px 14px; --top-focus:#FFFFFF;
+  --band-bg:#0F766E; --band-fg:#FFFFFF; --head-fill:#E6F2F1;
+  --radius:0px; --radius-in:0px; --rule:1px solid var(--line);
+  --font-body:Arial,"Helvetica Neue",Helvetica,sans-serif;
+  --cap:700 11.5px/1.3 var(--font-body);
+  --h1:700 17px/1.2 var(--font-display); --tab:700 13px/1.1 var(--font-display);
+  --h2:700 12.5px/1.2 var(--font-display); --h2-case:uppercase; --h2-track:.03em;
+}
+@media (prefers-color-scheme: dark){
+  :root[data-look="sheet"]:not([data-theme="light"]){
+    --bg:#101314; --surface:#191D1F; --ink:#E8EAED; --ink-2:#BDC1C6; --muted:#979DA4; --line:#30373B;
+    --accent:#5EC4B8; --on-accent:#08211E; --field:#2B2817; --field-line:#57502C; --series:#2FA094; --track:#1D3A36;
+    --btn-line:#414A50; --note-bg:#2B2817; --note-fg:#E5D48A; --note-line:#57502C;
+    --top-bg:#0E1826; --top-fg:#E8EAED; --top-muted:#9FB0C6; --top-focus:#E8EAED;
+    --band-bg:#134E48; --band-fg:#E8F5F3; --head-fill:#1E2A2A;
+  }
+}
+:root[data-look="sheet"][data-theme="dark"]{
+  --bg:#101314; --surface:#191D1F; --ink:#E8EAED; --ink-2:#BDC1C6; --muted:#979DA4; --line:#30373B;
+  --accent:#5EC4B8; --on-accent:#08211E; --field:#2B2817; --field-line:#57502C; --series:#2FA094; --track:#1D3A36;
+  --btn-line:#414A50; --note-bg:#2B2817; --note-fg:#E5D48A; --note-line:#57502C;
+  --top-bg:#0E1826; --top-fg:#E8EAED; --top-muted:#9FB0C6; --top-focus:#E8EAED;
+  --band-bg:#134E48; --band-fg:#E8F5F3; --head-fill:#1E2A2A;
+}
+
+/* theme: shipping label */
+:root[data-look="label"]{
+  --bg:#E7EAF0; --surface:#FFFFFF; --ink:#0F1320; --ink-2:#434B5C; --muted:#5C6578; --line:#D5DAE3;
+  --accent:#1D3FD0; --on-accent:#FFFFFF; --field:#E8EDFF; --field-line:#AAB8F0; --series:#3156E0; --track:#D6DEFA;
+  --btn-line:var(--ink); --note-bg:var(--warn-bg); --note-fg:var(--warn); --note-line:transparent;
+  --label-paper:#FAFAF6; --label-ink:#0B0D12; --label-muted:#5A6272; --label-field:#E6EBFF; --label-accent:#1D3FD0; --label-track:#D3DBF7;
+  --radius:0px; --radius-in:0px; --rule:1.5px solid var(--ink); --in-border:0px solid transparent; --in-bottom:1.5px solid var(--field-line);
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-display:"Big Shoulders Display","Arial Narrow","Roboto Condensed","Helvetica Neue",sans-serif;
+  --font-num:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --cap:500 10.5px/1.25 var(--font-num); --cap-case:uppercase; --cap-track:.13em;
+  --h1:800 34px/1 var(--font-display); --tab:700 21px/1 var(--font-display); --head-case:uppercase; --head-track:.045em;
+  --h2:700 25px/1 var(--font-display); --h2-case:uppercase; --h2-track:.045em;
+  --linput:600 17px/1.25 var(--font-body); --big:600 28px/1 var(--font-body);
+}
+@media (prefers-color-scheme: dark){
+  :root[data-look="label"]:not([data-theme="light"]){
+    --bg:#0C0F15; --surface:#141922; --ink:#ECEFF5; --ink-2:#B9C0CD; --muted:#8D96A8; --line:#283040;
+    --accent:#9BB0FF; --on-accent:#0C0F15; --field:#1A2342; --field-line:#3A4A85; --series:#6C88F5; --track:#232C4D;
+    --btn-line:var(--ink); --note-bg:var(--warn-bg); --note-fg:var(--warn); --note-line:transparent;
+  }
+}
+:root[data-look="label"][data-theme="dark"]{
+  --bg:#0C0F15; --surface:#141922; --ink:#ECEFF5; --ink-2:#B9C0CD; --muted:#8D96A8; --line:#283040;
+  --accent:#9BB0FF; --on-accent:#0C0F15; --field:#1A2342; --field-line:#3A4A85; --series:#6C88F5; --track:#232C4D;
+  --btn-line:var(--ink); --note-bg:var(--warn-bg); --note-fg:var(--warn); --note-line:transparent;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--font-body)}
+button,input,select,textarea{font:inherit;color:inherit}
+[hidden]{display:none !important}
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1320px;margin:0 auto;padding:0 clamp(16px,3vw,32px) 64px;display:flex;flex-direction:column;gap:14px}
+
+/* top bar */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 20px;margin-top:16px;padding:var(--top-pad);background:var(--top-bg);color:var(--top-fg)}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.brand h1{font:var(--h1);letter-spacing:var(--head-track);text-transform:var(--head-case);margin:0}
+.brand span{font:var(--cap);letter-spacing:var(--cap-track);text-transform:var(--cap-case);color:var(--top-muted)}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.save,.look{font:400 12.5px/1.2 var(--font-body);color:var(--top-muted);display:flex;align-items:center;gap:7px}
+.save{margin-right:6px}
+.save::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--good);flex:none}
+.save[data-mode="off"]::before{background:var(--bad);border-radius:0;transform:rotate(45deg)}
+.btn,.look select{font:500 13px/1 var(--font-body);padding:8px 12px;border:1px solid var(--btn-line);background-color:var(--surface);color:var(--ink);border-radius:var(--radius);cursor:pointer;white-space:nowrap}
+.btn:hover,.look select:hover{border-color:var(--ink-2)}
+.btn.primary{background-color:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.danger{background-color:var(--bad);border-color:var(--bad);color:var(--surface)}
+.btn.quiet{background-color:transparent;color:var(--ink-2)}
+.btn.small{padding:6px 10px;font-size:12.5px}
+.look select{appearance:none;-webkit-appearance:none;padding-right:26px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);
+  background-position:calc(100% - 14px) 55%,calc(100% - 9px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.link{background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font-weight:600}
+:is(.btn,.tab,.in,.linput,.del,.link,svg,.look select):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top :is(.btn,select):focus-visible{outline-color:var(--top-focus)}
+
+/* product header */
+.label{display:grid;grid-template-columns:minmax(0,1fr) 310px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius)}
+.cap,.field label{display:block;font:var(--cap);letter-spacing:var(--cap-track);text-transform:var(--cap-case);color:var(--muted)}
+.lcell{min-width:0}
+.lcell .cap{margin-bottom:5px}
+.linput{display:block;width:100%;min-width:0;font:var(--linput);color:var(--ink);background:var(--field);border:var(--in-border);border-bottom:var(--in-bottom);padding:6px 9px;border-radius:var(--radius-in)}
+.linput:hover{border-color:var(--muted)}
+.linput::placeholder{color:var(--muted);font-weight:400}
+.barcode,.barcode-text{display:none}
+.count{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.count strong{font:var(--big);letter-spacing:-.01em}
+.count span{font:400 13.5px/1.25 var(--font-body);color:var(--ink-2)}
+.count-date{font:400 12.5px/1.3 var(--font-num);color:var(--muted);margin-top:4px;min-height:1.3em}
+.meters{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.meters li{display:grid;grid-template-columns:108px minmax(0,1fr) auto;align-items:center;gap:10px;font-size:13px;line-height:1.2}
+.meters b{font:500 12.5px/1 var(--font-num);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
+.meter{height:6px;background:var(--track);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--accent);border-radius:3px;transition:width .18s ease}
+.meter.thin{height:4px;border-radius:2px}
+.meter.thin i{border-radius:2px}
+.meter[data-tone="bad"]{background:var(--bad-bg)}
+.meter[data-tone="bad"] i{background:var(--bad)}
+:root:not([data-look="label"]) .label-main{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px 16px;padding:16px;align-content:start;min-width:0}
+:root:not([data-look="label"]) :is(.lrow,.meta){display:contents}
+:root:not([data-look="label"]) .lrow-id > .lcell:first-child{grid-column:span 3}
+:root:not([data-look="label"]) .lrow-id > .lcell:last-child{grid-column:span 6}
+:root:not([data-look="label"]) .lrow-sku > .lcell:first-child{grid-column:span 3}
+:root:not([data-look="label"]) .meta > div{grid-column:span 4;min-width:0}
+:root:not([data-look="label"]) .label-main{grid-column:1;grid-row:1}
+:root:not([data-look="label"]) .label-side{display:contents}
+:root:not([data-look="label"]) .label-side > .lcell:first-child{grid-column:1;grid-row:2;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:10px 16px 12px;border-top:1px solid var(--line)}
+:root:not([data-look="label"]) .label-side > .lcell:first-child .cap{margin:0}
+:root:not([data-look="label"]) .label-side > .lcell:first-child .count-date{margin:0}
+:root:not([data-look="label"]) .label-side > .lcell:last-child{grid-column:2;grid-row:1 / span 2;padding:16px;border-left:1px solid var(--line)}
+
+/* sample notice */
+.notice{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 18px;padding:8px 12px;background:var(--note-bg);color:var(--note-fg);border:1px solid var(--note-line);border-radius:var(--radius);font-size:13.5px}
+.notice p{margin:0;max-width:70ch}
+.notice-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:thin}
+.tab{font:var(--tab);letter-spacing:var(--head-track);text-transform:var(--head-case);padding:11px 12px;color:var(--ink-2);text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+.tab small{font:500 11.5px/1 var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:0;text-transform:none;padding:3px 7px;border-radius:10px;background:var(--idle-bg);color:var(--idle)}
+.tab small:empty{display:none}
+
+/* panels and sections */
+.panel{display:flex;flex-direction:column;gap:14px}
+.sec{--pad:clamp(14px,2vw,20px);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:var(--pad);display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec-head{display:flex;flex-direction:column;gap:4px}
+.sec h2{font:var(--h2);letter-spacing:var(--h2-track);text-transform:var(--h2-case);color:var(--band-fg);margin:0;text-wrap:balance}
+.help{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.5;max-width:72ch}
+.strip{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:5px;min-width:150px}
+.field .in{max-width:230px}
+.field small{font-size:12px;color:var(--ink-2)}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px 18px;align-items:start}
+.form .field{min-width:0}
+.form .field .in{max-width:none}
+.stat{display:flex;flex-direction:column;gap:5px;min-width:120px}
+.stat strong{font:600 18px/1.2 var(--font-body);display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-height:33px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* inputs */
+.in{display:block;width:100%;min-width:0;font:400 14px/1.4 var(--font-body);color:var(--ink);background:var(--field);border:var(--in-border);border-bottom:var(--in-bottom);padding:6px 8px;border-radius:var(--radius-in)}
+.in:hover{border-color:var(--muted)}
+.in::placeholder{color:var(--muted)}
+.in.num{text-align:right;font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.in.mono{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:12.5px}
+textarea.in{resize:vertical;min-height:36px;line-height:1.45}
+select.in{appearance:none;-webkit-appearance:none;padding-right:24px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-2) 50%),linear-gradient(135deg,var(--ink-2) 50%,transparent 50%);
+  background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+select.in[data-tone]{font-weight:600;border-color:transparent}
+select.in[data-tone="good"]{background-color:var(--good-bg);color:var(--good)}
+select.in[data-tone="warn"]{background-color:var(--warn-bg);color:var(--warn)}
+select.in[data-tone="bad"]{background-color:var(--bad-bg);color:var(--bad)}
+select.in[data-tone="idle"]{background-color:var(--idle-bg);color:var(--idle)}
+select.in option{background:var(--surface);color:var(--ink);font-weight:400}
+input.in[data-tone="bad"]{color:var(--bad);font-weight:600;border-color:var(--bad)}
+
+/* status marks */
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px/1 var(--font-body);padding:5px 9px 5px 8px;border-radius:var(--radius-in);white-space:nowrap;background:var(--idle-bg);color:var(--idle)}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;border:1.5px solid currentColor;flex:none}
+.pill[data-tone="good"]{background:var(--good-bg);color:var(--good)}
+.pill[data-tone="good"]::before{background:currentColor}
+.pill[data-tone="warn"]{background:var(--warn-bg);color:var(--warn)}
+.pill[data-tone="warn"]::before{background:currentColor;border-radius:1px}
+.pill[data-tone="bad"]{background:var(--bad-bg);color:var(--bad)}
+.pill[data-tone="bad"]::before{background:currentColor;border-radius:0;transform:rotate(45deg)}
+.tier{display:inline-grid;place-items:center;min-width:28px;height:23px;padding:0 6px;font:600 12px/1 var(--font-num);border:1.5px solid var(--accent);color:var(--accent);border-radius:var(--radius-in)}
+.tier[data-tier="A"]{background:var(--accent);color:var(--on-accent)}
+.tier[data-tier="B"]{background:var(--track)}
+.tier[data-tier="C"]{border-color:var(--line);color:var(--ink-2)}
+.calc,.v{font-family:var(--font-num);font-variant-numeric:tabular-nums}
+.v[data-tone="bad"]{color:var(--bad);font-weight:600}
+
+/* listing copy */
+.copy{display:flex;flex-direction:column}
+.copy-head,.copy-row{display:grid;grid-template-columns:170px minmax(0,1fr) 196px 84px 104px;gap:6px 16px;align-items:start}
+.copy-head{font:var(--cap);letter-spacing:var(--cap-track);text-transform:var(--cap-case);color:var(--muted);padding-bottom:7px;border-bottom:var(--rule);background:var(--head-fill)}
+.copy-row{padding:10px 0;border-bottom:1px solid var(--line)}
+.copy-row:last-child{border-bottom:0;padding-bottom:0}
+.copy-name label{font-weight:600;display:block;padding-top:6px}
+.copy-name .hint{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.35;margin-top:2px}
+.copy-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.copy-used{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.copy-used .v{display:inline-block;min-width:44px;text-align:right}
+.copy-used .limit{width:70px;flex:none}
+.copy-used .unit{font-size:12px;color:var(--muted)}
+.copy-left,.copy-status{padding-top:7px}
+.copy-left{font-size:13px;white-space:nowrap}
+
+/* tables */
+.scroll{overflow-x:auto;position:relative}
+.grid{border-collapse:collapse;width:100%;font-size:14px}
+.grid th{font:var(--cap);letter-spacing:var(--cap-track);text-transform:var(--cap-case);color:var(--muted);text-align:left;padding:7px 5px;border-bottom:var(--rule);vertical-align:bottom;background:var(--head-fill)}
+.grid td{padding:4px 5px;border-bottom:1px solid var(--line);vertical-align:middle}
+.grid th:first-child,.grid td:first-child{padding-left:0}
+.grid .num{text-align:right}
+.grid td.calc{white-space:nowrap}
+.grid .strong{font-weight:600}
+.grid td.x,.grid th.x{width:34px;padding:0 0 0 4px;text-align:right}
+.grid td.empty{color:var(--ink-2);padding:18px 0;text-align:left}
+.grid tfoot td{border-top:var(--rule);border-bottom:0;font-weight:600;padding-top:9px;padding-bottom:5px}
+.auto-tag{font:500 10px/1 var(--font-num);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:var(--radius-in);padding:2px 4px;margin-left:8px;vertical-align:1px}
+.del{width:28px;height:28px;border:0;background:transparent;color:var(--muted);font-size:19px;line-height:1;cursor:pointer;border-radius:var(--radius-in)}
+.del:hover{background:var(--bad-bg);color:var(--bad)}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.tile{background:var(--surface);padding:14px 16px 16px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.tile strong{font:var(--big);letter-spacing:-.01em}
+.tile .sub{font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.tile[data-tone="bad"] strong{color:var(--bad)}
+.tile[data-tone="none"] strong{color:var(--muted);font-size:16px;line-height:24px;font-weight:500}
+
+/* charts */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px 32px}
+.chart{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.chart figcaption{font:600 13.5px/1.35 var(--font-body)}
+.chart figcaption span{display:block;font-weight:400;font-size:13px;color:var(--ink-2)}
+.plot{position:relative;min-height:230px}
+.plot svg{display:block;width:100%;height:230px;touch-action:pan-y}
+.chart-empty{margin:0;padding:36px 0;color:var(--ink-2);font-size:14px}
+.ch-grid{stroke:var(--line);stroke-width:1}
+.ch-axis{stroke:var(--muted);stroke-width:1;opacity:.7}
+.ch-tick{font:400 11px var(--font-num);fill:var(--muted)}
+.ch-line{fill:none;stroke:var(--series);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.ch-area{fill:var(--series);opacity:.1}
+.ch-dot{fill:var(--series);stroke:var(--surface);stroke-width:2}
+.ch-end{font:600 12.5px var(--font-body);fill:var(--ink)}
+.ch-target{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:4 4}
+.ch-target-label{font:500 11px var(--font-num);fill:var(--ink-2)}
+.ch-cross{stroke:var(--ink-2);stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);padding:6px 9px;border-radius:var(--radius-in);font-size:12px;line-height:1.3;white-space:nowrap;z-index:2}
+.tip strong{display:block;font-size:13px}
+.tip span{opacity:.8}
+
+/* footer, toast, dialog */
+.foot{color:var(--ink-2);font-size:12.5px;line-height:1.55;display:flex;flex-direction:column;gap:6px;max-width:80ch;padding-top:4px}
+.foot p{margin:0}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:var(--radius);font-size:14px;display:flex;gap:14px;align-items:center;z-index:20;max-width:calc(100vw - 32px);box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+dialog{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);color:var(--ink);padding:20px;width:100%;max-width:min(560px,calc(100vw - 32px));box-shadow:0 24px 60px -20px rgba(0,0,0,.45)}
+dialog::backdrop{background:rgba(8,10,16,.55)}
+dialog h2{font:600 17px/1.25 var(--font-body);margin:0 0 10px;text-wrap:balance}
+#dlg-body{display:flex;flex-direction:column;gap:10px}
+.dlg-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.err{margin:0;color:var(--bad);font-size:14px;font-weight:600}
+noscript p{background:var(--bad-bg);color:var(--bad);padding:12px 14px;margin:0}
+
+/* theme: spreadsheet, structure */
+:root[data-look="sheet"] .tabs{gap:2px}
+:root[data-look="sheet"] .tab{background:var(--idle-bg);border:1px solid var(--line);border-bottom:0;padding:9px 14px}
+:root[data-look="sheet"] .tab[aria-selected="true"]{background:var(--surface);box-shadow:inset 0 3px 0 var(--accent)}
+:root[data-look="sheet"] .tab small{border-radius:0;background:transparent;border:1px solid var(--line);color:var(--ink-2);padding:2px 5px}
+:root[data-look="sheet"] .sec{padding-top:0}
+:root[data-look="sheet"] .sec-head{margin:0 calc(-1 * var(--pad));gap:0}
+:root[data-look="sheet"] .sec h2{background:var(--band-bg);padding:8px var(--pad)}
+:root[data-look="sheet"] .sec-head .help{padding:10px var(--pad) 0}
+:root[data-look="sheet"] .grid th,:root[data-look="sheet"] .grid td{border:1px solid var(--line)}
+:root[data-look="sheet"] .grid th{color:var(--ink)}
+:root[data-look="sheet"] .grid th:first-child,:root[data-look="sheet"] .grid td:first-child{padding-left:6px}
+:root[data-look="sheet"] .grid td.x,:root[data-look="sheet"] .grid th.x{width:36px;padding:0 2px;text-align:center}
+:root[data-look="sheet"] .grid tfoot td{border-top:1px solid var(--line);background:var(--head-fill)}
+:root[data-look="sheet"] .copy-head{padding:7px 8px;color:var(--ink);border:1px solid var(--line)}
+:root[data-look="sheet"] .copy-row{padding-left:8px;padding-right:8px}
+:root[data-look="sheet"] .pill,:root[data-look="sheet"] .tier{font-weight:700}
+
+/* theme: shipping label, structure */
+:root[data-look="label"] body{font-size:15px}
+:root[data-look="label"] .wrap{gap:20px}
+:root[data-look="label"] .top{margin-top:22px}
+:root[data-look="label"] .brand{gap:12px}
+:root[data-look="label"] :is(.save,.look){font:500 12px/1.2 var(--font-num)}
+:root[data-look="label"] :is(.btn,.look select){border-width:1.5px;background-color:transparent;font-size:13.5px;padding:9px 14px}
+:root[data-look="label"] .look select{padding-right:28px}
+:root[data-look="label"] .btn:hover{background-color:var(--ink);color:var(--surface)}
+:root[data-look="label"] .btn.primary{background-color:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+:root[data-look="label"] .btn.primary:hover{background-color:var(--ink);border-color:var(--ink);color:var(--surface)}
+:root[data-look="label"] .btn.danger{background-color:var(--bad);border-color:var(--bad);color:var(--surface)}
+:root[data-look="label"] .btn.quiet{border-color:var(--line);color:var(--ink-2)}
+:root[data-look="label"] .btn.quiet:hover{border-color:var(--ink);background-color:transparent;color:var(--ink)}
+:root[data-look="label"] .btn.small{padding:7px 11px;font-size:13px}
+:root[data-look="label"] .label{background:var(--label-paper);color:var(--label-ink);border:2px solid var(--label-ink);
+  --ink:var(--label-ink);--ink-2:#2A303C;--muted:var(--label-muted);--field:var(--label-field);--field-line:#A9B6EE;--accent:var(--label-accent);--track:var(--label-track);--in-bottom:1.5px solid #A9B6EE;color-scheme:light}
+:root[data-look="label"] .label-main{display:grid;grid-template-rows:auto 1fr;border-right:2px solid var(--label-ink);min-width:0}
+:root[data-look="label"] .lrow{display:grid;min-width:0}
+:root[data-look="label"] .lrow-id{grid-template-columns:minmax(0,1fr) minmax(0,2fr);border-bottom:2px solid var(--label-ink)}
+:root[data-look="label"] .lrow-sku{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+:root[data-look="label"] .lcell{padding:14px 16px 16px}
+:root[data-look="label"] .lrow > .lcell + .lcell{border-left:2px solid var(--label-ink)}
+:root[data-look="label"] .label-side{display:grid;grid-template-rows:auto 1fr;min-width:0}
+:root[data-look="label"] .label-side > .lcell + .lcell{border-top:2px solid var(--label-ink)}
+:root[data-look="label"] .lcell .cap{margin-bottom:7px}
+:root[data-look="label"] .linput{padding:6px 8px}
+:root[data-look="label"] :is(.linput,.in):hover{border-color:var(--accent)}
+:root[data-look="label"] .sku-input{font:800 clamp(32px,4.6vw,52px)/1.05 var(--font-display);letter-spacing:.03em;text-transform:uppercase;padding:5px 8px 3px}
+:root[data-look="label"] .barcode{display:block;height:46px;margin-top:14px;max-width:100%;color:var(--label-ink)}
+:root[data-look="label"] .barcode svg{display:block;width:100%;height:100%;fill:currentColor}
+:root[data-look="label"] .barcode-text{display:flex;justify-content:space-between;gap:12px;margin-top:5px;font:500 11px/1.3 var(--font-num);letter-spacing:.12em;max-width:100%}
+:root[data-look="label"] .barcode-text span:last-child{color:var(--muted)}
+:root[data-look="label"] .meta{display:grid;gap:12px;align-content:start}
+:root[data-look="label"] .meta .linput{font-size:15px}
+:root[data-look="label"] .count{gap:10px}
+:root[data-look="label"] .count strong{font:600 52px/1 var(--font-body);letter-spacing:-.02em}
+:root[data-look="label"] .count span{font:500 14px/1.25 var(--font-body)}
+:root[data-look="label"] .count-date{font-weight:500;margin-top:8px}
+:root[data-look="label"] .meters{gap:9px}
+:root[data-look="label"] .meters li{grid-template-columns:112px minmax(0,1fr) auto}
+:root[data-look="label"] .meter{height:8px;border-radius:4px}
+:root[data-look="label"] .meter i{border-radius:4px}
+:root[data-look="label"] .meter.thin{height:4px;border-radius:2px}
+:root[data-look="label"] .notice{border:0;border-left:4px solid var(--warn);padding:10px 14px;font-size:14px}
+:root[data-look="label"] .notice .btn{border-color:currentColor;color:inherit}
+:root[data-look="label"] .notice .btn:hover{background-color:var(--warn);color:var(--warn-bg)}
+:root[data-look="label"] .tabs{gap:2px;border-bottom:2px solid var(--ink)}
+:root[data-look="label"] .tab{padding:12px 18px 10px;gap:10px}
+:root[data-look="label"] .tab:hover{box-shadow:inset 0 -3px 0 var(--line)}
+:root[data-look="label"] .tab[aria-selected="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+:root[data-look="label"] .tab small{font:500 11px/1 var(--font-num);padding:3px 6px;border:1px solid currentColor;border-radius:0;background:transparent;color:inherit;opacity:.85}
+:root[data-look="label"] .panel{gap:24px}
+:root[data-look="label"] .sec{--pad:clamp(16px,2.4vw,24px);border-top:3px solid var(--ink);gap:16px}
+:root[data-look="label"] .sec-head{gap:6px}
+:root[data-look="label"] .help{font-size:14px;max-width:68ch}
+:root[data-look="label"] .stat strong{font-size:22px}
+:root[data-look="label"] select.in[data-tone]{border-bottom-color:currentColor}
+:root[data-look="label"] .copy-row{padding:12px 0}
+:root[data-look="label"] .grid th{padding:8px 5px}
+:root[data-look="label"] .grid td{padding:5px}
+:root[data-look="label"] .grid th:first-child,:root[data-look="label"] .grid td:first-child{padding-left:0}
+:root[data-look="label"] .grid td.x,:root[data-look="label"] .grid th.x{padding:0 0 0 4px}
+:root[data-look="label"] .auto-tag{letter-spacing:.1em}
+:root[data-look="label"] .tiles{border-top:3px solid var(--ink)}
+:root[data-look="label"] .tile{padding:16px 18px 18px;gap:9px}
+:root[data-look="label"] .tile[data-tone="none"] strong{font-size:18px;line-height:28px}
+:root[data-look="label"] .chart figcaption{font-size:14px}
+:root[data-look="label"] .foot{font-size:13px}
+:root[data-look="label"] dialog{border:2px solid var(--ink);padding:22px;box-shadow:none}
+:root[data-look="label"] dialog h2{font:700 27px/1 var(--font-display);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
+
+@media (max-width:900px){
+  .label{grid-template-columns:1fr}
+  :root:not([data-look="label"]) .label-side > .lcell:last-child{grid-column:1;grid-row:3;border-left:0;border-top:1px solid var(--line)}
+  :root[data-look="label"] .label-main{border-right:0;border-bottom:2px solid var(--label-ink)}
+  :root[data-look="label"] .label-side{grid-template-columns:1fr 1fr;grid-template-rows:auto}
+  :root[data-look="label"] .label-side > .lcell + .lcell{border-top:0;border-left:2px solid var(--label-ink)}
+}
+@media (max-width:820px){
+  .copy-head{display:none}
+  .copy-row{grid-template-columns:minmax(0,1fr) auto auto;align-items:center}
+  .copy-name,.copy-body{grid-column:1 / -1}
+  .copy-left,.copy-status{padding-top:0}
+  .copy-name label{padding-top:0}
+}
+@media (max-width:620px){
+  :root:not([data-look="label"]) .lrow-id > .lcell:first-child,
+  :root:not([data-look="label"]) .lrow-id > .lcell:last-child{grid-column:span 12}
+  :root:not([data-look="label"]) .lrow-sku > .lcell:first-child,
+  :root:not([data-look="label"]) .meta > div{grid-column:span 6}
+  :root[data-look="label"] :is(.lrow-id,.lrow-sku,.label-side){grid-template-columns:1fr}
+  :root[data-look="label"] .lrow > .lcell + .lcell,:root[data-look="label"] .label-side > .lcell + .lcell{border-left:0;border-top:2px solid var(--label-ink)}
+  :root[data-look="label"] .tab{font-size:18px;padding:11px 12px 9px}
+  :root[data-look="label"] .brand h1{font-size:28px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important;scroll-behavior:auto !important}
+}
+
+/* workbook-specific */
+.figs{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.figs li{display:flex;justify-content:space-between;align-items:baseline;gap:14px;font-size:13px;line-height:1.3}
+.figs li span{color:var(--ink-2)}
+.figs b{font-weight:600;text-align:right;font-variant-numeric:tabular-nums}
+.figs b[data-tone="bad"]{color:var(--bad)}
+.figs b[data-tone="warn"]{color:var(--warn)}
+.state{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font-size:14px}
+.state p{margin:0;max-width:80ch}
+.linked{font-size:12.5px;color:var(--ink-2)}
+.ch-line.dash{stroke-dasharray:6 5}
+.ch-divider{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 3}
+.ch-phase{font:600 11px var(--font-body);fill:var(--ink-2)}
+.ch-bar{fill:var(--series)}
+.ch-bar:hover{opacity:.85}
+.ch-bar-label{font:400 12.5px var(--font-body);fill:var(--ink-2)}
+.ch-val{font:600 12px var(--font-num);fill:var(--ink)}
+.ch-val tspan{font-weight:400;fill:var(--ink-2)}
+.plot.bars{min-height:0}
+.plot.bars svg{height:auto}
+.grid td .pill{min-width:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand"><h1>Demand &amp; Inventory</h1><span>FBA workbook</span></div>
+    <div class="actions">
+      <button type="button" class="btn primary" id="btn-copy">Save local copy</button>
+      <button type="button" class="btn" id="btn-backup">Back up</button>
+      <button type="button" class="btn" id="btn-restore">Restore</button>
+      <button type="button" class="btn" id="btn-blank">Start blank</button>
+    </div>
+  </header>
+
+  <noscript><p>This workbook needs JavaScript to calculate and save. Turn it on and reload the page.</p></noscript>
+
+  <section class="label" aria-label="Product and stock status">
+    <div class="label-main">
+      <div class="lrow lrow-id">
+        <div class="lcell"><label class="cap" for="p-brand">Brand</label><input class="linput" id="p-brand" type="text" autocomplete="off" placeholder="Brand name"></div>
+        <div class="lcell"><label class="cap" for="p-name">Product</label><input class="linput" id="p-name" type="text" autocomplete="off" placeholder="What you are planning"></div>
+      </div>
+      <div class="lrow lrow-sku">
+        <div class="lcell"><label class="cap" for="p-sku">SKU</label><input class="linput" id="p-sku" type="text" autocomplete="off" spellcheck="false" placeholder="SKU"></div>
+        <div class="lcell meta">
+          <div><label class="cap" for="p-asin">ASIN</label><input class="linput" id="p-asin" type="text" autocomplete="off" spellcheck="false" placeholder="ASIN"></div>
+          <div><label class="cap" for="p-marketplace">Marketplace</label><input class="linput" id="p-marketplace" type="text" autocomplete="off" placeholder="Amazon.com (US)"></div>
+          <div><label class="cap" for="p-category">Category</label><input class="linput" id="p-category" type="text" autocomplete="off" placeholder="Category"></div>
+        </div>
+      </div>
+    </div>
+    <div class="label-side">
+      <div class="lcell">
+        <span class="cap">Cover</span>
+        <div class="count"><strong id="count-num"></strong><span id="count-unit"></span></div>
+        <div class="count-date" id="count-date"></div>
+      </div>
+      <div class="lcell">
+        <span class="cap">Key figures</span>
+        <ul class="figs" id="figs"></ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="notice" id="notice" hidden>
+    <p>Every tab is filled with sample data for an invented speaker range. Type over it, or start blank.</p>
+    <div class="notice-actions">
+      <button type="button" class="btn small" id="notice-blank">Start blank</button>
+      <button type="button" class="btn small" id="notice-keep">Keep this data</button>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Workbook tabs">
+    <a class="tab" role="tab" id="tab-demand-forecast" href="#demand-forecast" aria-controls="panel-demand-forecast">Demand forecast <small id="badge-demand-forecast"></small></a>
+    <a class="tab" role="tab" id="tab-reorder-planner" href="#reorder-planner" aria-controls="panel-reorder-planner">Reorder and safety stock <small id="badge-reorder-planner"></small></a>
+    <a class="tab" role="tab" id="tab-inventory-health" href="#inventory-health" aria-controls="panel-inventory-health">Inventory health and aging <small id="badge-inventory-health"></small></a>
+    <a class="tab" role="tab" id="tab-peak-season" href="#peak-season" aria-controls="panel-peak-season">Peak season <small id="badge-peak-season"></small></a>
+  </nav>
+
+  <main>
+    <div class="panel" id="panel-demand-forecast" role="tabpanel" aria-labelledby="tab-demand-forecast"></div>
+    <div class="panel" id="panel-reorder-planner" role="tabpanel" aria-labelledby="tab-reorder-planner" hidden></div>
+    <div class="panel" id="panel-inventory-health" role="tabpanel" aria-labelledby="tab-inventory-health" hidden></div>
+    <div class="panel" id="panel-peak-season" role="tabpanel" aria-labelledby="tab-peak-season" hidden></div>
+  </main>
+
+  <footer class="foot">
+    <p>Tinted cells are yours to fill in. Every other figure is calculated from them. The forecast feeds the reorder planner, and both feed the peak season deadlines.</p>
+    <p>Adjusted demand scales each month's sales up to a full month in stock, so a stockout does not drag the forecast down. The forecast averages your recent months with seasonality removed, then applies each month's seasonal index and your growth rate.</p>
+    <p>Safety stock = z &times; &radic;(lead time &times; daily demand variability&sup2; + daily demand&sup2; &times; lead time variability&sup2;), with z taken from your service level. Low stock flags anything under 28 days of cover, where Amazon's low-inventory-level fee starts. Peak dates and cutoffs in the sample are examples: check Seller Central for each year's real dates.</p>
+    <p id="foot-save">Your entries are stored in this browser. Save local copy downloads this page with your data inside, so it opens in any browser without Claude. Back up puts the data alone in a file that Restore can load.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-text"></span><button type="button" class="link" id="toast-act" hidden></button></div>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <h2 id="dlg-title"></h2>
+  <div id="dlg-body"></div>
+  <div class="dlg-actions" id="dlg-actions"></div>
+</dialog>
+
+<script id="logic" data-own="1">
+(function (root) {
+'use strict';
+
+var DAY = 86400000, MPD = 365.25 / 12;
+var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+var CURRENCIES = ['$', '€', '£'];
+var BUCKETS = ['0-90 days', '91-180 days', '181-270 days', '271-365 days', 'Over 365 days'];
+
+function isNum(v) { return typeof v === 'number' && isFinite(v); }
+function roundTo(v, d) {
+  if (!isNum(v)) return v;
+  var a = Math.abs(v);
+  if (a === 0) return 0;
+  if (a < 1e-6 || a >= 1e15) { var p = Math.pow(10, d); return Math.round(v * p) / p; }
+  var s = Number(a.toPrecision(15));
+  var r = Number(Math.round(Number(s + 'e' + d)) + 'e-' + d);
+  return v < 0 ? -r : r;
+}
+function parseNum(s) {
+  if (typeof s === 'number') return isFinite(s) ? s : null;
+  s = String(s == null ? '' : s).trim().replace(/[\s$€£%×x]/g, '');
+  if (!s) return null;
+  if (s.indexOf('.') < 0 && /^[-+]?\d+,\d{1,2}$/.test(s)) s = s.replace(',', '.');
+  else s = s.replace(/,/g, '');
+  var n = Number(s);
+  return isFinite(n) ? n : null;
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+function toUTC(iso) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  if (!m) return null;
+  var t = Date.UTC(+m[1], +m[2] - 1, +m[3]);
+  return isFinite(t) && new Date(t).getUTCDate() === +m[3] ? t : null;
+}
+function isoOf(t) { var d = new Date(t); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1) + '-' + pad2(d.getUTCDate()); }
+function fDate(t, weekday) {
+  if (t == null) return '';
+  var d = new Date(t);
+  return (weekday ? WD[d.getUTCDay()] + ' ' : '') + d.getUTCDate() + ' ' + MON[d.getUTCMonth()] + ' ' + d.getUTCFullYear();
+}
+function fDay(t) { if (t == null) return ''; var d = new Date(t); return d.getUTCDate() + ' ' + MON[d.getUTCMonth()]; }
+function todayUTC() { var n = new Date(); return Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); }
+
+function mParse(k) {
+  var m = /^(\d{4})-(\d{2})$/.exec(k || '');
+  if (!m) return null;
+  var mo = +m[2];
+  return mo >= 1 && mo <= 12 ? {y: +m[1], m: mo - 1} : null;
+}
+function mKey(y, m) { var d = new Date(Date.UTC(y, m, 1)); return d.getUTCFullYear() + '-' + pad2(d.getUTCMonth() + 1); }
+function mAdd(k, n) { var p = mParse(k); return mKey(p.y, p.m + n); }
+function mDays(k) { var p = mParse(k); return new Date(Date.UTC(p.y, p.m + 1, 0)).getUTCDate(); }
+function mOf(t) { var d = new Date(t); return mKey(d.getUTCFullYear(), d.getUTCMonth()); }
+function mLabel(k) { var p = mParse(k); return p ? MON[p.m] + ' ' + p.y : ''; }
+function mStart(k) { var p = mParse(k); return Date.UTC(p.y, p.m, 1); }
+
+/* Inverse of the standard normal distribution (Acklam), accurate to about 1e-9. */
+function invNorm(p) {
+  var a = [-39.69683028665376, 220.9460984245205, -275.9285104469687, 138.357751867269, -30.66479806614716, 2.506628277459239];
+  var b = [-54.47609879822406, 161.5858368580409, -155.6989798598866, 66.80131188771972, -13.28068155288572];
+  var c = [-0.007784894002430293, -0.3223964580411365, -2.400758277161838, -2.549732539343734, 4.374664141464968, 2.938163982698783];
+  var d = [0.007784695709041462, 0.3224671290700398, 2.445134137142996, 3.754408661907416];
+  var q, r, lo = 0.02425;
+  if (p <= 0) return -Infinity;
+  if (p >= 1) return Infinity;
+  if (p < lo) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  if (p > 1 - lo) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  q = p - 0.5; r = q * q;
+  return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+}
+function mean(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; }
+function sdev(a) {
+  if (a.length < 3) return null;
+  var m = mean(a);
+  return Math.sqrt(a.reduce(function (x, y) { return x + (y - m) * (y - m); }, 0) / (a.length - 1));
+}
+function fill(n, f) { var out = []; for (var i = 0; i < n; i++) out.push(f(i)); return out; }
+
+function blankState(today) {
+  today = today == null ? todayUTC() : today;
+  return {
+    v: 1, updatedAt: 0, notice: false,
+    product: {brand: '', name: '', sku: '', asin: '', marketplace: '', category: ''},
+    fc: {lastMonth: mAdd(mOf(today), -1), baseN: 3, growth: 0, hist: fill(12, function () { return {units: null, stockDays: null}; }), idx: fill(12, function () { return 1; }), actual: fill(12, function () { return null; })},
+    ro: {currency: '$', fba: null, inbound: null, upstream: null, prod: null, transit: null, receiving: null, ltSd: null, review: 30, service: 95,
+      demandMode: 'Forecast', manualDaily: null, sdMode: 'History', manualSd: null, carton: null, moq: null, cost: null, pos: []},
+    health: {targetDays: 60, agedFlag: 20, rate: null, rows: []},
+    peak: {events: []}
+  };
+}
+function sampleState() {
+  var s = blankState();
+  s.notice = true;
+  s.product = {brand: 'ExampleBrand', name: 'Portable Bluetooth speaker, 20 W', sku: 'EB-SPK-20-BLK', asin: '', marketplace: 'Amazon.com (US)', category: 'Consumer Electronics'};
+  s.fc.lastMonth = '2026-10'; s.fc.baseN = 3; s.fc.growth = 1;
+  s.fc.hist = [1450, 1900, 820, 760, 800, 850, 900, 1000, 1350, 950, 920, 1100].map(function (u, i) { return {units: u, stockDays: i === 4 ? 27 : null}; });
+  s.fc.idx = [0.85, 0.8, 0.85, 0.9, 0.95, 1, 1.35, 0.95, 0.95, 1.1, 1.4, 1.9];
+  var r = s.ro;
+  r.fba = 1400; r.inbound = 600; r.upstream = 800; r.prod = 30; r.transit = 35; r.receiving = 10; r.ltSd = 7; r.review = 30; r.service = 95;
+  r.carton = 40; r.moq = 1000; r.cost = 14.5;
+  r.pos = [{po: 'PO-2611-01', qty: 1500, eta: '2026-12-20', notes: 'Sea freight, booked'}];
+  s.health = {targetDays: 60, agedFlag: 20, rate: 0.78, rows: [
+    ['EB-SPK-20-BLK', 1100, 300, 0, 0, 0, 1150, 14.5, 0.12],
+    ['EB-SPK-20-BLU', 300, 450, 380, 120, 0, 210, 14.5, 0.12],
+    ['EB-BUD-PRO-WHT', 900, 0, 0, 0, 0, 1500, 9.8, 0.03],
+    ['EB-CHG-65W', 1600, 900, 0, 0, 0, 600, 7.2, 0.04],
+    ['EB-CBL-USBC-2M', 2000, 500, 0, 0, 0, 1900, 1.9, 0.02],
+    ['EB-PWR-10K', 0, 0, 150, 200, 260, 0, 8.4, 0.05]
+  ].map(function (a) { return {sku: a[0], a0: a[1], a1: a[2], a2: a[3], a3: a[4], a4: a[5], sold30: a[6], cost: a[7], cube: a[8]}; })};
+  s.peak.events = [
+    ['BFCM 2026', '2026-11-27', '2026-11-30', 3, '2026-11-01', 'Yes'],
+    ['Holiday 2026', '2026-12-01', '2026-12-22', 1.8, '2026-11-20', 'No'],
+    ['Prime Day 2027', '2027-07-13', '2027-07-14', 4, '2027-06-15', 'No'],
+    ['Big Deal Days 2027', '2027-10-12', '2027-10-13', 2.5, '2027-09-14', 'No'],
+    ['BFCM 2027', '2027-11-26', '2027-11-29', 3, '2027-11-01', 'No']
+  ].map(function (a) { return {name: a[0], start: a[1], end: a[2], uplift: a[3], cutoff: a[4], covered: a[5]}; });
+  return s;
+}
+
+function normalize(inp) {
+  var s = blankState();
+  if (!inp || typeof inp !== 'object') return s;
+  var isObj = function (x) { return !!x && typeof x === 'object' && !Array.isArray(x); };
+  var obj = function (x) { return isObj(x) ? x : {}; };
+  var arr = function (x) { return Array.isArray(x) ? x.slice(0, 500) : []; };
+  var str = function (v, max) { return (typeof v === 'string' ? v : v == null ? '' : String(v)).slice(0, max); };
+  var num = function (v) { return typeof v === 'number' ? (isFinite(v) ? v : null) : typeof v === 'string' ? parseNum(v) : null; };
+  var pick = function (v, list, d) { return list.indexOf(v) >= 0 ? v : d; };
+  var isoStr = function (v) { return typeof v === 'string' && toUTC(v) != null ? v : ''; };
+
+  s.updatedAt = isNum(inp.updatedAt) ? inp.updatedAt : 0;
+  s.notice = inp.notice === true;
+  var P = obj(inp.product);
+  Object.keys(s.product).forEach(function (k) { s.product[k] = str(P[k], 300); });
+
+  var F = obj(inp.fc);
+  if (typeof F.lastMonth === 'string' && mParse(F.lastMonth)) s.fc.lastMonth = F.lastMonth;
+  var bn = num(F.baseN);
+  if (bn != null && bn >= 1 && bn <= 12) s.fc.baseN = Math.round(bn);
+  if ('growth' in F) s.fc.growth = num(F.growth);
+  var H = arr(F.hist);
+  s.fc.hist = s.fc.hist.map(function (d, i) { var h = obj(H[i]); return {units: num(h.units), stockDays: num(h.stockDays)}; });
+  var I = arr(F.idx);
+  if (I.length) s.fc.idx = s.fc.idx.map(function (d, i) { return num(I[i]); });
+  var A = arr(F.actual);
+  s.fc.actual = s.fc.actual.map(function (d, i) { return num(A[i]); });
+
+  var R = obj(inp.ro), r = s.ro;
+  r.currency = pick(R.currency, CURRENCIES, '$');
+  ['fba', 'inbound', 'upstream', 'prod', 'transit', 'receiving', 'ltSd', 'review', 'service', 'manualDaily', 'manualSd', 'carton', 'moq', 'cost'].forEach(function (k) { if (k in R) r[k] = num(R[k]); });
+  r.demandMode = pick(R.demandMode, ['Forecast', 'Manual'], 'Forecast');
+  r.sdMode = pick(R.sdMode, ['History', 'Manual'], 'History');
+  r.pos = arr(R.pos).filter(isObj).map(function (p) { return {po: str(p.po, 120), qty: num(p.qty), eta: isoStr(p.eta), notes: str(p.notes, 600)}; });
+
+  var HL = obj(inp.health);
+  ['targetDays', 'agedFlag', 'rate'].forEach(function (k) { if (k in HL) s.health[k] = num(HL[k]); });
+  s.health.rows = arr(HL.rows).filter(isObj).map(function (x) {
+    return {sku: str(x.sku, 120), a0: num(x.a0), a1: num(x.a1), a2: num(x.a2), a3: num(x.a3), a4: num(x.a4), sold30: num(x.sold30), cost: num(x.cost), cube: num(x.cube)};
+  });
+  var PK = obj(inp.peak);
+  s.peak.events = arr(PK.events).filter(isObj).map(function (e) {
+    return {name: str(e.name, 200), start: isoStr(e.start), end: isoStr(e.end), uplift: num(e.uplift), cutoff: isoStr(e.cutoff), covered: pick(e.covered, ['Yes', 'No'], 'No')};
+  });
+  return s;
+}
+
+/* Every calculated figure in the workbook comes from this one function. */
+function derive(s, today) {
+  var D = {}, i, k, key, n0 = function (v) { return isNum(v) ? v : 0; };
+  var sum = function (a) { return a.reduce(function (x, y) { return x + y; }, 0); };
+
+  /* demand forecast */
+  var F = s.fc, last = mParse(F.lastMonth) ? F.lastMonth : mAdd(mOf(today), -1);
+  var idxOf = function (k2) { var v = F.idx[mParse(k2).m]; return isNum(v) && v > 0 ? v : 1; };
+  var hist = [];
+  for (i = 0; i < 12; i++) {
+    key = mAdd(last, i - 11);
+    var h = F.hist[i] || {}, days = mDays(key);
+    var inStock = isNum(h.stockDays) && h.stockDays > 0 ? Math.min(h.stockDays, days) : days;
+    var adj = isNum(h.units) ? h.units * days / inStock : null;
+    var ix = idxOf(key);
+    hist.push({key: key, days: days, adj: adj, idx: ix, des: adj == null ? null : adj / ix});
+  }
+  var adjVals = hist.filter(function (x) { return x.adj != null; }).map(function (x) { return x.adj; });
+  var meanAdj = mean(adjVals);
+  var sug = fill(12, function () { return null; });
+  hist.forEach(function (x) { if (x.adj != null && meanAdj > 0) sug[mParse(x.key).m] = x.adj / meanAdj; });
+  var desVals = hist.filter(function (x) { return x.des != null; }).map(function (x) { return x.des; });
+  var baseN = isNum(F.baseN) ? Math.max(1, Math.min(12, Math.round(F.baseN))) : 3;
+  var baseline = mean(hist.slice(12 - baseN).filter(function (x) { return x.des != null; }).map(function (x) { return x.des; }));
+  var sdMonth = sdev(desVals), g = n0(F.growth) / 100, rows = [], map = {};
+  for (k = 1; k <= 12; k++) {
+    key = mAdd(last, k);
+    var ix2 = idxOf(key), d2 = mDays(key);
+    var f = baseline == null ? null : roundTo(baseline * ix2 * Math.pow(1 + g, k), 0);
+    var act = isNum(F.actual[k - 1]) ? F.actual[k - 1] : null;
+    var err = act != null && f != null ? act - f : null;
+    rows.push({key: key, idx: ix2, days: d2, fc: f, daily: f == null ? null : f / d2, actual: act, err: err, ape: err != null && act > 0 ? Math.abs(err) / act : null});
+    map[key] = f;
+  }
+  var withAct = rows.filter(function (x) { return x.err != null; });
+  var apes = withAct.filter(function (x) { return x.ape != null; }).map(function (x) { return x.ape; });
+  var sumAct = sum(withAct.map(function (x) { return x.actual; })), sumFc = sum(withAct.map(function (x) { return x.fc; }));
+  var peakRow = baseline == null ? null : rows.reduce(function (best, x) { return !best || x.fc > best.fc ? x : best; }, null);
+  D.fc = {
+    last: last, hist: hist, sug: sug, baseline: baseline, sdMonth: sdMonth, sdDaily: sdMonth == null ? null : sdMonth / Math.sqrt(MPD), rows: rows,
+    next3: baseline == null ? null : rows[0].fc + rows[1].fc + rows[2].fc, next12: baseline == null ? null : sum(rows.map(function (x) { return x.fc; })),
+    peak: peakRow, mape: apes.length ? mean(apes) : null, bias: sumAct > 0 ? (sumFc - sumAct) / sumAct : null, nActual: withAct.length
+  };
+  var rate = function (t) {
+    var k3 = mOf(t), dd = mDays(k3);
+    if (isNum(map[k3])) return map[k3] / dd;
+    for (var j = 0; j < hist.length; j++) if (hist[j].key === k3 && hist[j].adj != null) return hist[j].adj / dd;
+    return baseline == null ? 0 : baseline * idxOf(k3) / dd;
+  };
+
+  /* reorder and safety stock */
+  var R = s.ro, LT = n0(R.prod) + n0(R.transit) + n0(R.receiving), dAuto = 0;
+  for (i = 0; i < 90; i++) dAuto += rate(today + i * DAY);
+  dAuto /= 90;
+  var d = R.demandMode === 'Manual' ? n0(R.manualDaily) : dAuto;
+  var sd = R.sdMode === 'Manual' ? n0(R.manualSd) : n0(D.fc.sdDaily);
+  var sl = isNum(R.service) ? Math.min(99.9, Math.max(50, R.service)) : 95, z = invNorm(sl / 100);
+  var ltSd = n0(R.ltSd), review = n0(R.review);
+  var ss = d > 0 ? Math.max(0, Math.ceil(roundTo(z * Math.sqrt(LT * sd * sd + d * d * ltSd * ltSd), 6))) : 0;
+  var rop = d > 0 ? Math.ceil(roundTo(d * LT + ss, 6)) : 0;
+  var target = d > 0 ? Math.ceil(roundTo(d * (LT + review) + ss, 6)) : 0;
+  var openPO = sum(R.pos.map(function (p) { return n0(p.qty); }));
+  var net = n0(R.fba) + n0(R.inbound) + n0(R.upstream), position = net + openPO;
+  var carton = isNum(R.carton) && R.carton > 0 ? R.carton : 1, need = target - position;
+  var qty = d > 0 && need > 0 ? Math.ceil(roundTo(Math.max(need, n0(R.moq)) / carton, 6)) * carton : 0;
+  var reorderIn = d > 0 ? Math.floor(roundTo((position - rop) / d, 6)) : null;
+  var arrivals = {};
+  R.pos.forEach(function (p) {
+    if (!isNum(p.qty)) return;
+    var t = toUTC(p.eta), di = t == null ? 0 : Math.max(0, Math.round((t - today) / DAY));
+    arrivals[di] = (arrivals[di] || 0) + p.qty;
+  });
+  var proj = [], inv = net, stockout = null;
+  for (i = 0; i <= 182; i++) {
+    inv += arrivals[i] || 0;
+    if (i % 7 === 0) proj.push({t: today + i * DAY, y: Math.max(0, inv)});
+    if (i === 182) break;
+    inv -= rate(today + i * DAY);
+    if (inv <= 0 && stockout == null && d > 0) stockout = today + i * DAY;
+  }
+  D.ro = {
+    LT: LT, d: d, dAuto: dAuto, sd: sd, sl: sl, z: z, ss: ss, rop: rop, target: target, openPO: openPO, net: net, position: position, qty: qty,
+    value: isNum(R.cost) ? qty * R.cost : null, coverNet: d > 0 ? position / d : null, coverFba: d > 0 ? n0(R.fba) / d : null,
+    reorderIn: reorderIn, reorderDate: reorderIn == null ? null : today + Math.max(0, reorderIn) * DAY,
+    status: d <= 0 ? 'No demand' : position <= rop ? 'Order now' : reorderIn <= 14 ? 'Order soon' : 'Healthy',
+    lowFee: d > 0 && n0(R.fba) / d < 28, arrival: today + LT * DAY, proj: proj, stockout: stockout
+  };
+
+  /* inventory health and aging */
+  var HL = s.health, tgt = n0(HL.targetDays), flag = isNum(HL.agedFlag) ? HL.agedFlag / 100 : 0.2;
+  var hrows = HL.rows.map(function (r) {
+    var b = [r.a0, r.a1, r.a2, r.a3, r.a4].map(n0), on = sum(b), daily = n0(r.sold30) / 30;
+    var cover = daily > 0 ? on / daily : null;
+    var excess = daily > 0 ? Math.max(0, Math.round(on - tgt * daily)) : on;
+    var aged = b[2] + b[3] + b[4], agedShare = on > 0 ? aged / on : null;
+    var has = String(r.sku || '').trim() !== '' || on > 0 || n0(r.sold30) > 0;
+    var status = !has ? '' : on === 0 ? 'Out of stock' : daily === 0 ? 'No sales' : cover < 28 ? 'Low stock' : agedShare > flag ? 'Aged' : excess > 0 ? 'Excess' : 'Healthy';
+    return {b: b, on: on, daily: daily, cover: cover, excess: excess, excessValue: isNum(r.cost) ? excess * r.cost : null, aged: aged, agedShare: agedShare,
+      value: isNum(r.cost) ? on * r.cost : null, storage: isNum(r.cube) && isNum(HL.rate) ? on * r.cube * HL.rate : null, status: status, has: has};
+  });
+  var tUnits = sum(hrows.map(function (x) { return x.on; })), tDaily = sum(hrows.map(function (x) { return x.daily; }));
+  D.health = {
+    rows: hrows, units: tUnits, daily: tDaily, cover: tDaily > 0 ? tUnits / tDaily : null,
+    value: sum(hrows.map(function (x) { return n0(x.value); })), storage: sum(hrows.map(function (x) { return n0(x.storage); })),
+    aged: sum(hrows.map(function (x) { return x.aged; })), excessValue: sum(hrows.map(function (x) { return n0(x.excessValue); })),
+    excess: sum(hrows.map(function (x) { return x.excess; })),
+    buckets: [0, 1, 2, 3, 4].map(function (j) { return sum(hrows.map(function (x) { return x.b[j]; })); }),
+    tracked: hrows.filter(function (x) { return x.has; }).length,
+    attention: hrows.filter(function (x) { return x.status && x.status !== 'Healthy'; }).length
+  };
+
+  /* peak season */
+  var baseDaily = baseline == null ? null : baseline / MPD, ship = n0(R.transit) + n0(R.receiving), prod = n0(R.prod);
+  var events = s.peak.events.map(function (e) {
+    var t0 = toUTC(e.start), t1 = toUTC(e.end);
+    var days = t0 != null && t1 != null && t1 >= t0 ? Math.round((t1 - t0) / DAY) + 1 : null;
+    var normal = days != null && baseDaily != null ? Math.round(baseDaily * days) : null;
+    var exp = normal != null && isNum(e.uplift) ? Math.round(baseDaily * days * e.uplift) : null;
+    var arrive = toUTC(e.cutoff);
+    if (arrive == null) arrive = t0;
+    var shipBy = arrive == null ? null : arrive - ship * DAY, poBy = shipBy == null ? null : shipBy - prod * DAY;
+    var left = poBy == null ? null : Math.round((poBy - today) / DAY);
+    var status = t0 == null ? '' : e.covered === 'Yes' ? 'Covered' : t1 != null && today > t1 ? 'Past' : today > arrive ? 'Cutoff missed' : left < 0 ? 'Late, expedite' : left <= 21 ? 'Order soon' : 'On track';
+    return {days: days, normal: normal, expected: exp, extra: exp == null ? null : exp - normal, arrive: arrive, shipBy: shipBy, poBy: poBy, left: left, status: status};
+  });
+  var open = events.map(function (x, j) { return {x: x, j: j}; }).filter(function (o) { return ['Order soon', 'On track', 'Late, expedite'].indexOf(o.x.status) >= 0 && o.x.poBy != null; });
+  open.sort(function (a, b) { return a.x.poBy - b.x.poBy; });
+  D.peak = {
+    baseDaily: baseDaily, ship: ship, prod: prod, events: events, next: open.length ? open[0] : null,
+    extraAhead: sum(events.filter(function (x) { return x.status && x.status !== 'Past' && x.extra != null; }).map(function (x) { return x.extra; })),
+    action: events.filter(function (x) { return ['Order soon', 'Late, expedite', 'Cutoff missed'].indexOf(x.status) >= 0; }).length
+  };
+  return D;
+}
+
+root.WB = {
+  DAY: DAY, MPD: MPD, MONTHS: MONTHS, CURRENCIES: CURRENCIES, BUCKETS: BUCKETS,
+  isNum: isNum, roundTo: roundTo, parseNum: parseNum, toUTC: toUTC, isoOf: isoOf, fDate: fDate, fDay: fDay, todayUTC: todayUTC,
+  mParse: mParse, mAdd: mAdd, mOf: mOf, mLabel: mLabel, mStart: mStart, mDays: mDays, invNorm: invNorm,
+  blankState: blankState, sampleState: sampleState, normalize: normalize, derive: derive
+};
+})(typeof window !== 'undefined' ? window : globalThis);
+</script>
+
+<script data-own="1">
+(function () {
+'use strict';
+var WB = window.WB;
+var isNum = WB.isNum, roundTo = WB.roundTo, parseNum = WB.parseNum, toUTC = WB.toUTC, isoOf = WB.isoOf, fDate = WB.fDate, fDay = WB.fDay, todayUTC = WB.todayUTC;
+var DAY = WB.DAY;
+
+var LS_KEY = 'demand-inventory-workbook:v1';
+var TABS = ['demand-forecast', 'reorder-planner', 'inventory-health', 'peak-season'];
+var state = null, D = null, started = false, editedThisVisit = false, storageOK = false, saveTimer = 0;
+var ups = {global: [], forecast: [], reorder: [], health: [], peak: []};
+var hosted = !!(window.claude && typeof window.claude.use === 'function');
+var framed = (function () { try { return window.self !== window.top; } catch (e) { return true; } })();
+var cloud = {ref: null, ok: false, busy: false, want: false, last: '', fails: 0, timer: 0};
+
+var $ = function (id) { return document.getElementById(id); };
+var PAGE = document.documentElement.cloneNode(true);
+function h(tag, attrs) {
+  var el = document.createElement(tag), k, v, i;
+  if (attrs) for (k in attrs) {
+    v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k.slice(0, 2) === 'on' && typeof v === 'function') el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  var kids = Array.prototype.slice.call(arguments, 2);
+  kids = kids.concat.apply([], kids);
+  kids = kids.concat.apply([], kids);
+  for (i = 0; i < kids.length; i++) {
+    if (kids[i] == null || kids[i] === false) continue;
+    el.appendChild(kids[i].nodeType ? kids[i] : document.createTextNode(String(kids[i])));
+  }
+  return el;
+}
+
+/* ---------- formatting ---------- */
+var nf0 = new Intl.NumberFormat('en-US', {maximumFractionDigits: 0});
+var nf1 = new Intl.NumberFormat('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+var nf2 = new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+function cur() { return state.ro.currency || '$'; }
+function fInt(v) { return isNum(v) ? nf0.format(roundTo(v, 0)) : ''; }
+function fDec1(v) { return isNum(v) ? nf1.format(roundTo(v, 1)) : ''; }
+function fDec2(v) { return isNum(v) ? nf2.format(roundTo(v, 2)) : ''; }
+function fMoney(v, d) {
+  if (!isNum(v)) return '';
+  var r = roundTo(v, d || 0);
+  return (r < 0 ? '-' : '') + cur() + (d === 2 ? nf2 : nf0).format(Math.abs(r));
+}
+function fPct(v) { return isNum(v) ? nf1.format(roundTo(v * 100, 1)) + '%' : ''; }
+function fCompact(v) {
+  if (!isNum(v)) return '';
+  return Math.abs(v) >= 10000 ? nf0.format(roundTo(v / 1000, 0)) + 'k' : Math.abs(v) >= 1000 ? nf1.format(roundTo(v / 1000, 1)) + 'k' : nf0.format(v);
+}
+function signed(text, v) { return v > 0 ? '+' + text : text; }
+var TONES = {
+  good: ['Healthy', 'On track', 'Covered'],
+  warn: ['Order soon', 'Excess', 'Aged'],
+  bad: ['Order now', 'Low stock', 'Out of stock', 'No sales', 'Late, expedite', 'Cutoff missed']
+};
+function toneOf(v) {
+  for (var t in TONES) if (TONES[t].indexOf(v) >= 0) return t;
+  return 'idle';
+}
+function showNum(v, kind) {
+  if (!isNum(v)) return '';
+  if (kind === 'int') return nf0.format(v);
+  if (kind === 'money') return Math.round(v) === v ? nf0.format(v) : nf2.format(roundTo(v, 2));
+  return String(v);
+}
+
+/* ---------- saving ---------- */
+function probeStorage() {
+  try { localStorage.setItem(LS_KEY + ':probe', '1'); localStorage.removeItem(LS_KEY + ':probe'); return true; } catch (e) { return false; }
+}
+function loadLocal() {
+  try { var raw = localStorage.getItem(LS_KEY); return raw ? WB.normalize(JSON.parse(raw)) : null; } catch (e) { return null; }
+}
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); storageOK = true; } catch (e) { storageOK = false; }
+}
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function () { saveLocal(); updateSaveStatus(); queueCloud(); }, 400);
+}
+function flushSave() {
+  clearTimeout(saveTimer);
+  if (!state) return;
+  saveLocal(); updateSaveStatus(); queueCloud();
+}
+function updateSaveStatus() {
+  var el = $('save'), mode, text, note;
+  if (cloud.ok) {
+    mode = 'cloud'; text = 'Saves to your Claude sign-in';
+    note = 'Your entries are stored with your Claude sign-in, separate from anyone else who opens this page, and in this browser. Back up puts everything in one file that Restore can load anywhere.';
+  } else if (storageOK) {
+    mode = 'local'; text = 'Saves in this browser';
+    note = 'Your entries are stored in this browser. Back up puts everything in one file that Restore can load on any device.';
+  } else {
+    mode = 'off'; text = 'Cannot save here. Use Back up.';
+    note = 'This browser is blocking storage, so entries last only until you close the page. Use Back up to keep them.';
+  }
+  if (el) { el.dataset.mode = mode; el.textContent = text; }
+  $('foot-save').textContent = note;
+}
+function queueCloud() {
+  if (!cloud.ref || !cloud.ok) return;
+  clearTimeout(cloud.timer);
+  cloud.timer = setTimeout(pushCloud, 1500);
+}
+function pushCloud() {
+  if (!cloud.ref || !cloud.ok) return;
+  if (cloud.busy) { cloud.want = true; return; }
+  var body = JSON.stringify(state);
+  if (body === cloud.last) return;
+  cloud.busy = true;
+  cloud.ref.set({v: 1, updatedAt: state.updatedAt, state: JSON.parse(body)}).then(function () {
+    cloud.last = body; cloud.fails = 0;
+  }, function (e) {
+    var code = e && e.code;
+    cloud.fails++;
+    if (code === 'unavailable' && cloud.fails < 2) cloud.want = true;
+    else cloud.ok = false;
+  }).then(function () {
+    cloud.busy = false; updateSaveStatus();
+    if (cloud.want) { cloud.want = false; clearTimeout(cloud.timer); cloud.timer = setTimeout(pushCloud, 1500 + Math.random() * 1500); }
+  });
+}
+function initCloud() {
+  if (!hosted) return;
+  var timeout = new Promise(function (res) { setTimeout(function () { res(null); }, 10000); });
+  var caps;
+  try { caps = Promise.all([window.claude.use('db'), window.claude.use('user')]); } catch (e) { return; }
+  caps.then(function (ns) {
+    var db = ns[0], user = ns[1];
+    if (!db || !user) return null;
+    return Promise.all([user.id(), typeof user.can === 'function' ? user.can('data.write') : null]).then(function (who) {
+      var id = who[0];
+      if (!id || who[1] === false) return null;
+      var ref = db.doc('data/users/' + id + '/workbook');
+      return Promise.race([ref.get(), timeout]).then(function (snap) {
+        if (!snap) return null;
+        cloud.ref = ref; cloud.ok = true;
+        var body = snap.exists ? snap.data() : null;
+        var remote = body && body.state && typeof body.state === 'object' ? body : null;
+        if (remote && !editedThisVisit && isNum(remote.updatedAt) && remote.updatedAt > state.updatedAt) {
+          state = WB.normalize(JSON.parse(JSON.stringify(remote.state)));
+          state.updatedAt = remote.updatedAt;
+          cloud.last = JSON.stringify(state);
+          saveLocal(); renderAll();
+        } else if (state.updatedAt > 0 && (!remote || !isNum(remote.updatedAt) || state.updatedAt > remote.updatedAt)) {
+          queueCloud();
+        }
+        updateSaveStatus();
+        return null;
+      });
+    });
+  }).catch(function () { cloud.ok = false; updateSaveStatus(); });
+}
+
+/* ---------- bound inputs ---------- */
+function edit() {
+  state.updatedAt = Date.now(); editedThisVisit = true;
+  scheduleSave(); recalc();
+}
+function merge(base, attrs) { var o = {}, k; for (k in base) o[k] = base[k]; for (k in attrs) o[k] = attrs[k]; return o; }
+function bindText(obj, key, attrs) {
+  var el = h('input', merge({type: 'text', class: 'in', autocomplete: 'off'}, attrs));
+  el.value = obj[key] || '';
+  el.addEventListener('input', function () { obj[key] = el.value; edit(); });
+  return el;
+}
+function bindNum(obj, key, kind, attrs) {
+  var el = h('input', merge({type: 'text', class: 'in num', autocomplete: 'off', inputmode: kind === 'int' ? 'numeric' : 'decimal'}, attrs));
+  el.value = showNum(obj[key], kind);
+  el.addEventListener('input', function () {
+    var v = parseNum(el.value);
+    if (v != null && kind === 'int') v = Math.round(v);
+    obj[key] = v; edit();
+  });
+  el.addEventListener('blur', function () { el.value = showNum(obj[key], kind); });
+  return el;
+}
+function bindDate(obj, key, attrs) {
+  var el = h('input', merge({type: 'date', class: 'in'}, attrs));
+  el.value = obj[key] || '';
+  var on = function () { var v = toUTC(el.value) != null ? el.value : ''; if (v !== obj[key]) { obj[key] = v; edit(); } };
+  el.addEventListener('input', on); el.addEventListener('change', on);
+  return el;
+}
+function bindSelect(obj, key, options, attrs, opt) {
+  opt = opt || {};
+  var el = h('select', merge({class: 'in'}, attrs));
+  if (opt.blank != null) el.appendChild(h('option', {value: '', text: opt.blank}));
+  options.forEach(function (o) { el.appendChild(h('option', {value: String(o), text: String(o)})); });
+  el.value = obj[key] == null ? '' : String(obj[key]);
+  var paint = function () { if (opt.tone) el.dataset.tone = opt.tone(obj[key]); };
+  paint();
+  el.addEventListener('change', function () {
+    obj[key] = opt.numeric ? (el.value === '' ? null : Number(el.value)) : el.value;
+    paint(); edit();
+    if (opt.onChange) opt.onChange();
+  });
+  return el;
+}
+function pill() { return h('span', {class: 'pill'}); }
+function setPill(el, text, tone) { el.textContent = text; el.dataset.tone = tone || 'idle'; el.hidden = !text; }
+
+/* ---------- small builders ---------- */
+function sec(title, help) {
+  return h('section', {class: 'sec'}, h('div', {class: 'sec-head'}, h('h2', {text: title}), help ? h('p', {class: 'help', text: help}) : null), Array.prototype.slice.call(arguments, 2));
+}
+function field(label, input, note) {
+  return h('div', {class: 'field'}, h('label', {for: input.id, text: label}), input, note ? h('small', {text: note}) : null);
+}
+function stat(panel, label, fn) {
+  var val = h('strong');
+  ups[panel].push(function () { fn(val); });
+  return h('div', {class: 'stat'}, h('span', {class: 'cap', text: label}), val);
+}
+function tile(panel, label, sub, fn) {
+  var val = h('strong'), subEl = h('span', {class: 'sub', text: sub}), box = h('div', {class: 'tile'}, h('span', {class: 'cap', text: label}), val, subEl);
+  ups[panel].push(function () { fn(val, box, subEl); });
+  return box;
+}
+function setTile(val, box, text, bad) {
+  val.textContent = text || 'No data yet';
+  box.dataset.tone = !text ? 'none' : bad ? 'bad' : '';
+}
+
+var col = {
+  text: function (key, label, o) {
+    o = o || {};
+    return {key: key, label: label, w: o.w, cell: function (r, i, x) { return bindText(r, key, {id: x.id, 'aria-label': x.label, placeholder: o.ph}); }};
+  },
+  num: function (key, label, kind, o) {
+    o = o || {};
+    return {key: key, label: label, num: true, w: o.w, cell: function (r, i, x) {
+      var el = bindNum(r, key, kind, {id: x.id, 'aria-label': x.label, placeholder: o.ph ? o.ph(i) : null});
+      if (o.up) x.up(function () { o.up(el, i); });
+      return el;
+    }};
+  },
+  date: function (key, label, o) {
+    o = o || {};
+    return {key: key, label: label, w: o.w, cell: function (r, i, x) { return bindDate(r, key, {id: x.id, 'aria-label': x.label}); }};
+  },
+  sel: function (key, label, options, o) {
+    o = o || {};
+    return {key: key, label: label, w: o.w, cell: function (r, i, x) { return bindSelect(r, key, options, {id: x.id, 'aria-label': x.label}, o); }};
+  },
+  calc: function (key, label, fn, o) {
+    o = o || {};
+    return {key: key, label: label, num: o.num !== false, calc: true, w: o.w, cell: function (r, i, x) {
+      var el = h('span', {class: o.cls || 'v'});
+      x.up(function () { fn(el, i); });
+      return el;
+    }};
+  },
+  status: function (key, label, fn, o) {
+    o = o || {};
+    return {key: key, label: label, w: o.w, cell: function (r, i, x) {
+      var el = pill();
+      x.up(function () { var t = fn(i); setPill(el, t, toneOf(t)); });
+      return el;
+    }};
+  },
+  label: function (label, fn, o) {
+    o = o || {};
+    return {key: 'label', label: label, w: o.w, cell: function (r, i) { return h('span', {class: 'strong', text: fn(i)}); }};
+  }
+};
+
+function table(panel, cfg) {
+  var rows = cfg.rows;
+  var head = h('tr', null, cfg.cols.map(function (c) {
+    return h('th', {scope: 'col', class: c.num ? 'num' : null, style: c.w ? 'min-width:' + c.w + 'px;width:' + c.w + 'px' : null, text: c.label});
+  }), cfg.fixed ? null : h('th', {class: 'x'}, h('span', {class: 'vh', text: 'Remove'})));
+  var body = h('tbody');
+  rows.forEach(function (row, i) {
+    var tr = h('tr');
+    cfg.cols.forEach(function (c) {
+      var td = h('td', {class: ((c.num ? 'num ' : '') + (c.calc ? 'calc' : '')).trim() || null});
+      var node = c.cell(row, i, {id: cfg.id + '-' + i + '-' + c.key, label: c.label + ', row ' + (i + 1), up: function (fn) { ups[panel].push(fn); }});
+      if (node) td.appendChild(node);
+      tr.appendChild(td);
+    });
+    if (!cfg.fixed) tr.appendChild(h('td', {class: 'x'}, h('button', {type: 'button', class: 'del', 'aria-label': 'Remove row ' + (i + 1), title: 'Remove row', onclick: function () { removeRow(panel, rows, i); }}, '×')));
+    body.appendChild(tr);
+  });
+  if (!rows.length) body.appendChild(h('tr', null, h('td', {class: 'empty', colspan: cfg.cols.length + 1, text: cfg.empty || 'Nothing here yet.'})));
+  var t = h('table', {class: 'grid', id: cfg.id}, h('caption', {class: 'vh', text: cfg.caption}), h('thead', null, head), body);
+  if (cfg.foot) t.appendChild(cfg.foot());
+  return h('div', {class: 'scroll'}, t);
+}
+function structural(panel) {
+  state.updatedAt = Date.now(); editedThisVisit = true;
+  scheduleSave(); renderPanel(panel); recalc(); afterShow();
+}
+function addRow(panel, rows, row, focusId) {
+  rows.push(row);
+  structural(panel);
+  var el = $(focusId.replace('#', String(rows.length - 1)));
+  if (el) el.focus();
+}
+function removeRow(panel, rows, i) {
+  var row = rows.splice(i, 1)[0];
+  structural(panel);
+  toast('Row removed.', 'Undo', function () { rows.splice(Math.min(i, rows.length), 0, row); structural(panel); });
+}
+function addButton(label, fn) { return h('button', {type: 'button', class: 'btn small', onclick: fn}, label); }
+function figure(id, title, sub, extra) {
+  return h('figure', {class: 'chart'}, h('figcaption', null, title, h('span', {text: sub})), h('div', {class: 'plot' + (extra ? ' ' + extra : ''), id: id}));
+}
+
+/* ---------- tab 1: demand forecast ---------- */
+function renderForecast() {
+  var p = $('panel-demand-forecast'), F = state.fc;
+  ups.forecast = [];
+  var monthInput = h('input', {type: 'month', class: 'in', id: 'f-last', placeholder: 'YYYY-MM'});
+  monthInput.value = F.lastMonth;
+  monthInput.addEventListener('change', function () {
+    if (WB.mParse(monthInput.value) && monthInput.value !== F.lastMonth) { F.lastMonth = monthInput.value; structural('forecast'); var el = $('f-last'); if (el) el.focus(); }
+  });
+  var settings = h('div', {class: 'form'},
+    field('Last full month of sales', monthInput, 'History covers the 12 months up to here'),
+    field('Baseline months', bindSelect(F, 'baseN', [1, 2, 3, 6, 12], {id: 'f-basen'}, {numeric: true}), 'Recent months averaged, seasonality removed'),
+    field('Monthly growth %', bindNum(F, 'growth', 'num', {id: 'f-growth'}), 'Compounded month over month'));
+  var tiles = h('div', {class: 'tiles'},
+    tile('forecast', 'Baseline per month', 'Underlying demand with seasonality removed', function (v, b) { setTile(v, b, fInt(D.fc.baseline)); }),
+    tile('forecast', 'Next 3 months', 'Forecast units for the next three months', function (v, b) { setTile(v, b, fInt(D.fc.next3)); }),
+    tile('forecast', 'Next 12 months', 'Forecast units for the year ahead', function (v, b) { setTile(v, b, fInt(D.fc.next12)); }),
+    tile('forecast', 'Peak month', 'Highest forecast month', function (v, b, s) {
+      var pk = D.fc.peak;
+      setTile(v, b, pk ? fInt(pk.fc) : '');
+      s.textContent = pk ? WB.mLabel(pk.key) + ' is the highest forecast month' : 'Highest forecast month';
+    }),
+    tile('forecast', 'Forecast error', 'Average miss on months with an actual', function (v, b, s) {
+      setTile(v, b, D.fc.mape == null ? '' : fPct(D.fc.mape));
+      s.textContent = D.fc.mape == null ? 'Enter actuals below as months close' : 'Bias ' + signed(fPct(D.fc.bias), D.fc.bias) + ' over ' + D.fc.nActual + (D.fc.nActual === 1 ? ' month' : ' months');
+    }));
+  var hist = table('forecast', {id: 'hist', caption: 'Sales history', rows: F.hist, fixed: true, cols: [
+    col.label('Month', function (i) { return WB.mLabel(WB.mAdd(D.fc.last, i - 11)); }, {w: 110}),
+    col.num('units', 'Units sold', 'int', {w: 100}),
+    col.num('stockDays', 'Days in stock', 'int', {w: 100, ph: function (i) { return String(WB.mDays(WB.mAdd(D.fc.last, i - 11))); }}),
+    col.calc('adj', 'Adjusted demand', function (el, i) { el.textContent = fInt(D.fc.hist[i].adj); }, {w: 110}),
+    col.calc('idx', 'Seasonal index', function (el, i) { el.textContent = fDec2(D.fc.hist[i].idx); }, {w: 100}),
+    col.calc('des', 'Without seasonality', function (el, i) { el.textContent = fInt(D.fc.hist[i].des); }, {w: 120})
+  ]});
+  var season = table('forecast', {id: 'season', caption: 'Seasonal index by month', rows: F.idx, fixed: true, cols: [
+    col.label('Month', function (i) { return WB.MONTHS[i]; }, {w: 120}),
+    {key: 'idx', label: 'Seasonal index', num: true, w: 110, cell: function (r, i, x) { return bindNum(F.idx, i, 'num', {id: x.id, 'aria-label': x.label}); }},
+    col.calc('sug', 'From your history', function (el, i) { el.textContent = fDec2(D.fc.sug[i]); }, {w: 120})
+  ]});
+  var useHistory = function () {
+    var n = 0;
+    D.fc.sug.forEach(function (v, i) { if (isNum(v)) { F.idx[i] = roundTo(v, 2); n++; } });
+    if (!n) { toast('Enter sales history first.'); return; }
+    structural('forecast');
+    toast('Seasonal index copied from your history.');
+  };
+  var fc = table('forecast', {id: 'fc', caption: 'Forecast', rows: F.actual, fixed: true, cols: [
+    col.label('Month', function (i) { return WB.mLabel(WB.mAdd(D.fc.last, i + 1)); }, {w: 110}),
+    col.calc('idx', 'Seasonal index', function (el, i) { el.textContent = fDec2(D.fc.rows[i].idx); }, {w: 100}),
+    col.calc('fc', 'Forecast units', function (el, i) { el.textContent = fInt(D.fc.rows[i].fc); }, {w: 110}),
+    col.calc('daily', 'Per day', function (el, i) { el.textContent = fDec1(D.fc.rows[i].daily); }, {w: 80}),
+    {key: 'actual', label: 'Actual units', num: true, w: 110, cell: function (r, i, x) { return bindNum(F.actual, i, 'int', {id: x.id, 'aria-label': x.label}); }},
+    col.calc('err', 'Actual vs forecast', function (el, i) {
+      var r = D.fc.rows[i];
+      el.textContent = r.err == null || !r.fc ? '' : signed(fPct(r.err / r.fc), r.err);
+      el.dataset.tone = r.ape != null && r.ape > 0.25 ? 'bad' : '';
+    }, {w: 120})
+  ]});
+  p.replaceChildren(
+    sec('Forecast settings', 'Set the last month you have complete sales for. The 12 months of history and the 12 forecast months follow from it.', settings),
+    tiles,
+    sec('Demand by month', null, h('div', {class: 'charts'}, figure('plot-demand', 'Adjusted demand and forecast', 'Solid line is history, dashed line is forecast'))),
+    sec('Sales history', 'Enter units sold per month. If you were out of stock part of a month, enter the days you had stock and the month is scaled up to full demand.', hist),
+    sec('Seasonal index', 'How each calendar month compares to an average month: 1.00 is average, 1.40 is 40% above. Your own values drive the forecast. One year of history also carries any trend, so treat its values as a starting point.', season,
+      h('div', {class: 'toolbar'}, h('button', {type: 'button', class: 'btn small quiet', onclick: useHistory}, 'Use the values from your history'))),
+    sec('Forecast', 'Enter actual units as each month closes. Misses over 25% show in red.', fc)
+  );
+}
+
+/* ---------- tab 2: reorder and safety stock ---------- */
+function renderReorder() {
+  var p = $('panel-reorder-planner'), R = state.ro;
+  ups.reorder = [];
+  var tiles = h('div', {class: 'tiles'},
+    tile('reorder', 'Days of cover', 'Everything you own or have on order, at forecast demand', function (v, b) { setTile(v, b, fInt(D.ro.coverNet), D.ro.coverNet != null && D.ro.coverNet < D.ro.LT); }),
+    tile('reorder', 'Reorder point', 'Demand over the lead time plus safety stock', function (v, b) { setTile(v, b, D.ro.d > 0 ? fInt(D.ro.rop) : ''); }),
+    tile('reorder', 'Safety stock', 'Buffer for demand and lead time swings', function (v, b) { setTile(v, b, D.ro.d > 0 ? fInt(D.ro.ss) : ''); }),
+    tile('reorder', 'Suggested order', 'Up to target stock, in full cartons, at least the MOQ', function (v, b) { setTile(v, b, D.ro.d > 0 ? fInt(D.ro.qty) : ''); }),
+    tile('reorder', 'Order value', 'Suggested order at your unit cost', function (v, b) { setTile(v, b, fMoney(D.ro.value, 0)); }),
+    tile('reorder', 'Reorder by', 'Date the position reaches the reorder point', function (v, b) {
+      var r = D.ro;
+      setTile(v, b, r.d <= 0 ? '' : r.status === 'Order now' ? 'Now' : fDate(r.reorderDate), r.status === 'Order now');
+    }));
+  var st = pill(), stText = h('p');
+  ups.reorder.push(function () {
+    var r = D.ro;
+    setPill(st, r.status, toneOf(r.status));
+    if (r.d <= 0) { stText.textContent = 'Add sales history on the Demand forecast tab, or enter a manual daily demand, to calculate reorder figures.'; return; }
+    var s = 'Inventory position ' + fInt(r.position) + ' against a reorder point of ' + fInt(r.rop) + '. ';
+    s += r.status === 'Order now' ? 'Order ' + fInt(r.qty) + ' units now; they arrive around ' + fDate(r.arrival) + '.' : 'Order by ' + fDate(r.reorderDate, true) + '.';
+    if (r.lowFee) s += ' FBA stock covers only ' + fInt(r.coverFba) + ' days, under the 28 days where Amazon charges its low-inventory-level fee.';
+    stText.textContent = s;
+  });
+  var stockForm = h('div', {class: 'form'},
+    field('Available at FBA', bindNum(R, 'fba', 'int', {id: 'r-fba'}), 'Fulfillable units'),
+    field('Inbound to FBA', bindNum(R, 'inbound', 'int', {id: 'r-inbound'}), 'Shipped, not yet received'),
+    field('Upstream stock', bindNum(R, 'upstream', 'int', {id: 'r-upstream'}), 'AWD, 3PL or your own warehouse'));
+  var stockStats = h('div', {class: 'strip'},
+    stat('reorder', 'On open POs', function (el) { el.textContent = fInt(D.ro.openPO); }),
+    stat('reorder', 'Inventory position', function (el) { el.textContent = fInt(D.ro.position); }),
+    stat('reorder', 'FBA days of cover', function (el) { el.textContent = D.ro.coverFba == null ? 'No demand yet' : fInt(D.ro.coverFba); }));
+  var ltForm = h('div', {class: 'form'},
+    field('Production days', bindNum(R, 'prod', 'int', {id: 'r-prod'}), 'PO to goods ready'),
+    field('Transit days', bindNum(R, 'transit', 'int', {id: 'r-transit'}), 'Factory to Amazon'),
+    field('FBA receiving days', bindNum(R, 'receiving', 'int', {id: 'r-receiving'}), 'Arrival to available'),
+    field('Lead time variability', bindNum(R, 'ltSd', 'num', {id: 'r-ltsd'}), 'Standard deviation, days'),
+    field('Review period', bindNum(R, 'review', 'int', {id: 'r-review'}), 'Days between orders'),
+    field('Service level %', bindNum(R, 'service', 'num', {id: 'r-service'}), 'Chance of no stockout per cycle'),
+    field('Daily demand from', bindSelect(R, 'demandMode', ['Forecast', 'Manual'], {id: 'r-dmode'}), 'Forecast uses the next 90 days'),
+    field('Manual daily demand', bindNum(R, 'manualDaily', 'num', {id: 'r-dmanual'}), 'Used when set to Manual'),
+    field('Demand variability from', bindSelect(R, 'sdMode', ['History', 'Manual'], {id: 'r-sdmode'}), 'History uses your 12 months'),
+    field('Manual daily variability', bindNum(R, 'manualSd', 'num', {id: 'r-sdmanual'}), 'Standard deviation, units per day'));
+  var ltStats = h('div', {class: 'strip'},
+    stat('reorder', 'Lead time', function (el) { el.textContent = fInt(D.ro.LT) + ' days'; }),
+    stat('reorder', 'Daily demand used', function (el) { el.textContent = fDec1(D.ro.d); }),
+    stat('reorder', 'Daily variability used', function (el) { el.textContent = fDec1(D.ro.sd); }),
+    stat('reorder', 'z for service level', function (el) { el.textContent = fDec2(D.ro.z); }),
+    stat('reorder', 'Target stock', function (el) { el.textContent = D.ro.d > 0 ? fInt(D.ro.target) : ''; }));
+  var ruleForm = h('div', {class: 'form'},
+    field('Currency', bindSelect(R, 'currency', WB.CURRENCIES, {id: 'r-currency'}, {onChange: function () { renderAll(); var el = $('r-currency'); if (el) el.focus(); }})),
+    field('Units per carton', bindNum(R, 'carton', 'int', {id: 'r-carton'})),
+    field('Minimum order quantity', bindNum(R, 'moq', 'int', {id: 'r-moq'})),
+    field('Landed cost per unit', bindNum(R, 'cost', 'money', {id: 'r-cost'})));
+  var pos = table('reorder', {id: 'pos', caption: 'Open purchase orders', rows: R.pos, empty: 'No open purchase orders.', cols: [
+    col.text('po', 'PO number', {w: 140, ph: 'PO number'}),
+    col.num('qty', 'Units', 'int', {w: 100}),
+    col.date('eta', 'Available at Amazon', {w: 160}),
+    col.text('notes', 'Notes', {w: 260})
+  ], foot: function () {
+    var tq = h('td', {class: 'num calc'});
+    ups.reorder.push(function () { tq.textContent = fInt(D.ro.openPO); });
+    return h('tfoot', null, h('tr', null, h('td', {text: 'Total'}), tq, h('td'), h('td'), h('td')));
+  }});
+  var stockNote = h('p', {class: 'help'});
+  ups.reorder.push(function () {
+    var r = D.ro;
+    stockNote.textContent = r.d <= 0 ? '' : r.stockout == null ? 'No stockout in the next 26 weeks with the stock and POs you have.' :
+      'Without a new order you run out around ' + fDate(r.stockout, true) + '. An order placed today arrives around ' + fDate(r.arrival) + '.';
+    stockNote.dataset.tone = r.stockout != null ? 'bad' : '';
+  });
+  p.replaceChildren(
+    tiles,
+    sec('Status', null, h('div', {class: 'state'}, st, stText)),
+    sec('Stock you own', 'Inventory position adds open purchase orders to the stock you hold today.', stockForm, stockStats),
+    sec('Lead time and demand', 'Safety stock covers swings in both demand and lead time at the service level you choose. 95% means about one cycle in twenty runs short.', ltForm, ltStats),
+    sec('Order rules', null, ruleForm),
+    sec('Open purchase orders', 'Each PO counts toward your position now and lands in the projection on its date. Remove a PO once it is received.', pos,
+      h('div', {class: 'toolbar'}, addButton('Add a purchase order', function () { addRow('reorder', R.pos, {po: '', qty: null, eta: '', notes: ''}, 'pos-#-po'); }))),
+    sec('Projection', null, h('div', {class: 'charts'}, figure('plot-proj', 'Projected stock over 26 weeks', 'Stock you own plus open POs, minus forecast demand. No new orders included.')), stockNote)
+  );
+}
+
+/* ---------- tab 3: inventory health and aging ---------- */
+function renderHealth() {
+  var p = $('panel-inventory-health'), H = state.health;
+  ups.health = [];
+  var strip = h('div', {class: 'strip'},
+    field('Target days of cover', bindNum(H, 'targetDays', 'int', {id: 'h-target'}), 'Stock beyond this is excess'),
+    field('Flag aged stock above %', bindNum(H, 'agedFlag', 'num', {id: 'h-aged'}), 'Share older than 180 days'),
+    field('Storage fee per cu ft per month', bindNum(H, 'rate', 'money', {id: 'h-rate'}), 'Your current rate for this size tier'),
+    stat('health', 'SKUs tracked', function (el) { el.textContent = nf0.format(D.health.tracked); }),
+    stat('health', 'Needing attention', function (el) { el.textContent = nf0.format(D.health.attention); }));
+  var tiles = h('div', {class: 'tiles'},
+    tile('health', 'Units on hand', 'Across every SKU below', function (v, b) { setTile(v, b, fInt(D.health.units)); }),
+    tile('health', 'Inventory value', 'On hand at unit cost', function (v, b) { setTile(v, b, fMoney(D.health.value, 0)); }),
+    tile('health', 'Days of cover', 'All SKUs at last 30 days of sales', function (v, b) { setTile(v, b, fInt(D.health.cover)); }),
+    tile('health', 'Older than 180 days', 'Share of units', function (v, b, s) {
+      var share = D.health.units > 0 ? D.health.aged / D.health.units : null;
+      setTile(v, b, fPct(share), share != null && share * 100 > (isNum(H.agedFlag) ? H.agedFlag : 20));
+      s.textContent = fInt(D.health.aged) + ' units';
+    }),
+    tile('health', 'Excess value', 'Stock beyond your target cover', function (v, b, s) { setTile(v, b, fMoney(D.health.excessValue, 0)); s.textContent = fInt(D.health.excess) + ' units beyond target cover'; }),
+    tile('health', 'Storage per month', 'Estimate at your storage fee', function (v, b) { setTile(v, b, isNum(H.rate) ? fMoney(D.health.storage, 0) : ''); }));
+  var grid = table('health', {id: 'skus', caption: 'Inventory by SKU', rows: H.rows, empty: 'No SKUs yet. Add your first one below.', cols: [
+    col.text('sku', 'SKU', {w: 140, ph: 'SKU'}),
+    col.num('a0', '0-90 days', 'int', {w: 64}),
+    col.num('a1', '91-180', 'int', {w: 70}),
+    col.num('a2', '181-270', 'int', {w: 70}),
+    col.num('a3', '271-365', 'int', {w: 70}),
+    col.num('a4', 'Over 365', 'int', {w: 70}),
+    col.calc('on', 'On hand', function (el, i) { el.textContent = fInt(D.health.rows[i].on); }, {w: 70}),
+    col.num('sold30', 'Sold last 30 days', 'int', {w: 66}),
+    col.calc('cover', 'Days of cover', function (el, i) { var c = D.health.rows[i].cover; el.textContent = fInt(c); el.dataset.tone = c != null && c < 28 ? 'bad' : ''; }, {w: 70}),
+    col.calc('excess', 'Excess units', function (el, i) { el.textContent = fInt(D.health.rows[i].excess); }, {w: 60}),
+    col.calc('agedShare', 'Over 180 days', function (el, i) { el.textContent = fPct(D.health.rows[i].agedShare); }, {w: 58}),
+    col.num('cost', 'Unit cost', 'money', {w: 72}),
+    col.num('cube', 'Cu ft per unit', 'num', {w: 62}),
+    col.calc('value', 'Value', function (el, i) { el.textContent = fMoney(D.health.rows[i].value, 0); }, {w: 70}),
+    col.calc('storage', 'Storage per month', function (el, i) { el.textContent = fMoney(D.health.rows[i].storage, 0); }, {w: 66}),
+    col.status('status', 'Status', function (i) { return D.health.rows[i].status; }, {w: 100})
+  ], foot: function () {
+    var cells = {on: h('td', {class: 'num calc'}), sold: h('td', {class: 'num calc'}), cover: h('td', {class: 'num calc'}), excess: h('td', {class: 'num calc'}), aged: h('td', {class: 'num calc'}), value: h('td', {class: 'num calc'}), storage: h('td', {class: 'num calc'})};
+    var buckets = [0, 1, 2, 3, 4].map(function () { return h('td', {class: 'num calc'}); });
+    ups.health.push(function () {
+      var t = D.health;
+      buckets.forEach(function (c, j) { c.textContent = fInt(t.buckets[j]); });
+      cells.on.textContent = fInt(t.units);
+      cells.sold.textContent = fInt(t.daily * 30);
+      cells.cover.textContent = fInt(t.cover);
+      cells.excess.textContent = fInt(t.excess);
+      cells.aged.textContent = t.units > 0 ? fPct(t.aged / t.units) : '';
+      cells.value.textContent = fMoney(t.value, 0);
+      cells.storage.textContent = isNum(H.rate) ? fMoney(t.storage, 0) : '';
+    });
+    return h('tfoot', null, h('tr', null, h('td', {text: 'Total'}), buckets, cells.on, cells.sold, cells.cover, cells.excess, cells.aged, h('td'), h('td'), cells.value, cells.storage, h('td'), h('td')));
+  }});
+  var blank = function () { return {sku: '', a0: null, a1: null, a2: null, a3: null, a4: null, sold30: null, cost: null, cube: null}; };
+  p.replaceChildren(
+    sec('Settings', 'Low stock flags anything under 28 days of cover. Aged and excess flags use your thresholds.', strip),
+    tiles,
+    sec('Units by age', null, h('div', {class: 'charts'}, figure('plot-age', 'Units on hand by age', 'All SKUs together. Older stock costs more to store and is harder to sell.', 'bars'))),
+    sec('Inventory by SKU', 'Enter units in each age band from your FBA inventory age report. On hand is the sum of the bands.', grid,
+      h('div', {class: 'toolbar'}, addButton('Add a SKU', function () { addRow('health', H.rows, blank(), 'skus-#-sku'); })))
+  );
+}
+
+/* ---------- tab 4: peak season ---------- */
+function renderPeak() {
+  var p = $('panel-peak-season'), P = state.peak;
+  ups.peak = [];
+  var linked = h('div', {class: 'strip'},
+    stat('peak', 'Normal daily demand', function (el) { el.textContent = D.peak.baseDaily == null ? 'No forecast yet' : fDec1(D.peak.baseDaily); }),
+    stat('peak', 'Production days', function (el) { el.textContent = fInt(D.peak.prod); }),
+    stat('peak', 'Transit and receiving days', function (el) { el.textContent = fInt(D.peak.ship); }));
+  var tiles = h('div', {class: 'tiles'},
+    tile('peak', 'Next PO deadline', 'Last day to place the order', function (v, b, s) {
+      var n = D.peak.next;
+      setTile(v, b, n ? fDate(n.x.poBy) : '', n && n.x.left < 0);
+      s.textContent = !n ? 'No upcoming events need an order' : (P.events[n.j].name || 'Unnamed event') + ', ' + (n.x.left < 0 ? nf0.format(-n.x.left) + ' days late' : n.x.left === 0 ? 'today' : 'in ' + nf0.format(n.x.left) + ' days');
+    }),
+    tile('peak', 'Units for that event', 'Expected sales during the event', function (v, b) { var n = D.peak.next; setTile(v, b, n ? fInt(n.x.expected) : ''); }),
+    tile('peak', 'Extra units ahead', 'Above normal demand, all upcoming events', function (v, b) { setTile(v, b, D.peak.baseDaily == null ? '' : fInt(D.peak.extraAhead)); }),
+    tile('peak', 'Events needing action', 'Order soon, late, or cutoff missed', function (v, b) { setTile(v, b, nf0.format(D.peak.action), D.peak.action > 0); }));
+  var grid = table('peak', {id: 'events', caption: 'Peak events', rows: P.events, empty: 'No events yet. Add your first one below.', cols: [
+    col.text('name', 'Event', {w: 150, ph: 'Event name'}),
+    col.date('start', 'Starts', {w: 128}),
+    col.date('end', 'Ends', {w: 128}),
+    col.num('uplift', 'Demand multiple', 'num', {w: 66}),
+    col.date('cutoff', 'Stock at FBA by', {w: 128}),
+    col.sel('covered', 'Stock in place', ['No', 'Yes'], {w: 66}),
+    col.calc('expected', 'Expected units', function (el, i) { el.textContent = fInt(D.peak.events[i].expected); }, {w: 80}),
+    col.calc('extra', 'Extra units', function (el, i) { el.textContent = fInt(D.peak.events[i].extra); }, {w: 70}),
+    col.calc('shipBy', 'Ship by', function (el, i) { el.textContent = fDate(D.peak.events[i].shipBy); }, {w: 92, num: false}),
+    col.calc('poBy', 'Order by', function (el, i) { var e = D.peak.events[i]; el.textContent = fDate(e.poBy); el.dataset.tone = e.left != null && e.left < 0 && e.status !== 'Covered' && e.status !== 'Past' ? 'bad' : ''; }, {w: 92, num: false}),
+    col.status('status', 'Status', function (i) { return D.peak.events[i].status; }, {w: 116})
+  ]});
+  var blank = function () { return {name: '', start: '', end: '', uplift: 2, cutoff: '', covered: 'No'}; };
+  p.replaceChildren(
+    sec('Linked figures', 'Normal daily demand comes from the forecast baseline. Production and transit days come from the Reorder and safety stock tab, so change them there.', linked),
+    tiles,
+    sec('Peak events', 'Demand multiple is how many times normal daily sales you expect during the event. Order by works back from the FBA arrival date through transit and production. Set Stock in place to Yes once inventory is covered.', grid,
+      h('div', {class: 'toolbar'}, addButton('Add an event', function () { addRow('peak', P.events, blank(), 'events-#-name'); })))
+  );
+}
+
+/* ---------- charts ---------- */
+var SVG = 'http://www.w3.org/2000/svg';
+function s(tag, attrs, text) {
+  var el = document.createElementNS(SVG, tag), k;
+  for (k in attrs) if (attrs[k] != null) el.setAttribute(k, attrs[k]);
+  if (text != null) el.textContent = text;
+  return el;
+}
+function niceStep(raw) {
+  var p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+function lineChart(host, cfg) {
+  var pts = cfg.pts;
+  if (pts.length < 2) { host.replaceChildren(h('p', {class: 'chart-empty', text: cfg.empty})); return; }
+  var W = Math.max(280, Math.floor(host.clientWidth || 520)), H = 250, m = {l: 50, r: 58, t: 24, b: 30};
+  var iw = W - m.l - m.r, ih = H - m.t - m.b, n = pts.length;
+  var refs = (cfg.refs || []).filter(function (r) { return isNum(r.v) && r.v > 0; });
+  var ys = pts.map(function (q) { return q.y; });
+  var mx = Math.max.apply(null, ys.concat(refs.map(function (r) { return r.v; })).concat([1]));
+  var step = niceStep(mx / 4), lo = 0, hi = Math.ceil(mx / step - 1e-9) * step;
+  var x = function (i) { return m.l + i * iw / (n - 1); };
+  var y = function (v) { return m.t + ih - (v - lo) / (hi - lo) * ih; };
+  var last = pts[n - 1];
+  var svg = s('svg', {viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, tabindex: 0, role: 'img', 'aria-label': cfg.title + '. Arrow keys step through the points.'});
+  var v, yy;
+  for (v = lo; v <= hi + 1e-9; v += step) {
+    yy = Math.round(y(v)) + 0.5;
+    svg.appendChild(s('line', {x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: Math.abs(v - lo) < 1e-9 ? 'ch-axis' : 'ch-grid'}));
+    svg.appendChild(s('text', {x: m.l - 8, y: yy + 4, class: 'ch-tick', 'text-anchor': 'end'}, fCompact(v)));
+  }
+  var marks = n >= 5 ? [0, Math.floor((n - 1) / 2), n - 1] : [0, n - 1];
+  marks.forEach(function (i, j) {
+    svg.appendChild(s('text', {x: x(i), y: H - 9, class: 'ch-tick', 'text-anchor': j === 0 ? 'start' : j === marks.length - 1 ? 'end' : 'middle'}, cfg.xfmt(pts[i].t)));
+  });
+  var used = [];
+  refs.forEach(function (r) {
+    yy = Math.round(y(r.v)) + 0.5;
+    svg.appendChild(s('line', {x1: m.l, x2: W - m.r, y1: yy, y2: yy, class: 'ch-target'}));
+    var ly = yy - 6;
+    if (used.some(function (u) { return Math.abs(u - ly) < 13; })) ly = yy + 15;
+    used.push(ly);
+    svg.appendChild(s('text', {x: W - m.r - 4, y: ly, class: 'ch-target-label', 'text-anchor': 'end'}, r.label + ' ' + fInt(r.v)));
+  });
+  var path = function (from, to) {
+    var out = '';
+    for (var i = from; i <= to; i++) out += (i === from ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(pts[i].y).toFixed(1) + ' ';
+    return out;
+  };
+  if (cfg.area) svg.appendChild(s('path', {d: path(0, n - 1) + 'L' + x(n - 1).toFixed(1) + ' ' + y(lo).toFixed(1) + ' L' + x(0).toFixed(1) + ' ' + y(lo).toFixed(1) + ' Z', class: 'ch-area'}));
+  var split = cfg.split;
+  if (split > 0 && split < n) {
+    var xd = (x(split - 1) + x(split)) / 2;
+    svg.appendChild(s('line', {x1: xd, x2: xd, y1: m.t - 6, y2: m.t + ih, class: 'ch-divider'}));
+    svg.appendChild(s('text', {x: xd - 6, y: m.t - 10, class: 'ch-phase', 'text-anchor': 'end'}, 'Actual'));
+    svg.appendChild(s('text', {x: xd + 6, y: m.t - 10, class: 'ch-phase', 'text-anchor': 'start'}, 'Forecast'));
+    svg.appendChild(s('path', {d: path(0, split - 1), class: 'ch-line'}));
+    svg.appendChild(s('path', {d: path(split - 1, n - 1), class: 'ch-line dash'}));
+  } else {
+    svg.appendChild(s('path', {d: path(0, n - 1), class: 'ch-line'}));
+  }
+  var cross = s('line', {y1: m.t, y2: m.t + ih, class: 'ch-cross', visibility: 'hidden'});
+  var hov = s('circle', {r: 4.5, class: 'ch-dot', visibility: 'hidden'});
+  svg.appendChild(cross);
+  svg.appendChild(s('circle', {cx: x(n - 1), cy: y(last.y), r: 4.5, class: 'ch-dot'}));
+  svg.appendChild(s('text', {x: x(n - 1) + 10, y: y(last.y) + 4, class: 'ch-end'}, fCompact(last.y)));
+  svg.appendChild(hov);
+  var tipVal = h('strong'), tipSub = h('span'), tip = h('div', {class: 'tip', hidden: true}, tipVal, tipSub), at = -1;
+  var show = function (i) {
+    var q = pts[i], px = x(i), py = y(q.y);
+    cross.setAttribute('x1', px); cross.setAttribute('x2', px); cross.setAttribute('visibility', 'visible');
+    hov.setAttribute('cx', px); hov.setAttribute('cy', py); hov.setAttribute('visibility', 'visible');
+    tipVal.textContent = fInt(q.y) + ' ' + cfg.unit;
+    tipSub.textContent = cfg.tipSub(q, i);
+    tip.hidden = false;
+    var tw = tip.offsetWidth, left = px + 12;
+    if (left + tw > W - 4) left = px - 12 - tw;
+    tip.style.left = Math.max(4, left) + 'px';
+    tip.style.top = Math.max(4, py - 48) + 'px';
+    at = i;
+  };
+  var hide = function () { cross.setAttribute('visibility', 'hidden'); hov.setAttribute('visibility', 'hidden'); tip.hidden = true; at = -1; };
+  svg.addEventListener('pointermove', function (e) {
+    var px = e.clientX - svg.getBoundingClientRect().left;
+    show(Math.max(0, Math.min(n - 1, Math.round((px - m.l) / (iw / (n - 1))))));
+  });
+  svg.addEventListener('pointerleave', hide);
+  svg.addEventListener('focus', function () { show(n - 1); });
+  svg.addEventListener('blur', hide);
+  svg.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      show(Math.max(0, Math.min(n - 1, (at < 0 ? n - 1 : at) + (e.key === 'ArrowLeft' ? -1 : 1))));
+    } else if (e.key === 'Escape') hide();
+  });
+  host.replaceChildren(svg, tip);
+}
+function hbars(host, cfg) {
+  var items = cfg.items, total = items.reduce(function (a, b) { return a + b.v; }, 0);
+  if (!(total > 0)) { host.replaceChildren(h('p', {class: 'chart-empty', text: cfg.empty})); return; }
+  var W = Math.max(280, Math.floor(host.clientWidth || 520)), rowH = 34, lab = 112, valW = 120;
+  var H = items.length * rowH + 6, iw = Math.max(40, W - lab - valW);
+  var mx = Math.max.apply(null, items.map(function (it) { return it.v; }));
+  var svg = s('svg', {viewBox: '0 0 ' + W + ' ' + H, width: W, height: H, role: 'img', 'aria-label': cfg.title + ': ' + items.map(function (it) { return it.label + ' ' + fInt(it.v); }).join(', ')});
+  items.forEach(function (it, i) {
+    var top = 3 + i * rowH, w = it.v > 0 ? Math.max(2, it.v / mx * iw) : 0;
+    svg.appendChild(s('text', {x: lab - 12, y: top + rowH / 2 + 4, class: 'ch-bar-label', 'text-anchor': 'end'}, it.label));
+    if (w > 0) {
+      var r = s('path', {d: 'M' + lab + ' ' + (top + 8) + 'h' + (w - 4) + 'a4 4 0 0 1 4 4v10a4 4 0 0 1 -4 4h' + (-(w - 4)) + 'z', class: 'ch-bar'});
+      if (w < 6) r = s('rect', {x: lab, y: top + 8, width: w, height: 18, class: 'ch-bar'});
+      r.appendChild(s('title', {}, it.label + ': ' + fInt(it.v) + ' units, ' + fPct(it.v / total)));
+      svg.appendChild(r);
+    }
+    var t = s('text', {x: lab + w + 8, y: top + rowH / 2 + 4, class: 'ch-val'}, fInt(it.v));
+    t.appendChild(s('tspan', {dx: 6}, fPct(it.v / total)));
+    svg.appendChild(t);
+  });
+  svg.appendChild(s('line', {x1: lab + 0.5, x2: lab + 0.5, y1: 0, y2: H, class: 'ch-axis'}));
+  host.replaceChildren(svg);
+}
+function drawCharts() {
+  var tab = currentTab();
+  if (tab === 'demand-forecast' && $('plot-demand')) {
+    var hist = D.fc.hist.filter(function (x) { return x.adj != null; }).map(function (x) { return {t: WB.mStart(x.key), y: x.adj}; });
+    var fc = D.fc.rows.filter(function (x) { return x.fc != null; }).map(function (x) { return {t: WB.mStart(x.key), y: x.fc}; });
+    lineChart($('plot-demand'), {title: 'Adjusted demand and forecast by month', pts: hist.concat(fc), split: fc.length ? hist.length : 0, unit: 'units',
+      empty: 'Enter at least two months of sales history to draw this chart.',
+      xfmt: function (t) { return WB.mLabel(WB.mOf(t)); },
+      tipSub: function (q, i) { return (i < hist.length ? 'Actual, ' : 'Forecast, ') + WB.mLabel(WB.mOf(q.t)); }});
+  }
+  if (tab === 'reorder-planner' && $('plot-proj')) {
+    lineChart($('plot-proj'), {title: 'Projected stock over 26 weeks', pts: D.ro.d > 0 ? D.ro.proj : [], area: true, unit: 'units',
+      refs: [{v: D.ro.rop, label: 'Reorder point'}, {v: D.ro.ss, label: 'Safety stock'}],
+      empty: 'Add demand and stock figures to project your inventory.',
+      xfmt: fDay, tipSub: function (q) { return 'Week of ' + fDate(q.t); }});
+  }
+  if (tab === 'inventory-health' && $('plot-age')) {
+    hbars($('plot-age'), {title: 'Units on hand by age', empty: 'Add SKUs with stock to see their age.',
+      items: WB.BUCKETS.map(function (b, j) { return {label: b, v: D.health.buckets[j]}; })});
+  }
+}
+
+/* ---------- header and global figures ---------- */
+function buildHeader() {
+  ['brand', 'name', 'sku', 'asin', 'marketplace', 'category'].forEach(function (k) {
+    var el = $('p-' + k);
+    el.addEventListener('input', function () { state.product[k] = el.value; edit(); });
+  });
+  var defs = [
+    ['Next 3 months demand', function () { return [fInt(D.fc.next3) || 'No forecast', '']; }],
+    ['Suggested order', function () { return [D.ro.d > 0 ? fInt(D.ro.qty) + ' units' : 'No demand', '']; }],
+    ['Reorder by', function () { return [D.ro.d <= 0 ? 'No demand' : D.ro.status === 'Order now' ? 'Now' : fDate(D.ro.reorderDate), toneOf(D.ro.status) === 'bad' ? 'bad' : toneOf(D.ro.status) === 'warn' ? 'warn' : '']; }],
+    ['Stockout without new order', function () { return [D.ro.d <= 0 ? 'No demand' : D.ro.stockout == null ? 'None in 26 weeks' : fDate(D.ro.stockout), D.ro.stockout != null ? 'warn' : '']; }],
+    ['Next peak order deadline', function () { var n = D.peak.next; return [n ? fDate(n.x.poBy) : 'None', n && n.x.left < 0 ? 'bad' : n && n.x.left <= 21 ? 'warn' : '']; }],
+    ['SKUs needing attention', function () { return [nf0.format(D.health.attention) + ' of ' + nf0.format(D.health.tracked), D.health.attention > 0 ? 'warn' : '']; }]
+  ];
+  defs.forEach(function (def) {
+    var b = h('b');
+    $('figs').appendChild(h('li', null, h('span', {text: def[0]}), b));
+    ups.global.push(function () { var r = def[1](); b.textContent = r[0]; b.dataset.tone = r[1]; });
+  });
+  var countPill = pill(), countText = h('span');
+  $('count-date').replaceChildren(countPill, ' ', countText);
+  ups.global.push(function () {
+    var r = D.ro, num = $('count-num'), unit = $('count-unit');
+    num.hidden = r.coverNet == null;
+    if (r.coverNet == null) { unit.textContent = 'Add demand to see cover'; setPill(countPill, '', ''); countText.textContent = ''; return; }
+    num.textContent = fInt(r.coverNet);
+    unit.textContent = 'days of cover, incl. open POs';
+    setPill(countPill, r.status, toneOf(r.status));
+    countText.textContent = r.status === 'Order now' ? '' : 'reorder by ' + fDate(r.reorderDate);
+  });
+  ups.global.push(function () {
+    var r = D.ro, n = D.peak.next;
+    $('badge-demand-forecast').textContent = D.fc.next3 == null ? 'no data' : fCompact(D.fc.next3) + ' / 3 mo';
+    $('badge-reorder-planner').textContent = r.d <= 0 ? 'no data' : r.status.toLowerCase();
+    $('badge-inventory-health').textContent = D.health.attention ? D.health.attention + (D.health.attention === 1 ? ' alert' : ' alerts') : 'ok';
+    $('badge-peak-season').textContent = !n ? 'clear' : n.x.left < 0 ? 'late' : n.x.left + 'd';
+    $('notice').hidden = !state.notice;
+  });
+}
+function syncHeader() {
+  ['brand', 'name', 'sku', 'asin', 'marketplace', 'category'].forEach(function (k) { $('p-' + k).value = state.product[k] || ''; });
+}
+
+/* ---------- render cycle ---------- */
+function renderPanel(name) {
+  ({forecast: renderForecast, reorder: renderReorder, health: renderHealth, peak: renderPeak})[name]();
+}
+function recalc() {
+  D = WB.derive(state, todayUTC());
+  var run = function (fn) { fn(); };
+  ups.global.forEach(run); ups.forecast.forEach(run); ups.reorder.forEach(run); ups.health.forEach(run); ups.peak.forEach(run);
+  drawCharts();
+}
+function renderAll() {
+  D = WB.derive(state, todayUTC());
+  syncHeader(); renderForecast(); renderReorder(); renderHealth(); renderPeak();
+  recalc(); afterShow();
+}
+function currentTab() {
+  var id = (location.hash || '').replace('#', '');
+  if (TABS.indexOf(id) >= 0) return id;
+  try { id = localStorage.getItem(LS_KEY + ':tab'); } catch (e) { id = null; }
+  return TABS.indexOf(id) >= 0 ? id : TABS[0];
+}
+function afterShow() { if (D) drawCharts(); }
+function route() {
+  var id = currentTab();
+  TABS.forEach(function (t) {
+    var on = t === id, tab = $('tab-' + t);
+    tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    tab.tabIndex = on ? 0 : -1;
+    $('panel-' + t).hidden = !on;
+  });
+  try { localStorage.setItem(LS_KEY + ':tab', id); } catch (e) {}
+  afterShow();
+}
+
+/* ---------- toast and dialogs ---------- */
+var toastTimer = 0;
+function toast(msg, actLabel, act) {
+  var t = $('toast'), b = $('toast-act');
+  $('toast-text').textContent = msg;
+  b.hidden = !actLabel;
+  if (actLabel) { b.textContent = actLabel; b.onclick = function () { t.hidden = true; act(); }; }
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.hidden = true; }, actLabel ? 8000 : 3500);
+}
+function openDialog(title, body, actions) {
+  var d = $('dlg'), bar = $('dlg-actions');
+  $('dlg-title').textContent = title;
+  $('dlg-body').replaceChildren.apply($('dlg-body'), body);
+  bar.replaceChildren();
+  actions.forEach(function (a) {
+    bar.appendChild(h('button', {type: 'button', class: 'btn ' + (a.cls || ''), onclick: function () { if (!a.run || a.run() !== false) closeDialog(); }}, a.label));
+  });
+  if (typeof d.showModal === 'function') { if (!d.open) d.showModal(); } else d.setAttribute('open', '');
+}
+function closeDialog() {
+  var d = $('dlg');
+  if (typeof d.close === 'function') { if (d.open) d.close(); } else d.removeAttribute('open');
+}
+function replaceState(next, msg) {
+  var prev = state;
+  next.updatedAt = Date.now(); state = next; editedThisVisit = true;
+  flushSave(); renderAll();
+  toast(msg, 'Undo', function () { state = prev; state.updatedAt = Date.now(); flushSave(); renderAll(); });
+}
+function blankDialog() {
+  openDialog('Start with a blank workbook?', [h('p', {class: 'help', text: 'This clears every entry in all four tabs. Back up first if you want to keep what is here.'})], [
+    {label: 'Clear all entries', cls: 'danger', run: function () { replaceState(WB.blankState(), 'Workbook cleared.'); }},
+    {label: 'Load the sample', cls: 'quiet', run: function () { replaceState(WB.sampleState(), 'Sample data loaded.'); }},
+    {label: 'Cancel', cls: 'quiet'}
+  ]);
+}
+function copyDialog(text) {
+  var ta = h('textarea', {class: 'in mono', rows: 9, readonly: true, id: 'backup-text', 'aria-label': 'Backup text'});
+  ta.value = text;
+  openDialog('Back up', [h('p', {class: 'help', text: 'This view cannot save a file. Copy the text below and keep it somewhere safe. Restore accepts it later.'}), ta], [
+    {label: 'Copy backup text', cls: 'primary', run: function () {
+      ta.focus(); ta.select();
+      var fail = function () { toast('Could not copy. The text is selected, so copy it with your keyboard.'); };
+      try { navigator.clipboard.writeText(text).then(function () { toast('Backup text copied.'); }, fail); } catch (e) { fail(); }
+      return false;
+    }},
+    {label: 'Close', cls: 'quiet'}
+  ]);
+}
+var capDownloads = hosted ? Promise.resolve().then(function () { return window.claude.use('downloads'); }).catch(function () { return null; }) : Promise.resolve(null);
+function backup() {
+  flushSave();
+  var text = JSON.stringify({app: 'demand-inventory-workbook', v: 1, savedAt: new Date().toISOString(), state: state}, null, 2);
+  var slug = String(state.product.sku || '').toLowerCase().replace(/[^0-9a-z-]+/g, '-').replace(/^-+|-+$/g, '') || 'workbook';
+  var name = 'demand-inventory-' + slug + '-' + isoOf(todayUTC()) + '.json';
+  if (hosted || framed) {
+    capDownloads.then(function (dl) {
+      if (!dl) return copyDialog(text);
+      return dl.save({filename: name, data: text}).then(function () { toast('Backup saved as ' + name + '.'); }, function (e) {
+        if (e && e.code === 'declined') return;
+        copyDialog(text);
+      });
+    });
+    return;
+  }
+  try {
+    var url = URL.createObjectURL(new Blob([text], {type: 'application/json'}));
+    var a = h('a', {href: url, download: name});
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    toast('Backup file created. Look for ' + name + ' in your downloads.');
+  } catch (e) { copyDialog(text); }
+}
+function restoreDialog() {
+  var file = h('input', {type: 'file', id: 'restore-file', accept: '.json,application/json'});
+  var ta = h('textarea', {class: 'in mono', rows: 6, id: 'restore-text', placeholder: 'Or paste backup text here'});
+  var err = h('p', {class: 'err', role: 'alert', hidden: true});
+  var fail = function (msg) { err.textContent = msg; err.hidden = false; return false; };
+  file.addEventListener('change', function () {
+    var f = file.files && file.files[0];
+    if (!f) return;
+    var rd = new FileReader();
+    rd.onload = function () { ta.value = String(rd.result || ''); err.hidden = true; };
+    rd.onerror = function () { fail('Could not read that file. Try again, or open it and paste its text below.'); };
+    rd.readAsText(f);
+  });
+  openDialog('Restore from a backup', [
+    h('p', {class: 'help', text: 'Restoring replaces everything in all four tabs with what the backup holds.'}),
+    h('label', {class: 'cap', for: 'restore-file', text: 'Backup file'}), file,
+    h('label', {class: 'cap', for: 'restore-text', text: 'Backup text'}), ta, err
+  ], [
+    {label: 'Restore', cls: 'primary', run: function () {
+      var text = ta.value.trim(), parsed, src;
+      if (!text) return fail('Choose a backup file or paste backup text first.');
+      try { parsed = JSON.parse(text); } catch (e) { return fail('That text is not a complete backup. Paste the whole file, from the first curly brace to the last.'); }
+      src = parsed && typeof parsed === 'object' && parsed.state ? parsed.state : parsed;
+      if (!src || typeof src !== 'object' || !(src.fc || src.ro || src.health || src.peak)) return fail('That file is not a Demand and Inventory backup.');
+      var next = WB.normalize(src);
+      next.notice = false;
+      replaceState(next, 'Backup restored.');
+    }},
+    {label: 'Cancel', cls: 'quiet'}
+  ]);
+}
+
+/* ---------- local copy ---------- */
+function readSeed() {
+  var el = document.getElementById('seed');
+  if (!el) return null;
+  try { var st = WB.normalize(JSON.parse(el.textContent)); st.notice = false; return st; } catch (e) { return null; }
+}
+function pickStart() {
+  var seed = readSeed(), local = loadLocal();
+  if (seed && (!local || seed.updatedAt > local.updatedAt)) return seed;
+  return local || WB.sampleState();
+}
+function copyHtml() {
+  var doc = PAGE.cloneNode(true);
+  Array.prototype.slice.call(doc.querySelectorAll('script')).forEach(function (sc) { if (!sc.hasAttribute('data-own')) sc.remove(); });
+  var old = doc.querySelector('#seed');
+  if (old) old.remove();
+  var seed = document.createElement('script');
+  seed.id = 'seed'; seed.type = 'application/json';
+  seed.textContent = JSON.stringify(state).replace(/</g, '\\u003c');
+  var logic = doc.querySelector('#logic');
+  logic.parentNode.insertBefore(seed, logic);
+  doc.removeAttribute('data-theme');
+  return '<!DOCTYPE html>\n' + doc.outerHTML;
+}
+function saveCopy() {
+  flushSave();
+  var html = copyHtml();
+  var slug = String(state.product.sku || '').toLowerCase().replace(/[^0-9a-z-]+/g, '-').replace(/^-+|-+$/g, '') || 'workbook';
+  var name = 'demand-inventory-' + slug + '-' + isoOf(todayUTC()) + '.html';
+  var done = function () { toast('Local copy saved as ' + name + '. Open it in any browser, online or off.'); };
+  if (hosted || framed) {
+    capDownloads.then(function (dl) {
+      if (!dl) { toast('This view cannot save files. Open the page in its own tab and try again.'); return; }
+      return dl.save({filename: name, data: html}).then(done, function (e) {
+        if (e && e.code === 'declined') return;
+        toast('Could not save the copy here. Use Back up instead.');
+      });
+    });
+    return;
+  }
+  try {
+    var url = URL.createObjectURL(new Blob([html], {type: 'text/html'}));
+    var a = h('a', {href: url, download: name});
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    done();
+  } catch (e) { toast('Could not save the copy here. Use Back up instead.'); }
+}
+
+/* ---------- start ---------- */
+function start(hot) {
+  if (started) return;
+  started = true;
+  storageOK = probeStorage();
+  state = hot && hot.v === 1 && hot.fc ? WB.normalize(hot) : pickStart();
+  buildHeader();
+  $('btn-backup').addEventListener('click', backup);
+  $('btn-copy').addEventListener('click', saveCopy);
+  $('btn-restore').addEventListener('click', restoreDialog);
+  $('btn-blank').addEventListener('click', blankDialog);
+  $('notice-blank').addEventListener('click', blankDialog);
+  $('notice-keep').addEventListener('click', function () { state.notice = false; edit(); });
+  document.querySelector('.tabs').addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var i = TABS.indexOf(currentTab()) + (e.key === 'ArrowLeft' ? -1 : 1);
+    var id = TABS[(i + TABS.length) % TABS.length];
+    e.preventDefault(); location.hash = id; $('tab-' + id).focus();
+  });
+  window.addEventListener('hashchange', route);
+  window.addEventListener('pagehide', flushSave);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flushSave(); });
+  var lastW = 0, roTimer = 0;
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(function () {
+    var w = document.querySelector('main').clientWidth;
+    if (w === lastW) return;
+    lastW = w; clearTimeout(roTimer); roTimer = setTimeout(afterShow, 80);
+  }).observe(document.querySelector('main'));
+  updateSaveStatus();
+  renderAll(); route();
+  try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(function () { return state; }); } catch (e) {}
+  initCloud();
+}
+var hotApi = window.claude && window.claude.hot;
+if (hotApi && typeof hotApi.ready === 'function') {
+  try { hotApi.ready(start); } catch (e) { start({}); }
+  setTimeout(function () { start({}); }, 1500);
+} else {
+  start((hotApi && hotApi.data) || {});
+}
+})();
+</script>
+</body>
+</html>
