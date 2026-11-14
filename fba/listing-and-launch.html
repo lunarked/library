@@ -1,16 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-look="sheet">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Listing and Launch Workbook</title>
-<script data-own="1">
-(function () {
-  var look = 'plain';
-  try { var saved = localStorage.getItem('listing-launch-workbook:v1:look'); if (saved === 'sheet' || saved === 'label') look = saved; } catch (e) {}
-  document.documentElement.setAttribute('data-look', look);
-})();
-</script>
 <style>
 :root{
   /* Layout: a compact product header with launch status, then a four-tab workbook.
@@ -434,13 +427,6 @@ noscript p{background:var(--bad-bg);color:var(--bad);padding:12px 14px;margin:0}
   <header class="top">
     <div class="brand"><h1>Listing &amp; Launch</h1><span>FBA workbook</span></div>
     <div class="actions">
-      <label class="look" for="look">Theme
-        <select id="look">
-          <option value="plain">Plain</option>
-          <option value="sheet">Spreadsheet</option>
-          <option value="label">Shipping label</option>
-        </select>
-      </label>
       <button type="button" class="btn primary" id="btn-copy">Save local copy</button>
       <button type="button" class="btn" id="btn-backup">Back up</button>
       <button type="button" class="btn" id="btn-restore">Restore</button>
@@ -1746,8 +1732,6 @@ function start(hot) {
   $('btn-blank').addEventListener('click', blankDialog);
   $('notice-blank').addEventListener('click', blankDialog);
   $('notice-keep').addEventListener('click', function () { state.notice = false; edit(); });
-  $('look').addEventListener('change', function () { setLook($('look').value, true); });
-  setLook(document.documentElement.getAttribute('data-look'), false);
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', function () { if (state) afterShow(); });
   document.querySelector('.tabs').addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
