@@ -8,6 +8,7 @@ tpl, css, engine = read('template.html'), read('style.css'), read('engine.js')
 SERIES = [
     ('fba', {'KIND': 'FBA workbook', 'B1': 'Brand or business', 'B1PH': 'Brand name', 'B2': 'Marketplace', 'B2PH': 'Amazon.com (US)'}),
     ('escooter', {'KIND': 'E-scooter ops workbook', 'B1': 'Operator', 'B1PH': 'Operator name', 'B2': 'Cities or region', 'B2PH': 'Berlin, Munich, Hamburg'}),
+    ('planning', {'KIND': 'Network planning workbook', 'B1': 'Network or business', 'B1PH': 'Network name', 'B2': 'Plan horizon', 'B2PH': '2027 to 2031'}),
 ]
 for folder, labels in SERIES:
     for path in sorted(glob.glob(os.path.join(root, folder, 'src', 'specs', '*.js'))):
