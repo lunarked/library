@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Share image card</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;900&family=JetBrains+Mono:wght@600&display=swap">
+<style>
+/* Layout: one 1200 x 627 card in the stories' night look. A short kicker, one huge number, one caption line.
+   Everything is centred and kept inside the middle of the frame, so it survives a crop to a small thumbnail. */
+:root{--night:#0B0F16;--ink:#E9ECEF;--board:#FFB020;--kick:#F0A04B;
+  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--night)}
+.card{position:relative;width:1200px;height:627px;overflow:hidden;background:var(--night);color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:56px 120px}
+.glow{position:absolute;right:-150px;top:-170px;width:620px;height:620px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,160,75,.26),rgba(240,160,75,0) 65%)}
+.kick{position:relative;font:600 21px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--kick)}
+.hero{position:relative;font:900 280px/.9 var(--f-head);letter-spacing:-.02em;color:var(--board);white-space:nowrap;margin:34px 0 30px}
+.cap{position:relative;font:700 40px/1.16 var(--f-head);letter-spacing:-.005em;max-width:860px;text-wrap:balance}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="glow"></div>
+  <div class="kick" id="kick"></div>
+  <div class="hero"><span id="hero"></span></div>
+  <div class="cap" id="cap"></div>
+</div>
+<script>
+// Filled by build.js. The number is scaled down until it fits the middle of the frame.
+window.fill = function (c) {
+  document.getElementById('kick').textContent = c.kicker;
+  document.getElementById('hero').textContent = c.hero;
+  document.getElementById('cap').textContent = c.caption;
+  var hero = document.querySelector('.hero'), span = document.getElementById('hero'), size = 280;
+  while (size > 80 && span.getBoundingClientRect().width > 620) { size -= 4; hero.style.fontSize = size + 'px'; }
+  return size;
+};
+</script>
+</body>
+</html>
