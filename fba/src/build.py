@@ -9,11 +9,15 @@ SERIES = [
     ('fba', {'KIND': 'FBA workbook', 'B1': 'Brand or business', 'B1PH': 'Brand name', 'B2': 'Marketplace', 'B2PH': 'Amazon.com (US)'}),
     ('escooter', {'KIND': 'E-scooter ops workbook', 'B1': 'Operator', 'B1PH': 'Operator name', 'B2': 'Cities or region', 'B2PH': 'Berlin, Munich, Hamburg'}),
     ('planning', {'KIND': 'Network planning workbook', 'B1': 'Network or business', 'B1PH': 'Network name', 'B2': 'Plan horizon', 'B2PH': '2027 to 2031'}),
+    ('manufacturing', {'KIND': 'Manufacturing workbook', 'B1': 'Company or plant', 'B1PH': 'Plant name', 'B2': 'Product', 'B2PH': 'Portable speaker'}),
 ]
 for folder, labels in SERIES:
     for path in sorted(glob.glob(os.path.join(root, folder, 'src', 'specs', '*.js'))):
         name = os.path.splitext(os.path.basename(path))[0]
         spec = io.open(path, encoding='utf-8').read()
+        common = os.path.join(root, folder, 'src', 'common.js')
+        if os.path.exists(common):
+            spec = io.open(common, encoding='utf-8').read() + '\n' + spec
         title = re.search(r"title: '([^']+)'", spec).group(1)
         desc = re.search(r"desc: '([^']+)'", spec).group(1)
         page = tpl.replace('__CSS__', css).replace('__SPEC__', spec).replace('__ENGINE__', engine)

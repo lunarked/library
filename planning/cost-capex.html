@@ -1125,7 +1125,7 @@ function line(host, d, ch) {
 function bars(host, d, ch) {
   var items = (d.items || []).filter(function (it) { return isNum(it.v) && it.v > 0; }), fmt = d.fmt || 'int';
   if (!items.length) { host.replaceChildren(h('p', {class: 'chart-empty', text: ch.empty || 'Nothing to chart yet.'})); return; }
-  var total = sum(items.map(function (it) { return it.v; }));
+  var total = isNum(d.total) && d.total > 0 ? d.total : sum(items.map(function (it) { return it.v; }));
   var W = Math.max(280, Math.floor(host.clientWidth || 520)), rowH = 32, lab = Math.min(190, Math.max(110, W * 0.26)), valW = 130;
   var H = items.length * rowH + 6, iw = Math.max(40, W - lab - valW);
   var mx = Math.max.apply(null, items.map(function (it) { return it.v; }));
