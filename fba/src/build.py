@@ -18,6 +18,8 @@ for folder, labels in SERIES:
         common = os.path.join(root, folder, 'src', 'common.js')
         if os.path.exists(common):
             spec = io.open(common, encoding='utf-8').read() + '\n' + spec
+        if os.path.exists(os.path.join(root, folder, name + '.xlsx')) and 'download:' not in spec:
+            spec += "\nwindow.SPEC.download = {href: '%s.xlsx', label: 'Download Excel'};\n" % name
         title = re.search(r"title: '([^']+)'", spec).group(1)
         desc = re.search(r"desc: '([^']+)'", spec).group(1)
         page = tpl.replace('__CSS__', css).replace('__SPEC__', spec).replace('__ENGINE__', engine)
