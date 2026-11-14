@@ -96,9 +96,11 @@ class Sheet:
 
 
 class Book:
-    def __init__(self, folder, name, cur=None, data=None):
+    def __init__(self, folder, name, cur=None, data=None, tones=None):
         self.folder, self.name = folder, name
         self.d = data or load(folder, name)
+        for t, words in (tones or {}).items():
+            self.d['tones'][t] = self.d['tones'][t] + words
         c = cur or (self.d['f'].get('currency') if isinstance(self.d['f'].get('currency'), str) else None) or '$'
         self.cur = c
         self.today = datetime.date.fromisoformat(self.d['today'])
