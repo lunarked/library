@@ -158,8 +158,9 @@ class Book:
                 x = tbl['cols'][k]
                 if mod == '^': return '%s%d' % (x, r - 1)
                 if mod == '@top': return '%s$%d' % (x, tbl['first'])
+                if mod == '@bot': return '%s$%d' % (x, tbl['last'])
                 return '%s%d' % (x, r)
-            out = re.sub(r'\{([a-zA-Z0-9_]+)(\^|@top)?\}', cellref, out)
+            out = re.sub(r'\{([a-zA-Z0-9_]+)(\^|@top|@bot)?\}', cellref, out)
         return out
 
     # ---------- layout pass ----------
