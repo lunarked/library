@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-look="sheet">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<meta name="description" content="__DESC__">
+<style>
+__CSS__
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <header class="top">
+    <div class="brand"><h1 id="wb-title">__H1__</h1><span>FBA workbook</span></div>
+    <div class="actions">
+      <a class="btn quiet" href="../index.html">All tools</a>
+      <button type="button" class="btn primary" id="btn-copy">Save local copy</button>
+      <button type="button" class="btn" id="btn-backup">Back up</button>
+      <button type="button" class="btn" id="btn-restore">Restore</button>
+      <button type="button" class="btn" id="btn-blank">Start blank</button>
+    </div>
+  </header>
+  <noscript><p>This workbook needs JavaScript to calculate and save. Turn it on and reload the page.</p></noscript>
+  <section class="label" aria-label="Business and key figures">
+    <div class="label-main">
+      <div class="lrow lrow-id">
+        <div class="lcell"><label class="cap" for="b-brand">Brand or business</label><input class="linput" id="b-brand" type="text" autocomplete="off" placeholder="Brand name"></div>
+        <div class="lcell"><label class="cap" for="b-marketplace">Marketplace</label><input class="linput" id="b-marketplace" type="text" autocomplete="off" placeholder="Amazon.com (US)"></div>
+      </div>
+    </div>
+    <div class="label-side">
+      <div class="lcell">
+        <span class="cap" id="count-cap">Headline</span>
+        <div class="count"><strong id="count-num"></strong><span id="count-unit"></span></div>
+        <div class="count-date" id="count-date"></div>
+      </div>
+      <div class="lcell">
+        <span class="cap">Key figures</span>
+        <ul class="figs" id="figs"></ul>
+      </div>
+    </div>
+  </section>
+  <div class="notice" id="notice" hidden>
+    <p id="notice-text"></p>
+    <div class="notice-actions">
+      <button type="button" class="btn small" id="notice-blank">Start blank</button>
+      <button type="button" class="btn small" id="notice-keep">Keep this data</button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Workbook tabs"></nav>
+  <main></main>
+  <footer class="foot">
+    <p>Tinted cells are yours to fill in. Every other figure is calculated from them.</p>
+    <div id="foot-notes" class="foot"></div>
+    <p id="foot-save"></p>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden><span id="toast-text"></span><button type="button" class="link" id="toast-act" hidden></button></div>
+<dialog id="dlg" aria-labelledby="dlg-title"><h2 id="dlg-title"></h2><div id="dlg-body"></div><div class="dlg-actions" id="dlg-actions"></div></dialog>
+<script>
+__SPEC__
+</script>
+<script>
+__ENGINE__
+</script>
+</body>
+</html>
