@@ -6,12 +6,12 @@
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,sans-serif;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
 
 <!-- share:start -->
-<title>Story: First cross-dock ever, Berlin Airlift '48</title>
-<meta name="description" content="In 1948 the Soviets cut every road into West Berlin. Shows how the Allies supplied 2 million people by air, and how fixed landing slots and short ground times turned the airports into a fast cross-dock.">
+<title>Story: First ever cross-dock, Berlin Airlift</title>
+<meta name="description" content="How a cross-dock works, taught through the Berlin Airlift: seven rules, from fixed landing slots to shorter ground times, that let one dock with no storage supply 2 million people.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="JR">
-<meta property="og:title" content="First cross-dock ever: Berlin Airlift ’48">
-<meta property="og:description" content="In 1948 the Soviets cut every road into West Berlin. Shows how the Allies supplied 2 million people by air, and how fixed landing slots and short ground times turned the airports into a fast cross-dock.">
+<meta property="og:title" content="First ever cross-dock, Berlin Airlift">
+<meta property="og:description" content="How a cross-dock works, taught through the Berlin Airlift: seven rules, from fixed landing slots to shorter ground times, that let one dock with no storage supply 2 million people.">
 <meta property="og:url" content="https://lunarked.github.io/library/stories/berlin-airlift.html">
 <meta property="og:image" content="https://lunarked.github.io/library/og/berlin-airlift.png">
 <meta property="og:image:type" content="image/png">
@@ -22,11 +22,12 @@
 <!-- share:end -->
 </head>
 <body>
-<title>Story: First cross-dock ever, Berlin Airlift '48</title>
+<title>Story: First ever cross-dock, Berlin Airlift</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
+/* Layout: "seven lessons at the Berlin dock". Sticky dock board (air stack -> parking spots at three airports -> trucks to the city) left on desktop, top on phones; lesson cards scroll beside it. Same structure as the supply allocation story. */
 :root{
   --bg:#F3F3F1; --paper:#FFFFFF; --ink:#141A22; --muted:#5A6370; --line:#D3D6DA; --soft:#E5E7EA;
   --amber:#B86E00; --ambersoft:#F6E6CC; --sky:#2F5C8F; --skysoft:#DCE5F0;
@@ -45,11 +46,11 @@
   --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
   --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6;overflow-x:hidden}
 .g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .in{max-width:1240px;margin:0 auto}
-.col{max-width:680px;margin:0 auto}
-h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.col{max-width:720px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--f-head);text-wrap:balance;margin:0}
 .kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
 p{margin:0 0 1em}
 b,strong{font-weight:600}
@@ -59,236 +60,347 @@ b,strong{font-weight:600}
 .open{background:var(--night);color:var(--nightink);padding-block:60px 50px}
 .open .kick{color:var(--board)}
 .open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:15ch}
-.open h1 .u{color:#6FD49B}
+.open h1 .u{color:#FFB020}
 .dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
 .cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
 .cue::after{content:" ↓"}
-.boardrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;max-width:960px}
-@media (max-width:700px){.boardrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.boardrow div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:10px 12px}
-.boardrow b{display:block;font:600 clamp(22px,3.2vw,34px)/1.05 var(--f-mono);color:var(--board);font-variant-numeric:tabular-nums}
-.boardrow span{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+.gapbars{max-width:640px;margin:6px 0 26px}
+.gb{display:grid;grid-template-columns:88px minmax(0,1fr) 62px;gap:10px;align-items:center;margin-bottom:10px}
+.gb span{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:#C4CAD1}
+.gb b{font:900 24px var(--f-head);color:var(--nightink);text-align:right}
+.bar{height:26px;border-radius:4px}
+.bar.o{width:100%;background:repeating-linear-gradient(135deg,#5A2420 0 7px,#3A1815 7px 13px);box-shadow:inset 0 0 0 1.5px #FF7B6E}
+.bar.s{width:2%;min-width:6px;background:#FFB020}
+.short{margin:0 0 0 98px;font:800 18px var(--f-head);color:#FF7B6E}
+@media (max-width:480px){.gb{grid-template-columns:70px minmax(0,1fr) 54px;gap:8px}.gb b{font-size:20px}.short{margin-left:78px;font-size:16px}}
 
 /* Scrolly */
-.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
-.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px;margin:0}
-.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
-.steps{padding-block:20vh 30vh}
-.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:44px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5vh);height:90vh;display:flex;flex-direction:column;justify-content:center;gap:12px;margin:0;min-width:0}
+.steps{padding-block:24vh 40vh;min-width:0}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:60vh;font-size:18px;opacity:.45;transition:opacity .3s}
 .step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
 .step:last-child{margin-bottom:10vh}
 .step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
-.step h3{font-size:22px;margin-bottom:8px}
+.step .t.prob{color:var(--bad)} .step .t.fix{color:var(--good)}
+.step h3{font-size:22px;margin-bottom:8px;line-height:1.2}
 .step p:last-child{margin:0}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:600 12px var(--f-mono);color:var(--muted);min-height:1.2em}
-.legend i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.step.day{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.step.day .t{color:var(--board)}
+.step.day .big{display:block;font:900 58px/.9 var(--f-head);color:var(--board);margin-bottom:8px;letter-spacing:-.01em}
+.step.day h3{font-size:28px}
+.pc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
+.pc h4{font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;color:var(--good)}
+.pc div+div h4{color:var(--bad)}
+.pc ul{margin:0;padding:0;list-style:none;font-size:15.5px;line-height:1.35;display:flex;flex-direction:column;gap:5px}
+.pc li{padding-left:18px;position:relative}
+.pc li::before{position:absolute;left:0;font:800 15px var(--f-head)}
+.pc div:first-child li::before{content:"✓";color:var(--good)}
+.pc div+div li::before{content:"✗";color:var(--bad)}
+.diff{margin-top:12px;font-size:16px;line-height:1.4;border-left:5px solid var(--amber);padding:2px 0 2px 12px}
+.diff b{font-family:var(--f-head)}
+.mtag{display:inline-flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;background:var(--ink);color:var(--bg);font:800 16px/1.25 var(--f-head);padding:6px 11px;border-radius:5px;margin-bottom:12px}
+.mtag small{font:700 10.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--board)}
+.mtag.fam{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.mtag.fam small{color:var(--amber)}
 
-.scenes{position:relative;height:clamp(320px,58vh,500px)}
-.scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:translateY(10px);transition:opacity .5s,transform .5s;pointer-events:none}
-.scene.on{opacity:1;transform:none;pointer-events:auto}
-.chart svg{width:100%;height:auto;max-height:54vh;display:block}
+/* Warehouse vs cross-dock mini diagram inside a card */
+.flow{display:flex;flex-direction:column;gap:12px;margin:6px 0 14px}
+.frow .who{font:800 15px var(--f-head);margin-bottom:5px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.frow .who span{font:600 11.5px var(--f-mono);color:var(--muted);text-align:right}
+.boxes{display:grid;grid-template-columns:minmax(0,1fr) 18px minmax(0,1.2fr) 18px minmax(0,1fr);align-items:center}
+.bx{border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:8px 4px;text-align:center;font:700 13.5px/1.2 var(--f-head)}
+.bx small{display:block;font:600 10.5px var(--f-mono);color:var(--muted);margin-top:3px}
+.bx.st{background:var(--badsoft);border-color:var(--bad);color:var(--bad)} .bx.st small{color:var(--bad)}
+.bx.dk{background:var(--goodsoft);border-color:var(--good);color:var(--good)} .bx.dk small{color:var(--good)}
+.ar{text-align:center;font:700 16px var(--f-head);color:var(--muted)}
 
-/* Chart pieces */
+/* Dock board */
+.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.days span{font:600 11px var(--f-mono);letter-spacing:.03em;text-transform:uppercase;text-align:center;padding:4px 0;border-radius:3px;background:var(--soft);color:var(--muted);transition:background .3s,color .3s;white-space:nowrap;overflow:hidden}
+.days span.done{background:var(--line);color:var(--ink)} .days span.cur{background:var(--amber);color:#fff}
+.bh .lab{font:600 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;min-height:1.3em;display:block;color:var(--muted)}
+.bh h3{font-weight:900;font-size:clamp(24px,3vw,36px);line-height:1.05;margin:2px 0 0}
+.bh .mk2{display:inline-block;font:700 11px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:3px 7px;border-radius:3px;margin-right:8px;vertical-align:6px}
+.board{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:6px}
+.board svg{width:100%;height:auto;display:block}
+.bt{font:800 15px var(--f-head);fill:var(--ink)}
+.bs{font:600 11.5px var(--f-mono);fill:var(--muted)}
+.bnum{font:900 22px var(--f-head)}
+.zone{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:5 4}
+.cityz{fill:var(--goodsoft);stroke:var(--good);stroke-width:1.5}
+.stand{fill:var(--soft);stroke:var(--line);stroke-width:1.2;transition:fill .2s}
+.stand.busy{fill:var(--skysoft);stroke:var(--sky)}
+.stand.hl{stroke:var(--amber);stroke-width:3}
+.pbar{fill:var(--amber)}
+.plane{fill:var(--sky)} .plane.dep{fill:var(--muted)} .plane.w{fill:var(--bad)}
+.crate{fill:var(--amber)}
+.score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.score>div{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--line);border-radius:6px;padding:8px 12px;transition:border-color .4s}
+.score>div.hi{border-top-color:var(--good)} .score>div.mid{border-top-color:var(--amber)} .score>div.lo{border-top-color:var(--bad)}
+.score span{font:600 11.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block}
+.score b{font:900 26px/1.1 var(--f-head);font-variant-numeric:tabular-nums}
+.score small{font:600 11.5px var(--f-mono);color:var(--muted);display:block}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:600 12px var(--f-mono);color:var(--muted)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* After the scroll */
+.sec{padding-block:64px 10px}
+.sec h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 12px;letter-spacing:-.01em}
+.sec .intro{font-size:19px;color:var(--muted);max-width:36em}
+.sub2{font:800 clamp(20px,2.4vw,26px)/1.2 var(--f-head);margin-top:30px}
+.play{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.play .r{display:grid;grid-template-columns:70px minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.play .d{font:900 18px var(--f-head);color:var(--amber)}
+.play .p{font-size:16.5px;line-height:1.35;border-left:4px solid var(--bad);padding-left:10px}
+.play .f{font:800 16.5px/1.3 var(--f-head);border-left:4px solid var(--good);padding-left:10px}
+.play .f small{display:block;font:500 12px var(--f-mono);color:var(--muted);margin-top:2px}
+@media (max-width:700px){.play .r{grid-template-columns:minmax(0,1fr);gap:6px}}
+
+.calc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:16px}
+.cg{margin-bottom:12px}
+.cg>span{display:block;font:600 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.res{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 12px}
+.res div{border-top:4px solid var(--line);padding-top:6px}
+.res div.hi{border-top-color:var(--good)} .res div.lo{border-top-color:var(--bad)} .res div.mid{border-top-color:var(--amber)}
+.res b{display:block;font:900 clamp(22px,3.4vw,34px)/1.05 var(--f-head);font-variant-numeric:tabular-nums}
+.res span{font:600 11px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.meter{position:relative;height:30px;background:var(--soft);border-radius:4px;margin-top:24px}
+.meter .mf{position:absolute;inset:0 auto 0 0;border-radius:4px;transition:width .5s,background .3s}
+.meter .nk{position:absolute;top:-6px;bottom:-6px;border-left:2px dashed var(--ink)}
+.meter .nk span{position:absolute;bottom:100%;left:4px;font:600 11px var(--f-mono);color:var(--muted);white-space:nowrap}
+.verdict{font:800 19px/1.3 var(--f-head);margin-top:12px}
+.verdict.hi{color:var(--good)} .verdict.lo{color:var(--bad)} .verdict.mid{color:var(--amber)}
+.gantt{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:14px}
+.gantt svg{width:100%;height:auto;display:block}
 .tick{font:600 13px var(--f-mono);fill:var(--muted)}
-.lbl{font:600 12.5px var(--f-mono);fill:var(--muted)}
-.lblb{font:800 17px var(--f-head);fill:var(--ink)}
 .gl{stroke:var(--line);stroke-width:1}
-.zw{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
-.zs{fill:var(--badsoft);stroke:var(--bad);stroke-width:1.5;stroke-dasharray:5 4}
-.city{fill:var(--ink)}
-.road{stroke:var(--muted);stroke-width:3;stroke-dasharray:2 5;stroke-linecap:round;fill:none}
-.xm{stroke:var(--bad);stroke-width:5;stroke-linecap:round}
-.corr{stroke:var(--sky);stroke-width:10;stroke-opacity:.22;stroke-linecap:round}
-.need{stroke:var(--ink);stroke-width:2;stroke-dasharray:6 5;fill:none}
-.ln{fill:none;stroke:var(--good);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
-.dot{fill:var(--good)} .dot.lo{fill:var(--bad)}
-.rec{fill:var(--amber)}
-.plane{fill:var(--sky)} .plane.w{fill:var(--bad)}
-.runway{fill:var(--soft);stroke:var(--line)}
+.glbl{font:600 13px var(--f-mono);fill:var(--muted)}
+.glbb{font:800 17px var(--f-head);fill:var(--ink)}
 .seg-t{fill:var(--sky)} .seg-u{fill:var(--amber)} .seg-w{fill:var(--bad)} .seg-c{fill:var(--good)}
-.slot{fill:var(--soft);stroke:var(--line);transition:fill .2s}
-.slot.on{fill:var(--good)} .slot.now{fill:var(--amber)}
-.hand{stroke:var(--ink);stroke-width:3;stroke-linecap:round}
+@media (max-width:560px){.gantt .tick,.gantt .glbl{font-size:20px}.gantt .glbb{font-size:24px}}
 
-/* Option cards */
-.fork{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.opt{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:8px;padding:14px;background:var(--paper)}
-.opt.w{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
-.opt .ml{display:block;font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.opt h3{font-size:clamp(17px,2vw,22px);margin:6px 0 8px}
-.opt p{font-size:15.5px;line-height:1.45;margin:0;color:var(--muted)}
-.tag2{display:inline-block;margin-top:8px;font:700 11.5px var(--f-mono);padding:3px 8px;border-radius:4px}
-.t-bad{background:var(--badsoft);color:var(--bad)} .t-good{background:var(--goodsoft);color:var(--good)}
-
-/* Cross-dock diagram */
-.flow{display:flex;flex-direction:column;gap:22px}
-.frow .who{font:800 18px var(--f-head);margin-bottom:8px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.frow .who span{font:600 12.5px var(--f-mono);color:var(--muted);text-align:right}
-.boxes{display:grid;grid-template-columns:minmax(0,1fr) 26px minmax(0,1.2fr) 26px minmax(0,1fr);align-items:center}
-.bx{border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:12px 8px;text-align:center;font:700 15px/1.25 var(--f-head)}
-.bx small{display:block;font:600 11.5px var(--f-mono);color:var(--muted);margin-top:4px;letter-spacing:.02em}
-.bx.st{background:var(--badsoft);border-color:var(--bad);color:var(--bad)}
-.bx.st small{color:var(--bad)}
-.bx.dk{background:var(--goodsoft);border-color:var(--good);color:var(--good)}
-.bx.dk small{color:var(--good)}
-.ar{text-align:center;font:700 20px var(--f-head);color:var(--muted)}
-
-/* Lanes, counters */
-.lane{margin-bottom:22px}
-.lane .who{display:flex;justify-content:space-between;align-items:baseline;font:800 19px var(--f-head);margin-bottom:6px;gap:10px}
-.lane .who span{font:600 13px var(--f-mono);color:var(--muted)}
-.track{height:34px;background:var(--soft);border-radius:4px;position:relative;overflow:hidden}
-.fill{position:absolute;inset:0 auto 0 0;width:0;border-radius:4px;transition:width 1.4s cubic-bezier(.3,.7,.3,1)}
-.fill.r{background:var(--bad)} .fill.z{background:var(--good)}
-.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}
-.trio div{border-top:4px solid var(--good);padding-top:8px}
-.trio b{display:block;font:900 clamp(26px,4vw,42px)/1 var(--f-head);color:var(--good);font-variant-numeric:tabular-nums}
-.trio span{font:600 11.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
-.split{display:flex;height:50px;border-radius:6px;overflow:hidden;font:800 15px var(--f-head);color:#fff}
-.split div{display:flex;align-items:center;padding:0 12px;white-space:nowrap;overflow:hidden}
-.split .c{background:#3A4350;width:68%} .split .f{background:var(--good);width:23%} .split .o{background:var(--amber);width:9%;padding:0}
-.ax{display:flex;justify-content:space-between;font:600 12px var(--f-mono);color:var(--muted);margin-top:6px}
-
-/* Question reveal */
-.reveal{height:200vh;background:var(--night);position:relative}
-.rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
-.rv-in{width:100%}
-.rv-l{font:800 clamp(24px,3.6vw,40px)/1.2 var(--f-head);color:var(--nightink);margin:0 0 14px;opacity:.18;transform:translateY(8px);transition:opacity .5s,transform .5s}
-.rv-q{font-weight:900;font-size:clamp(34px,6.2vw,80px);line-height:1.02;letter-spacing:-.015em;color:var(--nightink);margin-top:28px;max-width:18ch;opacity:.18;transform:translateY(12px);transition:opacity .6s,transform .6s}
-.rv-q em{font-style:normal;color:var(--board)}
-.rv-l.on,.rv-q.on{opacity:1;transform:none}
-.rv-l.on{color:var(--board)}
-
-/* Sources */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+table.gr{border-collapse:collapse;width:100%;font-size:15px}
+.gr th,.gr td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center}
+.gr tr:last-child td{border-bottom:0}
+.gr th{font:600 11.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);vertical-align:bottom}
+.gr th:first-child,.gr td:first-child{text-align:left;padding-left:12px}
+.gr td:first-child{font:800 15px/1.2 var(--f-head)}
+.gr td:first-child small{display:block;font:500 11.5px var(--f-mono);color:var(--muted);margin-top:2px}
+.dot{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font:800 14px var(--f-head)}
+.dot.y{background:var(--goodsoft);color:var(--good)} .dot.m{background:var(--ambersoft);color:var(--amber)} .dot.n{background:var(--badsoft);color:var(--bad)}
+.gr tr{transition:opacity .3s}
+.gr.f tr.dim{opacity:.25}
+.gr th.sel,.gr td.sel{background:var(--skysoft)}
+.gkey2{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font:600 12.5px var(--f-mono);color:var(--muted)}
+@media (max-width:560px){
+  .gr th{writing-mode:vertical-rl;transform:rotate(180deg);text-align:left;padding:8px 2px;height:120px}
+  .gr th:first-child{writing-mode:horizontal-tb;transform:none;height:auto}
+  .gr td{padding:7px 2px} .dot{width:22px;height:22px;font-size:12px}
+  .gr td:first-child{font-size:14px}
+}
+.mix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+@media (max-width:760px){.mix{grid-template-columns:minmax(0,1fr)}}
+.mix div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;font-size:16.5px;line-height:1.45}
+.mix .ml{display:block;font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--amber);margin-bottom:4px}
+.mix h3{font-size:18px;margin-bottom:4px}
 .src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
 .src ol{padding-left:20px;margin:8px 0 14px}
+.src li{margin-bottom:4px}
 .src a{color:var(--ink)}
-a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-hr{border:0;border-top:1px solid var(--line);margin:0}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.rv-l,.rv-q{opacity:1;transform:none}}
+hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
 
 @media (max-width:860px){
   .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
-  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
-  .steps{padding-block:4vh 50vh;position:relative;z-index:3}
-  .step{margin-bottom:45vh;opacity:1;font-size:17px}
-  .scenes{height:250px}
-  .chart svg{max-height:245px}
-  .chart .tick,.chart .lbl{font-size:20px} .chart .lblb{font-size:24px}
-  .fork{gap:6px}
-  .opt{padding:9px 8px}.opt p{display:none}.opt h3{font-size:15px;margin:4px 0}
-  .opt .ml{font-size:10px}.tag2{font-size:10px;padding:2px 5px;margin-top:5px}
-  .flow{gap:8px}
-  .frow .who{margin-bottom:4px}
-  .frow .who{font-size:15px}.frow .who span{font-size:10.5px}
-  .boxes{grid-template-columns:minmax(0,1fr) 16px minmax(0,1.2fr) 16px minmax(0,1fr)}
-  .bx{font-size:12.5px;padding:8px 4px}.bx small{font-size:10px}
-  .ar{font-size:15px}
-  .lane{margin-bottom:14px}.lane .who{font-size:16px}.lane .who span{font-size:11.5px}
-  .track{height:28px}
-  .trio{gap:8px;margin-bottom:14px}.trio b{font-size:24px}.trio span{font-size:10px}
-  .split{height:40px;font-size:12.5px}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:8px 8px;background:var(--bg);z-index:2;gap:6px;border-bottom:1px solid var(--line)}
+  .steps{padding-block:6vh 50vh;position:relative;z-index:3}
+  .step{margin-bottom:50vh;opacity:1;font-size:17px}
+  .step h3{font-size:20px}
+  .step.day .big{font-size:44px} .step.day h3{font-size:24px}
+  .pc{gap:8px} .pc ul{font-size:14px}
+  .days span{font-size:9px;padding:3px 0}
+  .bh .lab{font-size:10.5px} .bh h3{font-size:20px}
+  .board{padding:3px}
+  .bt{font-size:19px} .bs{font-size:15px} .bnum{font-size:28px}
+  .legend{font-size:10.5px}
+  .score{gap:6px} .score>div{padding:4px 8px} .score b{font-size:18px} .score span,.score small{font-size:9.5px}
+  .res b{font-size:22px} .res span{font-size:9.5px}
 }
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 
 <header class="open g">
   <div class="in">
-    <div class="kick">Decision story · Berlin, 1948 to 1949</div>
-    <h1>First cross-dock ever: <span class="u">Berlin Airlift ’48</span></h1>
-    <p class="dek">In 1948 the Soviet Union cut every road and railway into West Berlin. The Allies kept the city alive with planes, by running its airports like a cross-dock. This is the question they faced, what they decided, and what happened.</p>
-    <div class="boardrow">
-      <div><b>2.3M</b><span>tons flown in</span></div>
-      <div><b>277,000</b><span>flights</span></div>
-      <div><b>3 min</b><span>between landings</span></div>
-      <div><b>15</b><span>months</span></div>
+    <div class="kick">Explainer · Berlin, 1948 to 1949</div>
+    <h1>First ever cross-dock, <span class="u">Berlin Airlift</span></h1>
+    <p class="dek" style="margin-bottom:22px">In 1948 the Soviet Union cut every road and railway into West Berlin. The city had to be supplied by air, through airports with no room to store anything.</p>
+    <div class="gapbars">
+      <div class="gb"><span>Needed</span><div class="bar o"></div><b>4,500</b></div>
+      <div class="gb"><span>Day one</span><div class="bar s"></div><b>80</b></div>
+      <p class="short">Tons a day. 4,420 short on day one.</p>
     </div>
+    <p class="dek">Follow the airlift lesson by lesson. Each lesson fixed one problem at Berlin's airports, and each is a rule that cross-docks still use today.</p>
     <div class="cue">Scroll to start</div>
   </div>
 </header>
 
-<!-- Part 1: problem and question -->
-<section class="g" style="padding-top:40px">
-  <div class="in scrolly" data-chart="a">
+<section class="g" style="padding-top:30px">
+  <div class="in scrolly" id="story">
     <figure class="fig">
-      <div class="figcap" id="aCap"></div>
-      <div class="legend" id="aLeg"></div>
-      <div class="scenes">
-        <div class="scene" data-scene="0"><div class="chart" id="map"></div></div>
-        <div class="scene" data-scene="1">
-          <div class="fork">
-            <div class="opt"><span class="ml">Option A</span><h3>Armed convoy</h3><p>Send troops and trucks up the motorway to force the road open.</p><span class="tag2 t-bad">Risk of war</span></div>
-            <div class="opt"><span class="ml">Option B</span><h3>Leave Berlin</h3><p>Pull out of the city and let the Soviets take it.</p><span class="tag2 t-bad">City lost</span></div>
-            <div class="opt w"><span class="ml">Option C</span><h3>Supply by air</h3><p>Fly everything in through the three air routes that stayed open.</p><span class="tag2 t-good">No shots</span> <span class="tag2 t-bad">Never done</span></div>
-          </div>
-        </div>
-        <div class="scene" data-scene="2"><div class="chart" id="early"></div></div>
+      <div class="days" id="days"><span>Flow</span><span>Limit</span><span>Slots</span><span>One way</span><span>Dwell</span><span>Loads</span><span>Doors</span></div>
+      <div class="bh"><span class="lab" id="bl"></span><h3 id="bn"></h3></div>
+      <div class="board"><svg id="bd" viewBox="0 0 600 340" role="img" aria-label="Berlin's airports drawn as one dock. Planes wait in the air, park at a spot to be unloaded, and the goods go on to the city by truck."></svg></div>
+      <div class="legend"><span><i style="background:var(--sky)"></i>Plane at a spot</span><span><i style="background:var(--amber)"></i>Unloading, goods to trucks</span><span><i style="background:var(--bad)"></i>Waiting or sent home</span></div>
+      <div class="score">
+        <div id="sg"><span>Time on the ground</span><b id="gt">-</b><small id="gn">per plane</small></div>
+        <div id="st"><span>Tons a day</span><b id="tn">-</b><small id="tnn">city needs 4,500</small></div>
       </div>
     </figure>
+
     <div class="steps">
-      <div class="step" data-s="0"><span class="t">1 · The problem</span><h3>The Soviets cut every road, railway and canal</h3><p>On 24 June 1948 the Soviet Union closed all land routes into West Berlin. Two million people had food for 36 days and coal for 45. The city needed about 4,500 tons of supplies a day.</p></div>
-      <div class="step" data-s="1"><span class="t">2 · The question the Allies asked</span><h3>Fight through, leave, or fly?</h3><p>General Clay wanted an armed convoy on the motorway. Washington and London feared it could start a war. Leaving Berlin was rejected too. The three air routes into the city were still open, so the Allies chose to fly, at first only to buy time.</p></div>
-      <div class="step" data-s="2"><span class="t">2 · The question the Allies asked</span><h3>The first airlift was far too small</h3><p>The first day brought 80 tons. Small planes carried 3 tons each, crews flew when they could, and planes circled over Berlin waiting to land. By mid-July it moved about 2,000 tons a day, less than half of what the city needed.</p></div>
+      <div class="step" data-r="june" data-d="-1"><span class="t">The setup</span><h3>Two million people, and only the air routes left open</h3><p>On 24 June 1948 the Soviet Union closed every road, railway and canal into West Berlin. The city had food for 36 days and coal for 45. Leaving the city was ruled out, and an armed convoy could have started a war. The three air routes into Berlin were still open, so the Allies chose to fly.</p><p>On the board, Berlin's airports are drawn as one dock. Each box is a parking spot where a plane is unloaded, like a door at a warehouse. <span class="est">simple model</span></p></div>
+
+      <!-- 1 FLOW -->
+      <div class="step day" data-r="june" data-d="0"><span class="t">Lesson 1 · June 1948</span><span class="big">01</span><h3>Goods have to keep moving</h3><p>Every plane had to be emptied and sent back fast, because the next one was already on its way. The airports could not work like a warehouse.</p></div>
+      <div class="step" data-r="june" data-d="0"><span class="t prob">Lesson 1 · the problem</span><h3>A warehouse stores goods before it ships them</h3><p>In a normal warehouse, goods arrive, go onto a shelf, and wait days or weeks for an order. That takes space, labor and time. Berlin's airports had none of that to spare.</p></div>
+      <div class="step" data-r="june" data-d="0"><span class="t fix">Lesson 1 · the rule</span><div class="mtag"><small>Rule</small>Cross-dock</div><h3>Move goods straight from the incoming vehicle to the outgoing one</h3><p>A cross-dock is a site where goods go from inbound vehicles straight onto outbound ones, usually within a day, with little or no storage. At Tempelhof, Berliners unloaded each plane onto trucks that drove straight into the city.</p>
+        <div class="flow">
+          <div class="frow"><div class="who">A warehouse <span>goods wait for days</span></div>
+            <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx st">Shelf<small>stored</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
+          <div class="frow"><div class="who">A cross-dock <span>goods move in hours</span></div>
+            <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx dk">Dock<small>straight across</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
+          <div class="frow"><div class="who">Tempelhof, 1948 <span>no shelf at all</span></div>
+            <div class="boxes"><div class="bx">Plane in</div><div class="ar">→</div><div class="bx dk">Unload<small>onto trucks</small></div><div class="ar">→</div><div class="bx">To the city</div></div></div>
+        </div></div>
+      <div class="step" data-r="june" data-d="0"><span class="t">Lesson 1 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Flow through, don't store</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>No storage space or cost</li><li>Goods move in hours</li><li>Less handling</li></ul></div><div><h4>Weak at</h4><ul><li>Every arrival must be on time</li><li>Outbound trucks must be ready</li><li>One delay backs up the dock</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> the dock is a place goods pass through, not a place where they wait.</div></div>
+
+      <!-- 2 LIMIT -->
+      <div class="step day" data-r="july" data-d="1"><span class="t">Lesson 2 · July and August 1948</span><span class="big">02</span><h3>More planes, still not enough</h3><p>By mid-July the airlift moved about 2,000 tons a day, less than half of what the city needed. More planes arrived, and crews flew whenever they could.</p></div>
+      <div class="step" data-r="black" data-d="1"><span class="t prob">Lesson 2 · the problem</span><h3>Black Friday: planes stacked up over Berlin</h3><p>On 13 August 1948 a storm hit Berlin. A plane crashed on landing, many more circled overhead, and loaded planes on the ground could not take off. Adding planes only made the stack in the air bigger.</p></div>
+      <div class="step" data-r="limit" data-d="1"><span class="t fix">Lesson 2 · the rule</span><div class="mtag"><small>Rule</small>Find the constraint</div><h3>Output is set by the dock, not by the fleet</h3><p>General Tunner, the new head of the airlift, saw that more planes would not help. The limit was how many planes could land, unload and leave each hour.</p><p>A cross-dock works the same way. Its output is the number of doors, times the loads each door handles a day, times the size of each load. Extra trucks only wait in the yard. On the board, the spots are the limit.</p></div>
+      <div class="step" data-r="limit" data-d="1"><span class="t">Lesson 2 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Find the constraint</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>Shows where to spend</li><li>Stops buying capacity that waits</li><li>One number to track</li></ul></div><div><h4>Weak at</h4><ul><li>The limit moves once fixed</li><li>Needs data on door time</li><li>Easy to ignore when trucks are cheap</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> it measures the dock door, the one place every load has to pass.</div></div>
+
+      <!-- 3 SLOTS -->
+      <div class="step day" data-r="black" data-d="2"><span class="t">Lesson 3 · August 1948</span><span class="big">03</span><h3>Planes arrive in bunches</h3><p>Some hours brought a crowd of planes and others almost none. In a busy hour, planes waited in the air. In a quiet hour, the unloading crews stood idle.</p></div>
+      <div class="step" data-r="slots" data-d="2"><span class="t fix">Lesson 3 · the rule</span><div class="mtag"><small>Rule</small>Dock appointments</div><h3>Give every arrival a fixed time slot</h3><p>Tunner set one landing every 3 minutes, day and night, in any weather. That is 20 an hour and 480 a day. A pilot who missed his landing flew back with the load instead of circling, so one late plane never held up the rest.</p><p>Cross-docks use appointment slots in the same way. Each truck books a time at a door. A truck that misses its slot gets a new one, and is not squeezed in.</p></div>
+      <div class="step" data-r="slots" data-d="2"><span class="t">Lesson 3 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Dock appointments</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>Steady work for the crews</li><li>No queue in the yard</li><li>Easy to plan labor</li></ul></div><div><h4>Weak at</h4><ul><li>A missed slot wastes a trip</li><li>Carriers have to keep time</li><li>Less room for rush loads</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> the dock decides when loads arrive, not the carrier.</div></div>
+
+      <!-- 4 ONE WAY -->
+      <div class="step day" data-r="slots" data-d="3"><span class="t">Lesson 4 · the air routes</span><span class="big">04</span><h3>Traffic in both directions</h3><p>The slots cleared the sky, but some planes still flew home with their load. Look at the board: planes leaving fly back out the same way the next ones come in.</p></div>
+      <div class="step" data-r="slots" data-d="3"><span class="t prob">Lesson 4 · the problem</span><h3>Incoming and outgoing traffic get in each other's way</h3><p>When planes going out share the path with planes coming in, every departure can cost an arrival its slot. In a warehouse, the same thing happens when forklifts with incoming and outgoing goods cross the same floor.</p></div>
+      <div class="step" data-r="oneway" data-d="3"><span class="t fix">Lesson 4 · the rule</span><div class="mtag"><small>Rule</small>One-way flow</div><h3>In on two routes, out on the third</h3><p>There were three air routes into Berlin. Planes flew in on the northern and southern routes and left on the central one, so traffic only moved one way.</p><p>Cross-docks are built the same way. Inbound doors sit on one side of a long, narrow building and outbound doors on the other. Bartholdi and Gue found that this I-shape works best for small and mid-size docks, and that very large docks do better as a T or an X.</p></div>
+      <div class="step" data-r="oneway" data-d="3"><span class="t">Lesson 4 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>One-way flow</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>No crossing paths</li><li>Fewer delays and accidents</li><li>Simple rules for drivers</li></ul></div><div><h4>Weak at</h4><ul><li>Longer walks inside the dock</li><li>Layout is hard to change later</li><li>Needs space on two sides</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> it removes the conflict instead of managing it.</div></div>
+
+      <!-- 5 DWELL -->
+      <div class="step day" data-r="oneway" data-d="4"><span class="t">Lesson 5 · on the ground</span><span class="big">05</span><h3>Each plane sits too long</h3><p>Crews left the plane to file papers, check the weather and get food. The plane sat at its spot until they came back.</p></div>
+      <div class="step" data-r="oneway" data-d="4"><span class="t prob">Lesson 5 · the problem</span><h3>The door is busy, but nothing is moving</h3><p>A door is only useful while goods are moving through it. Every minute spent waiting for a driver or a form is a minute no load moves. On the board, every spot is full, so the dock cannot take more planes.</p></div>
+      <div class="step" data-r="dwell" data-d="4"><span class="t fix">Lesson 5 · the rule</span><div class="mtag"><small>Rule</small>Cut dwell time</div><h3>Bring everything to the door</h3><p>Crews stayed with the plane. An officer brought the return papers and the weather to the door, and a snack truck brought food. Time on the ground in Berlin fell by half, to 30 minutes. Unloading a 10-ton plane fell from 10 minutes to under 6.</p><p>With half the time per plane, each spot handles twice the loads. On the board, half the spots are now free for more planes. Modern docks do this by preparing paperwork before the truck arrives and having staff ready at the door.</p></div>
+      <div class="step" data-r="dwell" data-d="4"><span class="t">Lesson 5 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Cut dwell time</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>More output from the same doors</li><li>Cheap compared with building</li><li>Frees doors for growth</li></ul></div><div><h4>Weak at</h4><ul><li>Needs staff ready at the door</li><li>Prep work moves upstream</li><li>Small delays matter more</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> it treats the door's time as the scarce resource, not the vehicle's.</div></div>
+
+      <!-- 6 LOADS -->
+      <div class="step day" data-r="dwell" data-d="5"><span class="t">Lesson 6 · the planes</span><span class="big">06</span><h3>Small loads use up door time</h3><p>Early on, most planes were small, with 3-ton loads. A small plane takes almost as long to land, park and unload as a large one.</p></div>
+      <div class="step" data-r="dwell" data-d="5"><span class="t prob">Lesson 6 · the problem</span><h3>Each slot carried too little</h3><p>Twenty landings an hour can bring 60 tons or 200 tons. The only difference is the size of each load.</p></div>
+      <div class="step" data-r="loads" data-d="5"><span class="t fix">Lesson 6 · the rule</span><div class="mtag"><small>Rule</small>Full, standard loads</div><h3>Bigger, uniform loads in every slot</h3><p>Large planes with 10-ton loads replaced the small 3-ton ones. With mostly one type of plane, every crew knew the same routine. By the end of August the airlift delivered more than 4,500 tons a day, enough for the city.</p><p>Cross-docks push for full truckloads and standard pallets for the same reason. Each door slot moves more, and every load is handled the same way.</p></div>
+      <div class="step" data-r="loads" data-d="5"><span class="t">Lesson 6 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Full, standard loads</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>More tons per slot</li><li>Fast, routine handling</li><li>Fewer trips</li></ul></div><div><h4>Weak at</h4><ul><li>Loads wait to fill up</li><li>Needs standard equipment</li><li>Less flexible for small orders</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> it raises the size of each load, not the number of loads.</div></div>
+
+      <!-- 7 DOORS -->
+      <div class="step day" data-r="loads" data-d="6"><span class="t">Lesson 7 · autumn 1948</span><span class="big">07</span><h3>Winter is coming, and every door is in use</h3><p>From 20 October the city needed about 5,620 tons a day, mostly coal for the winter. The spots at Tempelhof and Gatow were busy all day.</p></div>
+      <div class="step" data-r="loads" data-d="6"><span class="t prob">Lesson 7 · the problem</span><h3>The doors are already working as fast as they can</h3><p>Once each door handles loads as fast as it can, with steady slots, short dwell and full loads, the only way to grow is more doors.</p></div>
+      <div class="step" data-r="doors" data-d="6"><span class="t fix">Lesson 7 · the rule</span><div class="mtag"><small>Rule</small>Add doors</div><h3>Berliners built a third airport in three months</h3><p>Between August and November 1948, Berliners built a new airport, Tegel. It added a third set of spots, and the planes could come more often.</p><p>A growing cross-dock adds doors along its long sides, or opens a second site.</p></div>
+      <div class="step" data-r="doors" data-d="6"><span class="t">Lesson 7 · pros and cons</span><div class="mtag fam"><small>Cross-dock rule</small>Add doors</div>
+        <div class="pc"><div><h4>Good at</h4><ul><li>More output when doors are full</li><li>Room for peaks</li><li>A backup if one site fails</li></ul></div><div><h4>Weak at</h4><ul><li>Costs the most and takes longest</li><li>Only helps after the other fixes</li><li>More doors need more staff</li></ul></div></div>
+        <div class="diff"><b>What makes it different:</b> it comes last. Building doors costs the most, so first get the most out of the doors you have.</div></div>
+
+      <!-- RESULT -->
+      <div class="step day" data-r="easter" data-d="7"><span class="t">The result · April 1949</span><span class="big">12,941</span><h3>Easter 1949: the dock at full speed</h3><p>On 16 April 1949, nearly 1,400 flights brought 12,941 tons in one day, about one landing a minute. After that, the airlift kept up close to 9,000 tons a day.</p></div>
+      <div class="step" data-r="after" data-d="7"><span class="t">The end · May 1949</span><h3>The Soviets reopened the roads</h3><p>On 12 May 1949 the blockade ended. The airlift kept flying until September to build up stock. In total it carried 2.3 million tons in 277,000 flights, two thirds of it coal. 78 people died in accidents.</p></div>
     </div>
   </div>
 </section>
 
-<section class="reveal" id="reveal" aria-label="The supply chain question">
-  <div class="rv-pin g">
-    <div class="in rv-in">
-      <p class="rv-l" data-at="0">So for supply chain, the question is:</p>
-      <h2 class="rv-q" data-at="1">How do you move more goods through one dock <em>with no room to store them?</em></h2>
-    </div>
+<section class="g sec"><div class="in">
+  <div class="kick">The cross-dock playbook</div>
+  <h2>Start from the problem you have</h2>
+  <p class="intro">Each rule in this story fixed one problem in Berlin. Cross-docks use the same rules today, in about the same order.</p>
+  <div class="play">
+    <div class="r"><span class="d">01</span><div class="p">Goods sit in storage between coming in and going out</div><div class="f">Flow through, don't store<small>cross-docking</small></div></div>
+    <div class="r"><span class="d">02</span><div class="p">Adding trucks or planes does not raise output</div><div class="f">Find the constraint<small>count door time, not vehicles</small></div></div>
+    <div class="r"><span class="d">03</span><div class="p">Arrivals come in bunches and queue in the yard</div><div class="f">Dock appointments<small>fixed time slots per door</small></div></div>
+    <div class="r"><span class="d">04</span><div class="p">Incoming and outgoing traffic get in each other's way</div><div class="f">One-way flow<small>inbound and outbound on opposite sides</small></div></div>
+    <div class="r"><span class="d">05</span><div class="p">Each vehicle sits at the door too long</div><div class="f">Cut dwell time<small>paperwork ready, staff at the door</small></div></div>
+    <div class="r"><span class="d">06</span><div class="p">Many small loads use up door time</div><div class="f">Full, standard loads<small>full truckloads, standard pallets</small></div></div>
+    <div class="r"><span class="d">07</span><div class="p">Every door is busy all day</div><div class="f">Add doors<small>longer dock or a second site</small></div></div>
   </div>
-</section>
+</div></section>
 
-<!-- Part 2: why, decision, outcome -->
-<section class="g" style="padding-top:40px">
-  <div class="in scrolly" data-chart="b">
-    <figure class="fig">
-      <div class="figcap" id="bCap"></div>
-      <div class="legend" id="bLeg"></div>
-      <div class="scenes">
-        <div class="scene" data-scene="0">
-          <div class="flow">
-            <div class="frow"><div class="who">A warehouse <span>goods wait for days</span></div>
-              <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx st">Shelf<small>stored for days</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
-            <div class="frow"><div class="who">A cross-dock <span>goods move in minutes</span></div>
-              <div class="boxes"><div class="bx">Truck in</div><div class="ar">→</div><div class="bx dk">Dock<small>straight across</small></div><div class="ar">→</div><div class="bx">Truck out</div></div></div>
-            <div class="frow"><div class="who">Tempelhof airport, 1948 <span>no room for a shelf</span></div>
-              <div class="boxes"><div class="bx">Plane in</div><div class="ar">→</div><div class="bx dk">Unload<small>onto trucks</small></div><div class="ar">→</div><div class="bx">Trucks to the city</div></div></div>
-          </div>
-        </div>
-        <div class="scene" data-scene="1"><div class="chart" id="stack"></div></div>
-        <div class="scene" data-scene="2"><div class="chart" id="clock"></div></div>
-        <div class="scene" data-scene="3"><div class="chart" id="gantt"></div></div>
-        <div class="scene" data-scene="4"><div class="chart" id="tons"></div></div>
-        <div class="scene" data-scene="5">
-          <div class="trio">
-            <div><b>2.3M</b><span>tons flown in</span></div>
-            <div><b>277,000</b><span>flights</span></div>
-            <div><b>15</b><span>months</span></div>
-          </div>
-          <div class="split" role="img" aria-label="Coal 68%, food 23%, other 9%"><div class="c">Coal 68%</div><div class="f">Food 23%</div><div class="o"></div></div>
-          <div class="ax"><span>what the planes carried</span><span>other 9%</span></div>
-        </div>
-        <div class="scene" data-scene="6">
-          <div class="lane"><div class="who">60 minutes at the door <span>24 loads a day</span></div><div class="track"><div class="fill r" data-w="50"></div></div></div>
-          <div class="lane"><div class="who">30 minutes at the door <span>48 loads a day</span></div><div class="track"><div class="fill z" data-w="100"></div></div></div>
-          <div class="ax"><span>loads through one dock door in 24 hours</span><span></span></div>
-        </div>
-      </div>
-    </figure>
-    <div class="steps">
-      <div class="step" data-s="0"><span class="t">3 · Why it mattered</span><h3>Berlin's airports worked like a cross-dock</h3><p>A cross-dock is a site where goods go from incoming vehicles straight onto outgoing ones, with almost no storage. At Tempelhof, planes landed, Berliners unloaded them onto trucks, and the trucks drove into the city. Nothing waited on a shelf.</p></div>
-      <div class="step" data-s="1"><span class="t">3 · Why it mattered</span><h3>The dock, not the number of planes, was the limit</h3><p>On 13 August 1948 a storm hit Berlin. A plane crashed on landing, many more circled overhead, and loaded planes on the ground could not take off. General Tunner, the new head of the airlift, saw that more planes would not help. The limit was how many could land, unload and leave each hour.</p></div>
-      <div class="step" data-s="2"><span class="t">4 · What Tunner decided</span><h3>Run the airport on a fixed rhythm</h3><p>One plane landed every 3 minutes, day and night, in any weather. A pilot who missed his landing flew back with the load instead of circling. Planes flew in on two air routes and out on the third, so traffic only moved one way.</p></div>
-      <div class="step" data-s="3"><span class="t">4 · What Tunner decided</span><h3>Keep each plane on the ground as short as possible</h3><p>Crews stayed with the plane. An officer brought the return papers and the weather to the door, and a snack truck brought food. Large planes with 10-ton loads replaced small 3-ton ones. Time on the ground in Berlin fell by half, to 30 minutes. <span class="est">est. split</span></p></div>
-      <div class="step" data-s="4"><span class="t">5 · What happened</span><h3>The airlift passed what the city needed</h3><p>By the end of August it delivered more than 4,500 tons a day. Unloading a 10-ton plane fell from 10 minutes to under 6. Berliners built a new airport, Tegel, in three months. On 16 April 1949 nearly 1,400 flights brought 12,941 tons in one day, and after that the airlift kept up close to 9,000 tons a day.</p></div>
-      <div class="step" data-s="5"><span class="t">5 · What happened</span><h3>The Soviets reopened the roads</h3><p>On 12 May 1949 the blockade ended. The airlift kept flying until September to build up stock. In total it carried 2.3 million tons, two thirds of it coal. 78 people died in accidents.</p></div>
-      <div class="step" data-s="6"><span class="t">The lesson</span><h3>A dock's output depends on how long each load stays at the door</h3><p>Fixed arrival slots, standard loads and no waiting at the door let the same space handle far more. Modern cross-docks work the same way: trucks book a door slot, unload and leave.</p></div>
+<section class="g sec"><div class="in">
+  <div class="kick">Door math</div>
+  <h2>How many tons one dock can move</h2>
+  <p class="intro">Tons a day = doors × loads per door a day × tons per load. Pick the settings and see if the city gets enough. <span class="est">simple example</span></p>
+  <div class="calc">
+    <div class="cg"><span>Time on the ground per plane</span><div class="pick" data-k="dw"><button type="button" data-v="60" aria-pressed="true">60 min</button><button type="button" data-v="45" aria-pressed="false">45 min</button><button type="button" data-v="30" aria-pressed="false">30 min</button></div></div>
+    <div class="cg"><span>Load per plane</span><div class="pick" data-k="ld"><button type="button" data-v="3" aria-pressed="true">3 tons, small plane</button><button type="button" data-v="10" aria-pressed="false">10 tons, large plane</button></div></div>
+    <div class="cg"><span>Parking spots (doors)</span><div class="pick" data-k="dr"><button type="button" data-v="20" aria-pressed="true">20, two airports</button><button type="button" data-v="30" aria-pressed="false">30, with Tegel</button></div></div>
+    <div class="res">
+      <div id="r1"><b id="v1">-</b><span>loads per door a day</span></div>
+      <div id="r2"><b id="v2">-</b><span>loads a day</span></div>
+      <div id="r3"><b id="v3">-</b><span>tons a day</span></div>
     </div>
+    <div class="meter"><div class="mf" id="mf"></div><div class="nk" style="left:31.25%"><span>4,500 summer</span></div><div class="nk" style="left:39.03%"><span style="top:38px;bottom:auto">5,620 winter</span></div></div>
+    <div style="height:18px"></div>
+    <div class="verdict" id="vd"></div>
   </div>
-</section>
+
+  <h3 class="sub2">One plane at the door, before and after</h3>
+  <p class="intro" style="margin-top:6px">The time on the ground fell by half because the crew no longer left the plane. <span class="est">est. split</span></p>
+  <div class="gantt"><div id="gantt"></div>
+    <div class="legend" style="margin-top:8px"><span><i style="background:var(--sky)"></i>Taxi</span><span><i style="background:var(--amber)"></i>Unload</span><span><i style="background:var(--bad)"></i>Crew away from the plane</span><span><i style="background:var(--good)"></i>Crew served at the plane</span></div>
+  </div>
+</div></section>
+
+<section class="g sec"><div class="in">
+  <div class="kick">Scorecard</div>
+  <h2>Warehouse or cross-dock?</h2>
+  <p class="intro">A cross-dock is not always the right choice. Pick what matters most. Setups that do well on it stay bright.</p>
+  <div class="pick" style="margin:14px 0 16px" role="group" aria-label="What matters most" id="sc">
+    <button type="button" data-c="-1" aria-pressed="true">Show all</button>
+    <button type="button" data-c="0" aria-pressed="false">Low storage cost</button>
+    <button type="button" data-c="1" aria-pressed="false">Speed</button>
+    <button type="button" data-c="2" aria-pressed="false">Copes with late arrivals</button>
+    <button type="button" data-c="3" aria-pressed="false">Simple to run</button>
+    <button type="button" data-c="4" aria-pressed="false">Many products</button>
+  </div>
+  <div class="tw"><table class="gr" id="grid">
+    <thead><tr><th>Setup</th><th>Low storage cost</th><th>Speed</th><th>Late arrivals</th><th>Simple</th><th>Many products</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+  <div class="gkey2"><span><span class="dot y" style="width:18px;height:18px;font-size:11px">✓</span> strong</span><span><span class="dot m" style="width:18px;height:18px;font-size:11px">~</span> mixed</span><span><span class="dot n" style="width:18px;height:18px;font-size:11px">✗</span> weak</span></div>
+
+  <h2 style="font-size:clamp(26px,3.6vw,38px);margin-top:46px">Where cross-docks are used today</h2>
+  <p class="intro">The same rules run some of the busiest sites in logistics.</p>
+  <div class="mix">
+    <div><span class="ml">Retail</span><h3>Store deliveries</h3>Suppliers deliver to a cross-dock, and goods are sorted onto trucks for each store the same day. Walmart made this well known in the 1980s.</div>
+    <div><span class="ml">Freight and parcels</span><h3>Hubs between routes</h3>Freight and parcel carriers move loads from long-haul trucks to local delivery trucks overnight, with almost no storage.</div>
+    <div><span class="ml">Factories</span><h3>Parts to the line</h3>Parts from many suppliers arrive at a cross-dock near the plant, are sorted, and go to the assembly line in the order they are needed.</div>
+  </div>
+</div></section>
 
 <hr>
 <footer class="src g">
@@ -297,180 +409,231 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
     <ol>
       <li><a href="https://www.pbs.org/wgbh/amex/airlift/timeline" target="_blank" rel="noopener">PBS American Experience, Berlin Airlift timeline</a>: blockade 24 June 1948, food for 36 days and coal for 45, Tunner arrives late July, Tegel built August to November 1948, Easter record 16 April 1949, blockade ends 12 May 1949, last flight 30 September 1949</li>
       <li><a href="https://www.americanheritage.com/william-h-tunner-berlin-airlift-commander" target="_blank" rel="noopener">American Heritage, William H. Tunner</a>: 80 tons on the first day, about 2,000 tons a day in mid-July, need of 4,500 tons a day, one plane every three minutes, missed landings fly home, crews stay with the plane, snack bars, ground time cut in half to 30 minutes, 3-ton and 10-ton planes, 12,941 tons on 1,398 flights</li>
-      <li><a href="https://en.wikipedia.org/wiki/Berlin_Blockade" target="_blank" rel="noopener">Wikipedia, Berlin Blockade</a>: more than 4,500 tons a day by end of August 1948, 10-ton unload from 10 minutes to 5 minutes 45 seconds, instrument flying and one landing try, 6,729 tons a day before Easter 1949 and 8,893 after</li>
+      <li><a href="https://en.wikipedia.org/wiki/Berlin_Blockade" target="_blank" rel="noopener">Wikipedia, Berlin Blockade</a>: Black Friday 13 August 1948, more than 4,500 tons a day by end of August 1948, need of 5,620 tons a day from 20 October, 10-ton unload from 10 minutes to 5 minutes 45 seconds, 6,729 tons a day before Easter 1949 and 8,893 after</li>
       <li><a href="https://europeanaviationhistory.blogspot.com/2023/08/the-berlin-crisis-1948-allied-options.html" target="_blank" rel="noopener">European Aviation History, The Berlin Crisis 1948: Allied Options</a>: armed convoy, withdrawal and airlift, and why the first two were rejected</li>
       <li><a href="https://europeanaviationhistory.blogspot.com/2024/11/the-berlin-airlift-by-numbers.html" target="_blank" rel="noopener">European Aviation History, The Berlin Airlift by the numbers</a>: 2,325,510 tons, coal 68% and food 23%, 277,569 flights, 78 deaths</li>
       <li><a href="https://centennialofflight.net/essay/Air_Power/berlin_airlift/AP35.htm" target="_blank" rel="noopener">US Centennial of Flight Commission, The Berlin Airlift</a>: three air corridors, in through the north and south, out through the center</li>
+      <li>Bartholdi, J. J. and Gue, K. R. (2004). The best shape for a crossdock. Transportation Science 38(2): I-shape for small and mid-size docks, T and X for large ones</li>
+      <li>Bartholdi, J. J. and Gue, K. R. (2000). Reducing labor costs in an LTL crossdocking terminal. Operations Research 48(6)</li>
+      <li>Boysen, N. and Fliedner, M. (2010). Cross dock scheduling: classification, literature review and research agenda. Omega 38(6): door assignment and truck scheduling</li>
+      <li>Yan, H. and Tang, S. (2009). Pre-distribution and post-distribution cross-docking operations. Transportation Research Part E 45(6)</li>
+      <li>Stalk, G., Evans, P. and Shulman, L. E. (1992). Competing on capabilities: the new rules of corporate strategy. Harvard Business Review 70(2): Wal-Mart and cross-docking</li>
     </ol>
+    <p style="margin:0">The dock board, the door math and the before and after split are simple examples made for this story.</p>
   </div>
 </footer>
 
 <script>
 (function(){
   var NS='http://www.w3.org/2000/svg';
-  function el(t,a,txt){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;return e;}
-  function svg(w,h,label){return el('svg',{viewBox:'0 0 '+w+' '+h,role:'img','aria-label':label});}
-  // Small plane icon, nose pointing right, centred on 0,0
-  function plane(s,x,y,cls,sc){
-    var g=el('g',{transform:'translate('+x+','+y+') scale('+(sc||1)+')'});
-    g.appendChild(el('path',{d:'M-16,-2 L10,-2 Q16,0 10,2 L-16,2 Z M-2,-2 L-8,-14 L-3,-14 L6,-2 Z M-2,2 L-8,14 L-3,14 L6,2 Z M-16,-2 L-19,-7 L-15,-7 L-11,-2 Z M-16,2 L-19,7 L-15,7 L-11,2 Z',class:'plane'+(cls?' '+cls:'')}));
-    s.appendChild(g);
-  }
+  function el(t,at,p,txt){var e=document.createElementNS(NS,t);for(var k in at)e.setAttribute(k,at[k]);if(txt!=null)e.textContent=txt;if(p)p.appendChild(e);return e;}
+  var PLANE='M-16,-2 L10,-2 Q16,0 10,2 L-16,2 Z M-2,-2 L-8,-14 L-3,-14 L6,-2 Z M-2,2 L-8,14 L-3,14 L6,2 Z M-16,-2 L-19,-7 L-15,-7 L-11,-2 Z M-16,2 L-19,7 L-15,7 L-11,2 Z';
 
-  // Map: West Germany, Soviet zone, Berlin, cut land routes, open air routes
-  (function(){
-    var s=svg(640,380,'Map: land routes into West Berlin cut, three air routes open');
-    s.appendChild(el('path',{d:'M20,20 L330,20 L350,120 L320,230 L300,360 L20,360 Z',class:'zw'}));
-    s.appendChild(el('path',{d:'M330,20 L620,20 L620,360 L300,360 L320,230 L350,120 Z',class:'zs'}));
-    s.appendChild(el('text',{x:40,y:50,class:'lbl'},'Allied zones'));
-    s.appendChild(el('text',{x:600,y:50,'text-anchor':'end',class:'lbl',style:'fill:var(--bad)'},'Soviet zone'));
-    var B=[490,175], C=[['Hamburg',250,70],['Hanover',230,175],['Frankfurt',190,310]];
-    C.forEach(function(c){s.appendChild(el('line',{x1:c[1],y1:c[2],x2:B[0],y2:B[1],class:'corr'}));});
-    // land routes
-    [[230,185,490,185],[195,300,490,190]].forEach(function(r){s.appendChild(el('path',{d:'M'+r[0]+','+r[1]+' L'+r[2]+','+r[3],class:'road'}));});
-    [[335,186],[333,240]].forEach(function(p){s.appendChild(el('line',{x1:p[0]-10,y1:p[1]-10,x2:p[0]+10,y2:p[1]+10,class:'xm'}));s.appendChild(el('line',{x1:p[0]+10,y1:p[1]-10,x2:p[0]-10,y2:p[1]+10,class:'xm'}));});
-    C.forEach(function(c){s.appendChild(el('circle',{cx:c[1],cy:c[2],r:5,class:'city'}));s.appendChild(el('text',{x:c[1]-10,y:c[2]+5,'text-anchor':'end',class:'lbl'},c[0]));});
-    s.appendChild(el('circle',{cx:B[0],cy:B[1],r:16,fill:'none',stroke:'var(--ink)','stroke-width':3}));
-    s.appendChild(el('circle',{cx:B[0],cy:B[1],r:6,class:'city'}));
-    s.appendChild(el('text',{x:B[0],y:B[1]-26,'text-anchor':'middle',class:'lblb'},'West Berlin'));
-    s.appendChild(el('text',{x:545,y:228,'text-anchor':'middle',class:'lbl'},'2 million people'));
-    document.getElementById('map').appendChild(s);
-  })();
+  // Board states. gap = minutes between arrivals; arr: rand, burst or fixed; size: s (3 t), b (10 t) or mix.
+  var R={
+    june:  {n:'Planes fly in when they can',fam:'Lesson 1 · cross-dock',arr:'rand',gap:9,size:'s',dwell:60,one:false,hold:true,rows:2,gt:'~60 min',gc:'lo',gn:'est.',tn:'80',tc:'lo',tnn:'first day · need 4,500'},
+    july:  {n:'More planes, no plan',fam:'Lesson 2 · find the constraint',arr:'burst',gap:3.4,size:'mix',dwell:60,one:false,hold:true,rows:2,gt:'~60 min',gc:'lo',gn:'est.',tn:'~2,000',tc:'lo',tnn:'mid-July · need 4,500'},
+    black: {n:'Planes stack up in the air',fam:'Lesson 2 · the problem',arr:'burst',gap:2.4,size:'mix',dwell:66,one:false,hold:true,rows:2,gt:'~60 min',gc:'lo',gn:'est.',tn:'~2,000',tc:'lo',tnn:'mid-July · need 4,500'},
+    limit: {n:'The spots are the limit',fam:'Lesson 2 · find the constraint',arr:'burst',gap:2.4,size:'mix',dwell:66,one:false,hold:true,rows:2,hl:true,gt:'~60 min',gc:'lo',gn:'est.',tn:'~2,000',tc:'lo',tnn:'mid-July · need 4,500'},
+    slots: {n:'One landing every 3 minutes',fam:'Lesson 3 · dock appointments',arr:'fixed',gap:3,size:'mix',dwell:58,one:false,hold:false,miss:.03,conf:.22,rows:2,gt:'~60 min',gc:'lo',gn:'est.',tn:'rising',tc:'mid',tnn:'through August · need 4,500'},
+    oneway:{n:'In on two routes, out on one',fam:'Lesson 4 · one-way flow',arr:'fixed',gap:3,size:'mix',dwell:58,one:true,hold:false,miss:.03,conf:0,rows:2,gt:'~60 min',gc:'lo',gn:'est.',tn:'rising',tc:'mid',tnn:'through August · need 4,500'},
+    dwell: {n:'Half the time at each spot',fam:'Lesson 5 · cut dwell time',arr:'fixed',gap:3,size:'mix',dwell:30,one:true,hold:false,miss:.03,conf:0,rows:2,gt:'30 min',gc:'hi',gn:'half the time',tn:'rising',tc:'mid',tnn:'through August · need 4,500'},
+    loads: {n:'Every slot brings 10 tons',fam:'Lesson 6 · full, standard loads',arr:'fixed',gap:3,size:'b',dwell:30,one:true,hold:false,miss:.03,conf:0,rows:2,gt:'30 min',gc:'hi',gn:'half the time',tn:'4,500+',tc:'hi',tnn:'end of August · need 4,500'},
+    doors: {n:'Tegel adds a third airport',fam:'Lesson 7 · add doors',arr:'fixed',gap:1.6,size:'b',dwell:30,one:true,hold:false,miss:.03,conf:0,rows:3,gt:'30 min',gc:'hi',gn:'half the time',tn:'6,729',tc:'hi',tnn:'early 1949 · need 5,620'},
+    easter:{n:'Easter: one landing a minute',fam:'The result',arr:'fixed',gap:1.05,size:'b',dwell:30,one:true,hold:false,miss:.02,conf:0,rows:3,gt:'30 min',gc:'hi',gn:'half the time',tn:'12,941',tc:'hi',tnn:'16 April 1949 · best day'},
+    after: {n:'Close to 9,000 tons a day',fam:'The result',arr:'fixed',gap:1.4,size:'b',dwell:30,one:true,hold:false,miss:.02,conf:0,rows:3,gt:'30 min',gc:'hi',gn:'half the time',tn:'8,893',tc:'hi',tnn:'a day after Easter 1949'}
+  };
 
-  // Tons per day chart. mode 'early' = first weeks only; 'full' = through April 1949
-  function tons(id,mode){
-    var W=640,H=340,L=74,R=625,T=24,B=292;
-    var full=mode==='full', MX=full?14000:5000, D0=0, D1=full?320:60; // days since 26 June 1948
-    var x=function(d){return L+(d-D0)/(D1-D0)*(R-L);}, y=function(v){return B-(v/MX)*(B-T);};
-    var s=svg(W,H,'Tons delivered per day vs what Berlin needed');
-    (full?[0,4000,8000,12000]:[0,2000,4000]).forEach(function(v){s.appendChild(el('line',{x1:L,x2:R,y1:y(v),y2:y(v),class:'gl'}));s.appendChild(el('text',{x:L-8,y:y(v)+5,'text-anchor':'end',class:'tick'},v===0?'0':(v/1000)+'k'));});
-    var ticks=full?[[0,'Jul'],[98,'Oct'],[189,'Jan'],[279,'Apr']]:[[0,'26 Jun'],[25,'21 Jul'],[50,'15 Aug']];
-    ticks.forEach(function(t){s.appendChild(el('text',{x:x(t[0]),y:B+24,'text-anchor':t[0]===0?'start':'middle',class:'tick'},t[1]));});
-    // need line: 4,500 then 5,620 from 20 Oct (day 116)
-    var nd=full?'M'+x(0)+','+y(4500)+' L'+x(116)+','+y(4500)+' L'+x(116)+','+y(5620)+' L'+x(D1)+','+y(5620):'M'+x(0)+','+y(4500)+' L'+x(D1)+','+y(4500);
-    s.appendChild(el('path',{d:nd,class:'need'}));
-    if(full)s.appendChild(el('text',{x:x(125),y:y(5620)-12,class:'lblb'},'Need'));else s.appendChild(el('text',{x:R,y:y(4500)-10,'text-anchor':'end',class:'lblb'},'Need'));
-    var P=[[0,80],[5,90],[12,1000],[20,2000]]; if(full)P.push([66,4600],[263,6729],[310,8893]);
-    var d='';P.forEach(function(p,i){d+=(i?' L':'M')+x(p[0])+','+y(p[1]);});
-    s.appendChild(el('path',{d:d,class:'ln',style:'stroke:'+(full?'var(--good)':'var(--bad)')}));
-    P.forEach(function(p){s.appendChild(el('circle',{cx:x(p[0]),cy:y(p[1]),r:6,class:'dot'+(p[1]<4500?' lo':'')}));});
-    if(!full){s.appendChild(el('text',{x:x(20)+12,y:y(2000)+5,class:'lblb',style:'fill:var(--bad)'},'~2,000'));}
-    if(full){
-      var tx=x(32); s.appendChild(el('line',{x1:tx,x2:tx,y1:T,y2:B,class:'gl','stroke-dasharray':'3 4'}));
-      s.appendChild(el('text',{x:tx+6,y:T+14,class:'lbl'},'Tunner'));
-      var ex=x(293); s.appendChild(el('rect',{x:ex-9,y:y(12941),width:18,height:B-y(12941),rx:3,class:'rec'}));
-      s.appendChild(el('text',{x:ex-16,y:y(12941)+6,'text-anchor':'end',class:'lblb',style:'fill:var(--amber)'},'12,941'));
-      s.appendChild(el('text',{x:ex-16,y:y(12941)+28,'text-anchor':'end',class:'lbl'},'best day'));
+  // Board geometry
+  var svg=document.getElementById('bd');
+  var ROWY=[86,176,266], ROWN=['Tempelhof','Gatow','Tegel'], AP=3.2, CR=4;
+  function sx(i){return 152+i*29;}
+  el('rect',{x:4,y:30,width:120,height:300,rx:6,'class':'zone'},svg);
+  el('text',{x:64,y:22,'text-anchor':'middle','class':'bt'},svg,'In the air');
+  var holdN=el('text',{x:64,y:58,'text-anchor':'middle','class':'bnum',fill:'var(--bad)'},svg,'0');
+  el('text',{x:64,y:74,'text-anchor':'middle','class':'bs'},svg,'waiting');
+  var homeN=el('text',{x:64,y:304,'text-anchor':'middle','class':'bnum',fill:'var(--bad)'},svg,'0');
+  el('text',{x:64,y:320,'text-anchor':'middle','class':'bs'},svg,'flew home');
+  el('rect',{x:476,y:30,width:120,height:300,rx:6,'class':'cityz'},svg);
+  el('text',{x:536,y:22,'text-anchor':'middle','class':'bt'},svg,'West Berlin');
+  el('text',{x:536,y:170,'text-anchor':'middle','class':'bs',fill:'var(--good)'},svg,'by truck');
+  el('text',{x:536,y:186,'text-anchor':'middle','class':'bs',fill:'var(--good)'},svg,'to the city');
+  var outLab=el('text',{x:296,y:22,'text-anchor':'middle','class':'bs'},svg,'');
+  var STAND=[], ROWLAB=[], ROWG=[];
+  ROWY.forEach(function(y,r){
+    var g=el('g',{},svg); ROWG.push(g);
+    ROWLAB.push(el('text',{x:152,y:y-30,'class':'bs'},g,ROWN[r]));
+    for(var i=0;i<10;i++){
+      var rc=el('rect',{x:sx(i),y:y-22,width:25,height:44,rx:3,'class':'stand'},g);
+      var pb=el('rect',{x:sx(i),y:y+24,width:0,height:4,rx:1,'class':'pbar'},g);
+      STAND.push({r:r,i:i,rc:rc,pb:pb,p:null});
     }
-    document.getElementById(id).appendChild(s);
+  });
+  var stackG=el('g',{},svg), STK=[];
+  for(var k=0;k<15;k++){STK.push(el('path',{d:PLANE,'class':'plane w',transform:'translate('+(28+(k%3)*36)+','+(102+Math.floor(k/3)*34)+') scale(.62)'},stackG));}
+  var moreN=el('text',{x:64,y:282,'text-anchor':'middle','class':'bs',fill:'var(--bad)'},svg,'');
+  var layer=el('g',{},svg);
+
+  // Simulation (minutes). 1 second = 6 minutes.
+  var S=null, cfg=null;
+  function gapNext(){
+    if(cfg.arr==='fixed')return cfg.gap;
+    if(cfg.arr==='burst')return Math.random()<.55?cfg.gap*.3:cfg.gap*1.85;
+    return cfg.gap*(.4+Math.random()*1.2);
   }
-  tons('early','early'); tons('tons','full');
-
-  // Black Friday stack: planes circling, runway blocked
-  (function(){
-    var s=svg(640,340,'Planes stacked over Berlin waiting to land');
-    s.appendChild(el('rect',{x:60,y:286,width:520,height:22,rx:4,class:'runway'}));
-    s.appendChild(el('text',{x:320,y:332,'text-anchor':'middle',class:'lbl'},'Tempelhof runway'));
-    plane(s,170,297,'w',1.1);
-    s.appendChild(el('text',{x:200,y:280,class:'lbl',style:'fill:var(--bad)'},'crash on landing'));
-    for(var r=0;r<5;r++){for(var c=0;c<4;c++){plane(s,150+c*110+(r%2)*40,40+r*46,'w',1.15);}}
-    s.appendChild(el('text',{x:620,y:30,'text-anchor':'end',class:'lblb',style:'fill:var(--bad)'},'Circling'));
-    s.appendChild(el('text',{x:620,y:52,'text-anchor':'end',class:'lbl'},'waiting to land'));
-    document.getElementById('stack').appendChild(s);
-  })();
-
-  // Landing clock: 20 slots per hour, one every 3 minutes
-  var clockSlots=[], clockHand;
-  (function(){
-    var s=svg(640,360,'One landing every 3 minutes, 20 an hour');
-    var cx=200,cy=180,R=140;
-    s.appendChild(el('circle',{cx:cx,cy:cy,r:R+22,fill:'var(--paper)',stroke:'var(--line)'}));
-    for(var i=0;i<20;i++){
-      var a=(i/20)*2*Math.PI-Math.PI/2;
-      var c=el('circle',{cx:cx+R*Math.cos(a),cy:cy+R*Math.sin(a),r:12,class:'slot'});
-      s.appendChild(c); clockSlots.push(c);
-    }
-    [0,15,30,45].forEach(function(m){var a=(m/60)*2*Math.PI-Math.PI/2;s.appendChild(el('text',{x:cx+(R-38)*Math.cos(a),y:cy+(R-38)*Math.sin(a)+5,'text-anchor':'middle',class:'tick'},':'+(m<10?'0'+m:m)));});
-    clockHand=el('line',{x1:cx,y1:cy,x2:cx,y2:cy-R+30,class:'hand'});
-    s.appendChild(clockHand); s.appendChild(el('circle',{cx:cx,cy:cy,r:6,fill:'var(--ink)'}));
-    var X=410;
-    [['3 min','between landings'],['20','landings an hour'],['480','landings a day']].forEach(function(t,i){
-      s.appendChild(el('text',{x:X,y:80+i*100,style:'font:900 46px var(--f-head);fill:var(--good)'},t[0]));
-      s.appendChild(el('text',{x:X,y:108+i*100,class:'lbl'},t[1]));
+  function freeStand(){
+    var f=STAND.filter(function(s){return s.r<cfg.rows&&!s.p;});
+    return f.length?f[Math.floor(Math.random()*f.length)]:null;
+  }
+  function land(p,st,t){p.st=st;p.tA=t+AP;p.tD=p.tA+cfg.dwell*(.92+Math.random()*.16);st.p=p;S.planes.push(p);}
+  function goHome(p,t){p.tH=t;p.row=Math.floor(Math.random()*cfg.rows);S.home.push(p);S.sent++;}
+  function arrive(t){
+    var p={b:cfg.size==='b'||(cfg.size==='mix'&&Math.random()<.5)};
+    if(!cfg.hold&&Math.random()<(cfg.miss||0)+(cfg.conf||0)){goHome(p,t);return;}
+    var st=freeStand();
+    if(st&&(!cfg.hold||!S.hold.length))land(p,st,t);
+    else if(cfg.hold){if(S.hold.length<40)S.hold.push(p);}
+    else goHome(p,t);
+  }
+  function step(dt){
+    S.t+=dt;
+    while(S.t>=S.next){arrive(S.next);S.next+=gapNext();}
+    if(S.hold.length&&S.t-S.last>=.7){var st=freeStand();if(st){land(S.hold.shift(),st,S.t);S.last=S.t;}}
+    S.planes.forEach(function(p){
+      if(!p.out&&S.t>=p.tD){p.out=true;p.st.p=null;for(var c=0;c<(p.b?3:1);c++)S.crates.push({x:sx(p.st.i)+12,y:ROWY[p.st.r],t0:p.tD+c*.5,ty:44+Math.random()*270,tx:492+Math.random()*88});}
     });
-    document.getElementById('clock').appendChild(s);
-  })();
-  var clockT=null, clockI=0;
-  function clock(on){
-    if(clockT){clearInterval(clockT);clockT=null;}
-    var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if(!on||reduce){clockSlots.forEach(function(c){c.setAttribute('class','slot'+(reduce&&on?' on':''));});return;}
-    clockI=0;
-    function tick(){
-      clockSlots.forEach(function(c,i){c.setAttribute('class','slot'+(i<clockI?' on':i===clockI?' now':''));});
-      clockHand.setAttribute('transform','rotate('+(clockI*18)+' 200 180)');
-      clockI=(clockI+1)%21;
-    }
-    tick(); clockT=setInterval(tick,350);
+    S.planes=S.planes.filter(function(p){var keep=S.t<p.tD+AP;if(!keep&&p.el)p.el.remove();return keep;});
+    S.home=S.home.filter(function(p){var keep=S.t<p.tH+AP;if(!keep&&p.el)p.el.remove();return keep;});
+    S.crates=S.crates.filter(function(c){var keep=S.t<c.t0+CR;if(!keep&&c.el)c.el.remove();return keep;});
+  }
+  function ease(f){f=Math.max(0,Math.min(1,f));return f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2;}
+  function put(p,x,y,rot,cls){
+    if(!p.el)p.el=el('path',{d:PLANE},layer);
+    p.el.setAttribute('class','plane'+(cls?' '+cls:''));
+    p.el.setAttribute('transform','translate('+x.toFixed(1)+','+y.toFixed(1)+') rotate('+rot+') scale('+(p.b?.7:.5)+')');
+  }
+  function draw(){
+    var t=S.t;
+    S.planes.forEach(function(p){
+      var X=sx(p.st.i)+12.5, Y=ROWY[p.st.r];
+      if(t<p.tA){var f=ease((t-(p.tA-AP))/AP);put(p,130+(X-130)*f,Y,0,'');}
+      else if(t<p.tD){put(p,X,Y,0,'');}
+      else{var f2=ease((t-p.tD)/AP);
+        if(cfg.one)put(p,X,Y-f2*(Y+30),-90,'dep');
+        else put(p,X-f2*(X+20),Y-12,180,'dep');}
+    });
+    S.home.forEach(function(p){var f=ease((t-p.tH)/AP);put(p,140-f*170,ROWY[p.row]+14,180,'w');});
+    S.crates.forEach(function(c){
+      if(t<c.t0)return;
+      if(!c.el)c.el=el('rect',{width:7,height:7,rx:1,'class':'crate'},layer);
+      var f=ease((t-c.t0)/CR*1.6);
+      var x=c.x+(c.tx-c.x)*f, y=c.y+(c.ty-c.y)*f-Math.sin(f*Math.PI)*24;
+      c.el.setAttribute('x',(x-3.5).toFixed(1));c.el.setAttribute('y',(y-3.5).toFixed(1));
+      c.el.setAttribute('opacity',f>=1?Math.max(0,1-((t-c.t0)/CR-.62)/.38).toFixed(2):'1');
+    });
+    STAND.forEach(function(s){
+      var on=s.r<cfg.rows, p=s.p, busy=on&&p&&t>=p.tA;
+      s.rc.setAttribute('class','stand'+(busy?' busy':'')+(cfg.hl&&on?' hl':''));
+      s.pb.setAttribute('width',busy?(25*Math.min(1,(t-p.tA)/(p.tD-p.tA))).toFixed(1):0);
+    });
+    var h=S.hold.length;
+    holdN.textContent=h; STK.forEach(function(e,i){e.setAttribute('display',i<h?'inline':'none');});
+    moreN.textContent=h>15?'+'+(h-15)+' more':'';
+    homeN.textContent=S.sent;
+  }
+  var cur=null, lastTs=null;
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function setState(key){
+    if(key===cur)return; cur=key; cfg=R[key];
+    layer.innerHTML=''; STAND.forEach(function(s){s.p=null;});
+    S={t:0,next:0,last:-9,planes:[],hold:[],home:[],crates:[],sent:0};
+    for(var i=0;i<480;i++)step(.25);   // warm up two hours so the board starts in a steady state
+    S.sent=0;
+    ROWG[2].setAttribute('opacity',cfg.rows>2?1:.3);
+    ROWLAB[2].textContent=cfg.rows>2?'Tegel':'Tegel · opens Nov 1948';
+    outLab.textContent=cfg.one?'↑ out on the central route':'planes leave the way they came in';
+    document.getElementById('bn').innerHTML='<span class="mk2">Board</span>'+cfg.n;
+    var bl=document.getElementById('bl'); bl.textContent=cfg.fam;
+    document.getElementById('gt').textContent=cfg.gt; document.getElementById('gn').textContent=cfg.gn; document.getElementById('sg').className=cfg.gc;
+    document.getElementById('tn').textContent=cfg.tn; document.getElementById('tnn').textContent=cfg.tnn; document.getElementById('st').className=cfg.tc;
+    draw();
+  }
+  function loop(ts){
+    if(lastTs!==null&&!reduce){var dt=Math.min(.1,(ts-lastTs)/1000)*6;var n=Math.ceil(dt/.25);for(var i=0;i<n;i++)step(dt/n);draw();}
+    lastTs=ts; requestAnimationFrame(loop);
   }
 
-  // Gantt: time on the ground in Berlin, before vs after (split est.)
+  function setStep(s){
+    var d=+s.dataset.d;
+    document.querySelectorAll('#days span').forEach(function(x,i){x.className=i<d?'done':i===d?'cur':'';});
+    setState(s.dataset.r);
+    document.getElementById('bl').textContent=s.querySelector('.t').textContent;
+  }
+  var steps=document.querySelectorAll('#story .step');
+  setStep(steps[0]); steps[0].classList.add('on');
+  requestAnimationFrame(loop);
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});setStep(e.target);}});},{rootMargin:(innerWidth<=860?'-64% 0px -16% 0px':'-40% 0px -45% 0px')});
+    steps.forEach(function(s){io.observe(s);});
+  } else steps.forEach(function(s){s.classList.add('on');});
+
+  // Door math
+  var CV={dw:60,ld:3,dr:20};
+  function calc(){
+    var per=1440/CV.dw, loads=per*CV.dr, tons=loads*CV.ld;
+    document.getElementById('v1').textContent=Math.round(per);
+    document.getElementById('v2').textContent=Math.round(loads).toLocaleString('en-US');
+    document.getElementById('v3').textContent=Math.round(tons).toLocaleString('en-US');
+    var c=tons>=5620?'hi':tons>=4500?'mid':'lo';
+    document.getElementById('r3').className=c;
+    var mf=document.getElementById('mf'); mf.style.width=Math.min(100,tons/14400*100)+'%';
+    mf.style.background=c==='hi'?'var(--good)':c==='mid'?'var(--amber)':'var(--bad)';
+    var vd=document.getElementById('vd'); vd.className='verdict '+c;
+    vd.textContent=c==='hi'?'Enough for the city, even in winter.':c==='mid'?'Enough in summer, but short in winter.':'Short by '+Math.round(4500-tons).toLocaleString('en-US')+' tons a day.';
+  }
+  document.querySelectorAll('.calc .pick').forEach(function(g){
+    g.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){
+      CV[g.dataset.k]=+b.dataset.v;
+      g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+      calc();
+    });});
+  });
+  calc();
+
+  // Gantt: one plane on the ground in Berlin, before vs after (split est.)
   (function(){
-    var s=svg(640,330,'Time on the ground in Berlin, before and after Tunner');
-    var L=150,R=600,T=34,MX=60,x=function(m){return L+m/MX*(R-L);};
-    [0,15,30,45,60].forEach(function(m){s.appendChild(el('line',{x1:x(m),x2:x(m),y1:T-6,y2:312,class:'gl'}));s.appendChild(el('text',{x:x(m),y:20,'text-anchor':'middle',class:'tick'},m+' min'));});
-    var rows=[
-      ['Before',0,'~60 min','bad'],
-      ['Plane',1,[[0,5,'t'],[5,20,'u'],[20,50,'w'],[50,60,'t']]],
-      ['Crew',1,[[5,50,'w']]],
-      ['After',0,'30 min','good'],
-      ['Plane',1,[[0,5,'t'],[5,20,'u'],[20,30,'t']]],
-      ['Crew',1,[[5,20,'c']]]
-    ];
+    var s=el('svg',{viewBox:'0 0 640 330',role:'img','aria-label':'Time on the ground in Berlin: about 60 minutes before, 30 minutes after'});
+    var L=150,Rr=600,T=34,MX=60,x=function(m){return L+m/MX*(Rr-L);};
+    [0,15,30,45,60].forEach(function(m){el('line',{x1:x(m),x2:x(m),y1:T-6,y2:312,'class':'gl'},s);el('text',{x:x(m),y:20,'text-anchor':'middle','class':'tick'},s,m+(m===60?' min':''));});
+    var rows=[['Before',0,'~60 min','bad'],['Plane',1,[[0,5,'t'],[5,20,'u'],[20,50,'w'],[50,60,'t']]],['Crew',1,[[5,50,'w']]],['After',0,'30 min','good'],['Plane',1,[[0,5,'t'],[5,20,'u'],[20,30,'t']]],['Crew',1,[[5,20,'c']]]];
     var yy=T;
     rows.forEach(function(r){
-      if(!r[1]){var t=el('text',{x:0,y:yy+22,class:'lblb'});t.appendChild(el('tspan',{},r[0]+'  '));t.appendChild(el('tspan',{style:'fill:var(--'+r[3]+')'},r[2]));s.appendChild(t);yy+=34;return;}
-      s.appendChild(el('text',{x:20,y:yy+24,class:'lbl'},r[0]));
-      r[2].forEach(function(g){s.appendChild(el('rect',{x:x(g[0])+1,y:yy+6,width:x(g[1])-x(g[0])-2,height:28,rx:3,class:'seg-'+g[2]}));});
+      if(!r[1]){var t=el('text',{x:0,y:yy+22,'class':'glbb'},s);el('tspan',{},t,r[0]+'  ');el('tspan',{style:'fill:var(--'+r[3]+')'},t,r[2]);yy+=34;return;}
+      el('text',{x:20,y:yy+24,'class':'glbl'},s,r[0]);
+      r[2].forEach(function(g){el('rect',{x:x(g[0])+1,y:yy+6,width:x(g[1])-x(g[0])-2,height:28,rx:3,'class':'seg-'+g[2]},s);});
       yy+=42;
     });
     document.getElementById('gantt').appendChild(s);
   })();
 
-  function bind(sel,fn){
-    var steps=document.querySelectorAll(sel+' .step');
-    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});fn(0);return;}
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(+e.target.getAttribute('data-s'));}});},{rootMargin:'-40% 0px -45% 0px'});
-    steps.forEach(function(s){io.observe(s);});
-    if(steps[0])steps[0].classList.add('on');
-  }
-  function show(root,n){
-    root.querySelectorAll('.scene').forEach(function(sc){
-      var on=+sc.getAttribute('data-scene')===n;
-      sc.classList.toggle('on',on);
-      sc.querySelectorAll('.fill').forEach(function(f){f.style.width=on?f.getAttribute('data-w')+'%':'0';});
-    });
-  }
-  var A=document.querySelector('[data-chart="a"]'), Bc=document.querySelector('[data-chart="b"]');
-  var AC=['West Berlin, June 1948','The three options','Tons per day, first weeks'];
-  var ALEG={0:'<span><i style="background:var(--bad)"></i>Road and rail cut</span><span><i style="background:var(--sky);opacity:.5"></i>Air routes open</span>',
-    2:'<span><i style="background:var(--bad)"></i>Delivered</span><span><i style="border-top:2px dashed var(--ink);height:0;border-radius:0"></i>Need</span>'};
-  var BC=['Where goods wait','Black Friday, 13 August 1948','Tunner’s landing rhythm','One plane’s time on the ground in Berlin','Tons per day','The airlift in total','Same door, different time at the door'];
-  var BLEG={3:'<span><i style="background:var(--sky)"></i>Taxi</span><span><i style="background:var(--amber)"></i>Unload</span><span><i style="background:var(--bad)"></i>Crew off the plane</span><span><i style="background:var(--good)"></i>Crew served at the plane</span>',
-    4:'<span><i style="background:var(--good)"></i>Delivered</span><span><i style="background:var(--amber)"></i>Best day</span><span><i style="border-top:2px dashed var(--ink);height:0;border-radius:0"></i>Need</span>'};
-  function setA(s){show(A,s);document.getElementById('aCap').textContent=AC[s];document.getElementById('aLeg').innerHTML=ALEG[s]||'';}
-  function setB(s){show(Bc,s);document.getElementById('bCap').textContent=BC[s];document.getElementById('bLeg').innerHTML=BLEG[s]||'';clock(s===2);}
-  setA(0); bind('[data-chart="a"]',setA);
-  setB(0); bind('[data-chart="b"]',setB);
-
-  var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
-  function rvTick(){
-    var rr=rv.getBoundingClientRect(), span=rr.height-innerHeight;
-    var p=span>0?Math.min(1,Math.max(0,-rr.top/span)):1;
-    var n=Math.floor(p*2.6);
-    rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1);});
-  }
-  addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
+  // Scorecard
+  var G=[
+    ['Warehouse','store, then pick and ship','nnyyy'],
+    ['Pure cross-dock','loads arrive sorted per store','yynym'],
+    ['Cross-dock with sorting','loads sorted at the dock','ymnny'],
+    ['Hybrid','cross-dock plus a small buffer','mmymy'],
+    ['Berlin Airlift, 1948','planes straight to trucks','yynyn']
+  ];
+  var SYM={y:'✓',m:'~',n:'✗'}, LBL={y:'strong',m:'mixed',n:'weak'};
+  document.querySelector('#grid tbody').innerHTML=G.map(function(r){return '<tr data-r="'+r[2]+'"><td>'+r[0]+'<small>'+r[1]+'</small></td>'+r[2].split('').map(function(c){return '<td><span class="dot '+c+'" aria-label="'+LBL[c]+'">'+SYM[c]+'</span></td>';}).join('')+'</tr>';}).join('');
+  var grid=document.getElementById('grid'), btns=document.querySelectorAll('#sc button');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    var c=+b.dataset.c;
+    btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+    grid.classList.toggle('f',c>=0);
+    grid.querySelectorAll('th,td').forEach(function(cell){cell.classList.toggle('sel',c>=0&&cell.cellIndex===c+1);});
+    grid.querySelectorAll('tbody tr').forEach(function(tr){tr.classList.toggle('dim',c>=0&&tr.dataset.r[c]!=='y');});
+  });});
 })();
 </script>
 
