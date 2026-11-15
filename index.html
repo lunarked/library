@@ -5,150 +5,287 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>JR</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Stories about supply chain decisions, and small tools to try them.">
+<meta name="description" content="Stories about supply chain decisions, small tools to try them, and workbooks for running an operation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Newsreader:opsz,wght@6..72,400&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: stories lead in a wide reading column, set in the same type as the story pages. Tools and workbooks sit in a compact tinted panel beside them (below them on phones). */
+/* Layout: sticky header, grid-paper hero, then a sticky category sidebar beside card grids (catalog style). */
 :root{
-  color-scheme:light;
-  --bg:#FFFFFF; --ink:#141A22; --muted:#5A6370; --faint:#69717C; --line:#DDE0E4; --panel:#F3F3F1;
-  --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
-  --f-read:"Newsreader",Georgia,"Times New Roman",serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#FFFFFF; --bg-soft:#F9FAFB; --ink:#1E2939; --muted:#4B5563; --faint:#6B7280;
+  --line:#E5E7EB; --grid:#EEF0F3; --card:#FFFFFF;
+  --accent:#4F39F6; --accent-hi:#5B4CF5; --badge:#6366F1; --badge-ink:#FFFFFF;
+  --tint:rgba(99,102,241,.08); --pill:rgba(75,85,99,.12); --btn:#1E2939; --btn-ink:#FFFFFF; --sheet:#1E8E3E;
+  --f-text:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111214; --ink:#EDEDEE; --muted:#A9AEB6; --faint:#9096A0; --line:#2A2C30; --panel:#1A1C20; color-scheme:dark}}
+  --bg:#0F1218; --bg-soft:#141821; --ink:#E8EAF0; --muted:#A6ADBB; --faint:#8C93A1;
+  --line:#262B36; --grid:#1B202A; --card:#161A22;
+  --accent:#A5A0FF; --accent-hi:#B9B5FF; --badge:#6366F1; --badge-ink:#FFFFFF;
+  --tint:rgba(129,140,248,.14); --pill:rgba(166,173,187,.16); --btn:#E8EAF0; --btn-ink:#0F1218; --sheet:#2E9E50; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111214; --ink:#EDEDEE; --muted:#A9AEB6; --faint:#9096A0; --line:#2A2C30; --panel:#1A1C20; color-scheme:dark}
+  --bg:#0F1218; --bg-soft:#141821; --ink:#E8EAF0; --muted:#A6ADBB; --faint:#8C93A1;
+  --line:#262B36; --grid:#1B202A; --card:#161A22;
+  --accent:#A5A0FF; --accent-hi:#B9B5FF; --badge:#6366F1; --badge-ink:#FFFFFF;
+  --tint:rgba(129,140,248,.14); --pill:rgba(166,173,187,.16); --btn:#E8EAF0; --btn-ink:#0F1218; --sheet:#2E9E50; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-head);-webkit-font-smoothing:antialiased}
-.wrap{max-width:1040px;margin:0 auto;padding-block:44px 64px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
-ul{list-style:none;margin:0;padding:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:15px;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
 a{color:inherit}
-a:focus-visible,summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.gut{max-width:1200px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
-header{max-width:600px;padding-bottom:34px}
-h1{font:800 22px/1 var(--f-head);letter-spacing:-.01em;margin:0}
-.sub{font:400 19px/1.42 var(--f-read);margin:12px 0 0;text-wrap:pretty}
-.n{font:400 12px/1.5 var(--f-mono);color:var(--faint);margin:14px 0 0}
-.n a{text-decoration:none}
-.n a:hover{text-decoration:underline;text-underline-offset:3px}
+/* Header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.logo{font-size:22px;font-weight:500;letter-spacing:-.02em;text-decoration:none;line-height:1}
+.logo b{font-weight:500;color:var(--accent)}
+.logo small{display:block;font-size:11px;color:var(--faint);letter-spacing:0;margin-top:3px}
+nav{display:flex;align-items:center;gap:6px}
+nav a{font-size:14px;font-weight:500;text-decoration:none;padding:8px 12px;border-radius:999px}
+nav a:hover{background:var(--tint)}
+nav a.solid{background:var(--btn);color:var(--btn-ink)}
+nav a.solid:hover{opacity:.9;background:var(--btn)}
 
-.cols{display:grid;grid-template-columns:minmax(0,1fr) 336px;column-gap:56px;align-items:start}
-.label{font:400 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0}
+/* Hero */
+.hero{background-color:var(--bg-soft);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;background-position:center -1px;border-bottom:1px solid var(--line)}
+.hero .gut{padding-block:72px 64px;text-align:center}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0}
+h1{font-size:clamp(32px,5.4vw,52px);font-weight:700;letter-spacing:-.02em;line-height:1.08;margin:14px auto 0;max-width:16ch;text-wrap:balance}
+.lede{font-size:clamp(16px,2vw,18px);line-height:1.55;color:var(--muted);max-width:52ch;margin:18px auto 0;text-wrap:balance}
+.ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;text-decoration:none;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+.btn:hover{border-color:var(--faint)}
+.btn.dark{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:8px 28px;margin-top:36px;font-size:13px;color:var(--faint)}
+.stats strong{color:var(--ink);font-weight:600}
 
-/* Stories: the reading column */
-#stories .label{padding-bottom:12px}
-.s li{border-top:1px solid var(--line)}
-.s a{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:20px;row-gap:5px;padding:15px 0 17px;text-decoration:none}
-.s .t{font:700 20px/1.22 var(--f-head);letter-spacing:-.012em;text-wrap:balance}
-.s .y{font:400 12px/1 var(--f-mono);color:var(--faint);white-space:nowrap;padding-top:8px}
-.s .q{grid-column:1/-1;max-width:30em;font:400 17px/1.4 var(--f-read);color:var(--muted);text-wrap:pretty}
-.s a:hover .t{text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+/* Catalog */
+.cat-wrap{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;padding-block:48px 80px}
+aside{position:sticky;top:96px;align-self:start}
+.side-h{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 10px}
+.side-h:not(:first-child){margin-top:26px}
+aside ul{list-style:none;margin:0;padding:0;border-left:1px solid var(--line)}
+aside a{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--muted);text-decoration:none;padding:7px 10px 7px 12px;margin-left:-1px;border-left:2px solid transparent}
+aside a span{color:var(--faint);font-variant-numeric:tabular-nums}
+aside a:hover{color:var(--ink)}
+aside a.on{background:var(--tint);color:var(--ink);border-left-color:var(--accent);font-weight:500}
 
-/* Tools and workbooks: the compact panel */
-.built{background:var(--panel);border-radius:10px;padding:20px 20px 10px}
-.built section + section{margin-top:22px}
-.note{font:400 14px/1.4 var(--f-read);color:var(--muted);margin:8px 0 6px}
-.b a,.row{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;align-items:baseline;padding:7px 0;font:500 15px/1.35 var(--f-head);text-decoration:none}
-.b a:hover,.wb a:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
-.k{font:400 12px/1.35 var(--f-mono);color:var(--faint);white-space:nowrap}
-summary{list-style:none;cursor:pointer}
-summary::-webkit-details-marker{display:none}
-.k::after{content:" +"}
-details[open] .k::after{content:" \2212"}
-.wb{padding:0 0 8px 12px;border-left:1px solid var(--line);margin:2px 0 8px}
-.wb a{display:block;padding:5px 0;font:500 14px/1.35 var(--f-head);color:var(--muted)}
-.more{margin:6px 0 0;padding:13px 0 9px;border-top:1px solid var(--line)}
-.get{font:500 15px/1.35 var(--f-head);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px}
-.get:hover{text-decoration-thickness:2px}
-.get svg{margin-left:6px;color:var(--faint);vertical-align:-1px}
+.group + .group{margin-top:64px}
+.group-h{display:flex;align-items:baseline;gap:12px;margin:0 0 6px}
+.group-h h2{font-size:clamp(26px,3.4vw,32px);font-weight:700;letter-spacing:-.02em;margin:0}
+.group-p{font-size:15px;color:var(--muted);margin:0 0 8px;line-height:1.5;max-width:60ch}
 
-@media (max-width:860px){
-  .wrap{padding-block:30px 48px}
-  header{padding-bottom:26px}
-  .cols{grid-template-columns:minmax(0,1fr);row-gap:34px}
-  .sub{font-size:18px}
-  .s .t{font-size:19px}
-  .s .q{font-size:16px}
-  .b a,.row{padding:9px 0}
-  .wb a{padding:8px 0}
+.cat{padding-top:28px}
+.cat-head{display:flex;align-items:center;gap:12px}
+.cat-head h3{font-size:22px;font-weight:600;letter-spacing:-.02em;margin:0;white-space:nowrap}
+.count{font-size:12px;color:var(--muted);background:var(--pill);border-radius:999px;padding:2px 9px;white-space:nowrap}
+.rule{flex:1;height:1px;background:var(--line);min-width:12px}
+.cat-sub{font-size:15px;line-height:1.5;color:var(--muted);margin:8px 0 18px;max-width:62ch}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:inherit;transition:border-color .2s,transform .2s,box-shadow .2s}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));transform:translateY(-2px);box-shadow:0 8px 24px -14px rgba(30,41,57,.35)}
+.card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.media{position:relative;padding:5px}
+.media img{display:block;width:100%;height:auto;max-width:100%;aspect-ratio:800/510;object-fit:cover;object-position:top left;border-radius:8px;border:1px solid var(--line);background:var(--bg-soft)}
+.badge{position:absolute;top:14px;right:14px;font-size:12px;font-weight:600;background:var(--badge);color:var(--badge-ink);border-radius:4px;padding:3px 7px}
+.body{display:flex;flex-direction:column;gap:8px;padding:12px 16px 16px;flex:1}
+.body h4{font-size:16px;font-weight:600;margin:0;line-height:1.35;letter-spacing:-.01em}
+.body p{font-size:14px;line-height:1.55;color:var(--muted);margin:0;flex:1}
+.cta{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.cta svg{transition:transform .2s}
+.card:hover .cta svg{transform:translateX(3px)}
+
+/* Workbooks: sets as compact lists */
+.sets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.set{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:14px 16px 8px;min-width:0}
+.set-h{display:flex;align-items:center;gap:10px;margin:0 0 6px}
+.set-h h4{font-size:16px;font-weight:600;letter-spacing:-.01em;margin:0}
+.set-h .count{margin-left:auto}
+.sh{width:22px;height:22px;border-radius:5px;background:var(--sheet);display:grid;place-items:center;flex:none}
+.set ul{list-style:none;margin:0;padding:0}
+.set li + li{border-top:1px solid var(--line)}
+.set li a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;font-size:14px;color:var(--ink);text-decoration:none;line-height:1.35}
+.set li a::after{content:"";width:7px;height:7px;border-top:1.5px solid var(--faint);border-right:1.5px solid var(--faint);transform:rotate(45deg);flex:none;margin-right:3px}
+.set li a:hover{color:var(--accent)}
+.set li a:hover::after{border-color:var(--accent)}
+.set li a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.get{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+.get:hover{text-decoration:underline;text-underline-offset:3px}
+.yr{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+footer{border-top:1px solid var(--line)}
+footer .gut{padding-block:24px 36px;font-size:13px;color:var(--faint)}
+
+@media (max-width:1080px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:820px){
+  .cat-wrap{grid-template-columns:minmax(0,1fr);padding-block:32px 56px}
+  aside{display:none}
 }
+@media (max-width:560px){
+  .hd{padding-block:12px}
+  .logo small{display:none}
+  nav a:not(.solid){padding:8px 10px}
+  .hero .gut{padding-block:44px 40px}
+  .grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .cat-head h3{font-size:20px;white-space:normal}
+  .group + .group{margin-top:48px}
+  .sets{grid-template-columns:minmax(0,1fr);gap:14px}
+  nav a:not(.solid){padding:8px 8px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card,.cta svg{transition:none}.card:hover{transform:none}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>JR</h1>
-    <p class="sub">I write up supply chain decisions I find interesting, and build small tools to try them myself.</p>
-    <p class="n"><a href="#stories"><span data-count="stories">9</span> stories</a> · <a href="#tools"><span data-count="tools">7</span> tools</a> · <a href="#workbooks"><span data-count="workbooks">38</span> workbooks</a></p>
-  </header>
 
-  <div class="cols">
-    <!-- Stories: newest event first. Each row is the title, the year of the event, and the one question the story answers. -->
-    <section id="stories" aria-labelledby="h-stories">
-      <h2 class="label" id="h-stories">Stories</h2>
-      <ul class="s">
-        <li><a href="stories/mcdonalds-ecoli-onions.html"><span class="t">McDonald's E. coli onions</span><span class="y">2024</span><span class="q">When you don't know yet which part is bad, how wide do you pull?</span></a></li>
-        <li><a href="stories/delta-united-crowdstrike.html"><span class="t">Delta vs United, CrowdStrike outage</span><span class="y">2024</span><span class="q">When your systems go down, how fast can you see where everything is again?</span></a></li>
-        <li><a href="stories/tesla-grunheide-outage.html"><span class="t">Tesla Grünheide power outage</span><span class="y">2024</span><span class="q">What is it worth to never depend on one power tower again?</span></a></li>
-        <li><a href="stories/adidas-yeezy.html"><span class="t">Adidas Yeezy inventory</span><span class="y">2022</span><span class="q">When stock you can't sell the normal way fills your warehouses, how fast do you sell it off?</span></a></li>
-        <li><a href="stories/ever-given-suez.html"><span class="t">Ever Given blocks the Suez Canal</span><span class="y">2021</span><span class="q">When a route closes and nobody knows for how long, when do you stop waiting?</span></a></li>
-        <li><a href="stories/peloton.html"><span class="t">Peloton overbuilds for the pandemic</span><span class="y">2020</span><span class="q">How much should you build for a demand spike that may not last?</span></a></li>
-        <li><a href="stories/zara-near-shoring.html"><span class="t">Zara near-shoring</span><span class="y">1990s</span><span class="q">Is it worth paying more per item to get clothes into stores faster?</span></a></li>
-        <li><a href="stories/berlin-airlift.html"><span class="t">First ever cross-dock, Berlin&nbsp;Airlift</span><span class="y">1948</span><span class="q">How do you move more goods through one dock with no room to store them?</span></a></li>
-        <li><a href="stories/supply-allocation-models.html"><span class="t">Supply allocation models</span><span class="y">Explainer</span><span class="q">How do you decide who gets supply when there is not enough for everyone?</span></a></li>
+<header>
+  <div class="gut hd">
+    <a class="logo" href="#top" aria-label="JR, back to top">J<b>R</b><small>Supply chain library</small></a>
+    <nav aria-label="Sections">
+      <a href="#stories">Stories</a>
+      <a href="#tools">Tools</a>
+      <a class="solid" href="#workbooks">Workbooks</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="gut">
+      <p class="eyebrow">Supply chain decisions</p>
+      <h1>Stories, tools and workbooks on supply chain decisions</h1>
+      <p class="lede">I write up supply chain decisions I find interesting, and build small tools to try them myself.</p>
+      <div class="ctas">
+        <a class="btn" href="#tools">Browse tools</a>
+        <a class="btn dark" href="#stories">Read stories <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+      <div class="stats"><span><strong data-count="stories">9</strong> decision stories</span><span><strong data-count="tools">7</strong> interactive tools</span><span><strong data-count="workbooks">38</strong> workbooks</span></div>
+    </div>
+  </section>
+
+  <div class="gut cat-wrap">
+    <aside aria-label="Browse by category">
+      <p class="side-h">Stories</p>
+      <ul>
+        <li><a href="#cat-disruptions">Disruptions <span>4</span></a></li>
+        <li><a href="#cat-bets">Big supply bets <span>3</span></a></li>
+        <li><a href="#cat-history">History and models <span>2</span></a></li>
       </ul>
-    </section>
+      <p class="side-h">Tools</p>
+      <ul>
+        <li><a href="#cat-allocation">Allocation <span>2</span></a></li>
+        <li><a href="#cat-planning">Planning and timing <span>3</span></a></li>
+        <li><a href="#cat-inventory">Inventory and operations <span>2</span></a></li>
+      </ul>
+      <p class="side-h">Workbooks</p>
+      <ul>
+        <li><a href="#workbooks">All sets <span>38</span></a></li>
+      </ul>
+    </aside>
 
-    <!-- Tools and workbooks: one line each. A new workbook goes inside its set; the counts update themselves. -->
-    <div class="built">
-      <section id="tools" aria-labelledby="h-tools">
-        <h2 class="label" id="h-tools">Tools</h2>
-        <p class="note">Interactive. Change the inputs and see what happens.</p>
-        <ul class="b">
-          <li><a href="tools/order-allocation-tool.html">Order allocation</a></li>
-          <li><a href="tools/datacenter-go-live-planner.html">Data center go-live planner</a></li>
-          <li><a href="tools/constrained-part-allocation.html">Constrained part allocation</a></li>
-          <li><a href="tools/launch-build-quantity.html">Launch build quantity</a></li>
-          <li><a href="tools/cny-order-timing.html">Chinese New Year order timing</a></li>
-          <li><a href="tools/safety-stock-policy-lab.html">Safety stock policy lab</a></li>
-          <li><a href="tools/utr-ops-simulator.html">Repair warehouse simulator</a></li>
-        </ul>
+    <div>
+      <section class="group" id="stories" aria-labelledby="stories-h">
+        <div class="group-h"><h2 id="stories-h">Stories</h2></div>
+        <p class="group-p">Scroll stories about real decisions. Each one answers one question.</p>
+
+        <section class="cat" id="cat-disruptions" aria-labelledby="cat-disruptions-h">
+          <div class="cat-head"><h3 id="cat-disruptions-h">Disruptions</h3><span class="count">4 stories</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">Something breaks without warning. How fast can the network recover?</p>
+          <div class="grid">
+            <a class="card" href="stories/mcdonalds-ecoli-onions.html"><div class="media"><img src="thumbs/mcdonalds-ecoli-onions.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2024</span><h4>McDonald's E. coli onions</h4><p>When you don't know yet which part is bad, how wide do you pull?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/delta-united-crowdstrike.html"><div class="media"><img src="thumbs/delta-united-crowdstrike.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2024</span><h4>Delta vs United, CrowdStrike outage</h4><p>When your systems go down, how fast can you see where everything is again?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/tesla-grunheide-outage.html"><div class="media"><img src="thumbs/tesla-grunheide-outage.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2024</span><h4>Tesla Grünheide power outage</h4><p>What is it worth to never depend on one power tower again?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/ever-given-suez.html"><div class="media"><img src="thumbs/ever-given-suez.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2021</span><h4>Ever Given blocks the Suez Canal</h4><p>When a route closes and nobody knows for how long, when do you stop waiting?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
+        <section class="cat" id="cat-bets" aria-labelledby="cat-bets-h">
+          <div class="cat-head"><h3 id="cat-bets-h">Big supply bets</h3><span class="count">3 stories</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">Where to make things, and how much to build when demand is unclear.</p>
+          <div class="grid">
+            <a class="card" href="stories/adidas-yeezy.html"><div class="media"><img src="thumbs/adidas-yeezy.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2022</span><h4>Adidas Yeezy inventory</h4><p>When stock you can't sell the normal way fills your warehouses, how fast do you sell it off?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/peloton.html"><div class="media"><img src="thumbs/peloton.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">2020</span><h4>Peloton overbuilds for the pandemic</h4><p>How much should you build for a demand spike that may not last?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/zara-near-shoring.html"><div class="media"><img src="thumbs/zara-near-shoring.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">1990s</span><h4>Zara near-shoring</h4><p>Is it worth paying more per item to get clothes into stores faster?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
+        <section class="cat" id="cat-history" aria-labelledby="cat-history-h">
+          <div class="cat-head"><h3 id="cat-history-h">History and models</h3><span class="count">2 stories</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">Ideas that still shape how supply is moved and shared today.</p>
+          <div class="grid">
+            <a class="card" href="stories/berlin-airlift.html"><div class="media"><img src="thumbs/berlin-airlift.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">1948</span><h4>First ever cross-dock, Berlin&nbsp;Airlift</h4><p>How do you move more goods through one dock with no room to store them?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="stories/supply-allocation-models.html"><div class="media"><img src="thumbs/supply-allocation-models.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Story</span></div><div class="body"><span class="yr">Explainer</span><h4>Supply allocation models</h4><p>How do you decide who gets supply when there is not enough for everyone?</p><span class="cta">Read story <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
       </section>
-      <section id="workbooks" aria-labelledby="h-workbooks">
-        <h2 class="label" id="h-workbooks">Workbooks</h2>
-        <p class="note">Spreadsheet sets for running an operation, each with an Excel download.</p>
-        <ul class="b">
-          <li><details><summary><span class="row"><span>Amazon FBA</span><span class="k">11</span></span></summary>
-            <ul class="wb"><li><a href="fba/product-selection.html">Product selection</a></li><li><a href="fba/unit-economics.html">Unit economics and pricing</a></li><li><a href="fba/sourcing-suppliers.html">Sourcing and suppliers</a></li><li><a href="fba/compliance.html">Compliance</a></li><li><a href="fba/demand-and-inventory.html">Demand and inventory</a></li><li><a href="fba/inbound-logistics.html">Inbound logistics</a></li><li><a href="fba/listing-and-launch.html">Listing and launch</a></li><li><a href="fba/advertising.html">Advertising</a></li><li><a href="fba/returns-quality.html">Returns and quality</a></li><li><a href="fba/finance-tax.html">Finance and tax</a></li><li><a href="fba/management-growth.html">Management and growth</a></li></ul>
-          </details></li>
-          <li><details><summary><span class="row"><span>E-scooter operations</span><span class="k">10</span></span></summary>
-            <ul class="wb"><li><a href="escooter/city-allocation.html">City fleet allocation</a></li><li><a href="escooter/fleet-health.html">Fleet health</a></li><li><a href="escooter/repair-maintenance.html">Repair and maintenance</a></li><li><a href="escooter/parts-batteries.html">Parts and batteries</a></li><li><a href="escooter/field-operations.html">Field operations</a></li><li><a href="escooter/npi.html">New product introduction</a></li><li><a href="escooter/supply-suppliers.html">Supply and suppliers</a></li><li><a href="escooter/unit-economics.html">Unit economics</a></li><li><a href="escooter/safety-compliance.html">Safety and compliance</a></li><li><a href="escooter/governance.html">Ops governance</a></li></ul>
-          </details></li>
-          <li><details><summary><span class="row"><span>Network planning</span><span class="k">8</span></span></summary>
-            <ul class="wb"><li><a href="planning/demand-forecast.html">Long-range demand forecast</a></li><li><a href="planning/network-capacity.html">Network capacity and gap</a></li><li><a href="planning/site-pipeline.html">Site and footprint pipeline</a></li><li><a href="planning/transport-plan.html">Middle-mile transport plan</a></li><li><a href="planning/labor-plan.html">Labor plan</a></li><li><a href="planning/cost-capex.html">Cost and capex model</a></li><li><a href="planning/scenarios-risk.html">Scenarios and risk register</a></li><li><a href="planning/planning-governance.html">Planning governance</a></li></ul>
-          </details></li>
-          <li><details><summary><span class="row"><span>Manufacturing</span><span class="k">9</span></span></summary>
-            <ul class="wb"><li><a href="manufacturing/bom-master.html">BOM and master data</a></li><li><a href="manufacturing/production-planning.html">Production planning</a></li><li><a href="manufacturing/procurement.html">Supply and procurement</a></li><li><a href="manufacturing/production.html">Production execution</a></li><li><a href="manufacturing/quality.html">Quality</a></li><li><a href="manufacturing/inventory.html">Inventory control</a></li><li><a href="manufacturing/product-cost.html">Product cost</a></li><li><a href="manufacturing/compliance.html">Product compliance</a></li><li><a href="manufacturing/governance.html">Manufacturing governance</a></li></ul>
-          </details></li>
-        </ul>
-        <!-- Placeholder target: the owner will replace this link with his own. -->
-        <p class="more"><a class="get" href="https://workspace.google.com/marketplace/app/sheetsfinance_stock_market_analysis/454765795033" target="_blank" rel="noopener">Get one of my templates<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg></a></p>
+
+      <section class="group" id="tools" aria-labelledby="tools-h">
+        <div class="group-h"><h2 id="tools-h">Tools</h2></div>
+        <p class="group-p">Interactive. Change the inputs and see what happens.</p>
+
+        <section class="cat" id="cat-allocation" aria-labelledby="cat-allocation-h">
+          <div class="cat-head"><h3 id="cat-allocation-h">Allocation</h3><span class="count">2 tools</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">Who gets the stock when there is not enough for everyone.</p>
+          <div class="grid">
+            <a class="card" href="tools/order-allocation-tool.html"><div class="media"><img src="thumbs/order-allocation-tool.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Order allocation</h4><p>For a sales call. Enter a quantity and see the earliest date you can promise.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="tools/constrained-part-allocation.html"><div class="media"><img src="thumbs/constrained-part-allocation.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Constrained part allocation</h4><p>Four vehicle lines share a scarce part. Compare four rules for who gets it first.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
+        <section class="cat" id="cat-planning" aria-labelledby="cat-planning-h">
+          <div class="cat-head"><h3 id="cat-planning-h">Planning and timing</h3><span class="count">3 tools</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">When to order and how much, before the date you cannot move.</p>
+          <div class="grid">
+            <a class="card" href="tools/datacenter-go-live-planner.html"><div class="media"><img src="thumbs/datacenter-go-live-planner.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Data center go-live planner</h4><p>Set an opening date and see the last day to order each piece of equipment.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="tools/launch-build-quantity.html"><div class="media"><img src="thumbs/launch-build-quantity.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Launch build quantity</h4><p>Decide how many parts to order for a new device before anyone knows how it will sell.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="tools/cny-order-timing.html"><div class="media"><img src="thumbs/cny-order-timing.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Chinese New Year order timing</h4><p>Find the last day to order before factories close, and how much stock to build ahead.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
+        <section class="cat" id="cat-inventory" aria-labelledby="cat-inventory-h">
+          <div class="cat-head"><h3 id="cat-inventory-h">Inventory and operations</h3><span class="count">2 tools</span><span class="rule" aria-hidden="true"></span></div>
+          <p class="cat-sub">How much stock to hold, and how a warehouse runs week to week.</p>
+          <div class="grid">
+            <a class="card" href="tools/safety-stock-policy-lab.html"><div class="media"><img src="thumbs/safety-stock-policy-lab.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Safety stock policy lab</h4><p>Three ways to set safety stock, run side by side on the same demand.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+            <a class="card" href="tools/utr-ops-simulator.html"><div class="media"><img src="thumbs/utr-ops-simulator.webp" alt="" loading="lazy" width="800" height="510"><span class="badge">Tool</span></div><div class="body"><h4>Repair warehouse simulator</h4><p>A year in an e-scooter repair warehouse. Change staff, shifts and parts.</p><span class="cta">Open tool <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span></div></a>
+          </div>
+        </section>
+      </section>
+
+      <section class="group" id="workbooks" aria-labelledby="workbooks-h">
+        <div class="group-h"><h2 id="workbooks-h">Workbooks</h2></div>
+        <p class="group-p">Spreadsheet sets for running an operation, each with an Excel download.</p>
+        <div class="sets">
+          <div class="set" id="set-fba"><div class="set-h"><span class="sh" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z"/></svg></span><h4>Amazon FBA</h4><span class="count">11</span></div><ul><li><a href="fba/product-selection.html">Product selection</a></li><li><a href="fba/unit-economics.html">Unit economics and pricing</a></li><li><a href="fba/sourcing-suppliers.html">Sourcing and suppliers</a></li><li><a href="fba/compliance.html">Compliance</a></li><li><a href="fba/demand-and-inventory.html">Demand and inventory</a></li><li><a href="fba/inbound-logistics.html">Inbound logistics</a></li><li><a href="fba/listing-and-launch.html">Listing and launch</a></li><li><a href="fba/advertising.html">Advertising</a></li><li><a href="fba/returns-quality.html">Returns and quality</a></li><li><a href="fba/finance-tax.html">Finance and tax</a></li><li><a href="fba/management-growth.html">Management and growth</a></li></ul></div><div class="set" id="set-escooter"><div class="set-h"><span class="sh" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z"/></svg></span><h4>E-scooter operations</h4><span class="count">10</span></div><ul><li><a href="escooter/city-allocation.html">City fleet allocation</a></li><li><a href="escooter/fleet-health.html">Fleet health</a></li><li><a href="escooter/repair-maintenance.html">Repair and maintenance</a></li><li><a href="escooter/parts-batteries.html">Parts and batteries</a></li><li><a href="escooter/field-operations.html">Field operations</a></li><li><a href="escooter/npi.html">New product introduction</a></li><li><a href="escooter/supply-suppliers.html">Supply and suppliers</a></li><li><a href="escooter/unit-economics.html">Unit economics</a></li><li><a href="escooter/safety-compliance.html">Safety and compliance</a></li><li><a href="escooter/governance.html">Ops governance</a></li></ul></div><div class="set" id="set-planning"><div class="set-h"><span class="sh" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z"/></svg></span><h4>Network planning</h4><span class="count">8</span></div><ul><li><a href="planning/demand-forecast.html">Long-range demand forecast</a></li><li><a href="planning/network-capacity.html">Network capacity and gap</a></li><li><a href="planning/site-pipeline.html">Site and footprint pipeline</a></li><li><a href="planning/transport-plan.html">Middle-mile transport plan</a></li><li><a href="planning/labor-plan.html">Labor plan</a></li><li><a href="planning/cost-capex.html">Cost and capex model</a></li><li><a href="planning/scenarios-risk.html">Scenarios and risk register</a></li><li><a href="planning/planning-governance.html">Planning governance</a></li></ul></div><div class="set" id="set-manufacturing"><div class="set-h"><span class="sh" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#fff" width="13" height="13"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h2v2H7V7zm0 4h2v2H7v-2zm0 4h2v2H7v-2zm4-8h6v2h-6V7zm0 4h6v2h-6v-2zm0 4h6v2h-6v-2z"/></svg></span><h4>Manufacturing</h4><span class="count">9</span></div><ul><li><a href="manufacturing/bom-master.html">BOM and master data</a></li><li><a href="manufacturing/production-planning.html">Production planning</a></li><li><a href="manufacturing/procurement.html">Supply and procurement</a></li><li><a href="manufacturing/production.html">Production execution</a></li><li><a href="manufacturing/quality.html">Quality</a></li><li><a href="manufacturing/inventory.html">Inventory control</a></li><li><a href="manufacturing/product-cost.html">Product cost</a></li><li><a href="manufacturing/compliance.html">Product compliance</a></li><li><a href="manufacturing/governance.html">Manufacturing governance</a></li></ul></div>
+        </div>
+        <a class="get" href="https://workspace.google.com/marketplace/app/sheetsfinance_stock_market_analysis/454765795033" target="_blank" rel="noopener">Get one of my templates in the Google Sheet store <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9"/></svg></a>
       </section>
     </div>
   </div>
-</div>
+</main>
+
+<footer><div class="gut">Stories, tools and workbooks on supply chain decisions. Updated Nov 2026.</div></footer>
+
 <script>
-/* Keeps the counts right when a page is added to a list. The numbers written in the HTML are the fallback. */
+/* Keeps the counts right when a card or workbook is added. The numbers written in the HTML are the fallback. */
 (function(){
   function n(sel){return document.querySelectorAll(sel).length}
-  var c={stories:n('#stories .s > li'),tools:n('#tools .b > li'),workbooks:n('#workbooks .wb > li')};
+  var c={stories:n('#stories .card'),tools:n('#tools .card'),workbooks:n('#workbooks .set li')};
   document.querySelectorAll('[data-count]').forEach(function(e){var v=c[e.getAttribute('data-count')];if(v)e.textContent=v});
-  document.querySelectorAll('#workbooks details').forEach(function(d){var k=d.querySelector('.k'),v=d.querySelectorAll('.wb > li').length;if(k&&v)k.textContent=v});
+  document.querySelectorAll('.set').forEach(function(d){var k=d.querySelector('.count');if(k)k.textContent=d.querySelectorAll('li').length});
+  var w=document.querySelector('aside a[href="#workbooks"] span');if(w)w.textContent=c.workbooks;
+})();
+(function(){
+  var links=[].slice.call(document.querySelectorAll('aside a'));
+  var cats=links.map(function(a){return document.querySelector(a.getAttribute('href'))}).filter(Boolean);
+  if(!('IntersectionObserver' in window)||!cats.length)return;
+  var vis={};
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){vis[e.target.id]=e.isIntersecting});
+    var cur=null;for(var i=0;i<cats.length;i++){if(vis[cats[i].id]){cur=cats[i].id;break}}
+    if(!cur)return;
+    links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+cur)});
+  },{rootMargin:'-90px 0px -55% 0px'});
+  cats.forEach(function(c){io.observe(c)});
 })();
 </script>
 </body>
