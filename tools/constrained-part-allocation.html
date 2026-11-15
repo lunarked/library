@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: problem banner and need-vs-get bar, then one Gantt per rule (who gets parts first, what gets parked), then the scoreboard. */
+/* Layout: need-vs-get bar, then one Gantt per rule (who gets parts first, what gets parked), then the scoreboard. */
 :root{
   --bg:#EEF1F3; --surface:#FFFFFF; --ink:#141B22; --muted:#5B6873; --line:#D3DAE0; --track:#E4E9ED;
   --accent:#1F5FA8; --accent-soft:#DCE8F6;
@@ -44,12 +44,6 @@ button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
 button:focus-visible,input:focus-visible,.tog:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* verdict */
-.verdict{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px 18px;align-items:center;border-radius:12px;padding:18px;border:2px solid var(--vc);background:var(--vs)}
-.verdict .big{width:64px;height:64px;border-radius:50%;background:var(--vc);color:var(--surface);display:grid;place-items:center;font:800 32px var(--f-display)}
-.verdict h3{font:800 clamp(23px,3.8vw,33px)/1.04 var(--f-display);text-transform:uppercase;margin:0;color:var(--vc);text-wrap:balance}
-.verdict p{margin:4px 0 0;max-width:72ch}
-.v-late{--vc:var(--late);--vs:var(--late-soft)} .v-warn{--vc:var(--warn);--vs:var(--warn-soft)} .v-ok{--vc:var(--ok);--vs:var(--ok-soft)}
 
 /* controls */
 .controls{display:flex;flex-wrap:wrap;gap:16px 26px;align-items:end}
@@ -145,8 +139,6 @@ td input[type=number]{width:84px;border:1px solid var(--line);border-radius:5px;
 
 @media (max-width:900px){.gantts{grid-template-columns:minmax(0,1fr)}.linechips{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){
-  .verdict{grid-template-columns:minmax(0,1fr)}
-  .verdict .big{width:46px;height:46px;font-size:24px}
   .gt{--lab:96px}
   .gl .n{display:none}
   .gc{padding:11px}
@@ -172,8 +164,6 @@ td input[type=number]{width:84px;border:1px solid var(--line);border-radius:5px;
     <h1>Constrained part <em>allocation</em></h1>
     <p class="lede">One part is short and four vehicle lines need it. Every other part keeps arriving, so a vehicle without the missing part is built and parked until it comes. You decide who gets the parts you have.</p>
   </header>
-
-  <section id="verdict" class="verdict v-late" aria-live="polite"></section>
 
   <section class="panel need" aria-label="The problem">
     <h2>The problem</h2>
@@ -365,7 +355,6 @@ function render(){
   const pick=res[pickIdx];
 
   // problem
-  const v=document.getElementById('verdict');
   const shortUnits=plan-supply;
   document.getElementById('got').style.width=(supply/plan*100)+'%';
   document.getElementById('got').textContent=`${P.Kit} you get: ${fmt(supply)}`;
@@ -373,14 +362,6 @@ function render(){
   document.getElementById('shortlab').hidden=shortUnits<=0;
   document.getElementById('needbar').setAttribute('aria-label',`Need ${fmt(plan)}, get ${fmt(supply)}, short ${fmt(shortUnits)}`);
   document.getElementById('needtot').textContent=`Plan needs ${fmt(plan)}`;
-  if(shortUnits<=0){
-    v.className='verdict v-ok';
-    v.innerHTML=`<div class="big">✓</div><div><h3>No shortage this quarter</h3><p>Every rule builds the full plan. Move the slider left to cut the ${P.many} you get.</p></div>`;
-  }else{
-    v.className='verdict v-late';
-    v.innerHTML=`<div class="big">!</div><div><h3>Short ${fmt(shortUnits)} ${P.kit}. Who gets the ${fmt(supply)} you have?</h3>
-      <p>Four vehicle lines planned ${fmt(plan)} vehicles. Without the ${P.one}, ${fmt(shortUnits)} of them are built and parked, with the cash already spent. Each rule below picks a different set of vehicles to park.</p></div>`;
-  }
   document.getElementById('linechips').innerHTML=lines.map(l=>{
     const why=l.id==='pickup'?`Top margin: ${money(l.margin)} each`:l.id==='suv'?`${fmt(l.backlog)} orders waiting`:l.id==='van'?`Contract: must build ${fmt(l.min)}`:`Launching: needs ${fmt(l.min)}`;
     return `<div class="lc" style="--lc:var(${l.c})"><b>${l.name}</b><span>Plan ${fmt(l.plan)}</span><span>${why}</span></div>`;}).join('');
