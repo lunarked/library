@@ -1,13 +1,5 @@
 [
   {
-    "slug": "mcdonalds-ecoli-onions",
-    "title": "McDonald's pulled the Quarter Pounder in 1 in 5 US restaurants and traced the E. coli to one onion plant",
-    "description": "In 2024 an E. coli outbreak was linked to the Quarter Pounder. Shows how it was traced to one onion plant, and how wide to pull a product before the cause is known.",
-    "kicker": "Decision story · McDonald's, 2024",
-    "hero": "1 in 5",
-    "caption": "US McDonald's restaurants pulled the Quarter Pounder"
-  },
-  {
     "slug": "delta-united-crowdstrike",
     "title": "How Delta, United and American recovered from the CrowdStrike outage",
     "description": "In July 2024 a faulty software update crashed Windows computers and grounded US airlines. Follows the week day by day: what Delta, United and American did, and why Delta needed five days to fly normally again.",
@@ -30,14 +22,6 @@
     "kicker": "Decision story · Adidas, 2022",
     "hero": "€1.2B",
     "caption": "of Yeezy shoes stuck in its warehouses"
-  },
-  {
-    "slug": "ever-given-suez",
-    "title": "One ship, sideways, and 422 ships waiting",
-    "description": "In 2021 a container ship blocked the Suez Canal for six days. Covers the choice to wait or sail around Africa, and the rush at Europe's ports afterwards.",
-    "kicker": "Decision story · Suez Canal, 2021",
-    "hero": "422",
-    "caption": "ships waiting while the Ever Given blocked the canal"
   },
   {
     "slug": "peloton",
