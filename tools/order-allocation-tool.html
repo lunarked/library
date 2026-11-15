@@ -9,216 +9,283 @@
 <title>Tool: Order allocation</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: the customer's ask (quantity + date) first, then what we can promise as answer cards, then free capacity by week, then where space is tight at each step. */
+/* Layout: one phone-width column in the order of a sales call, with a thin line between sections. Who is asking and how many, then the earliest dates you can promise, then a calendar to check the date the customer wants with the answer under it, then the capacity grid where swaps can be changed.
+   Plain theme: one text face, 1px lines, one accent color for what is selected or can be tapped. Any other color carries data: the status marks, the calendar, the bars and the capacity grid. */
 :root{
-  --bg:#EEF1F3; --surface:#FFFFFF; --ink:#141B22; --muted:#5B6873; --line:#D3DAE0; --track:#E4E9ED;
-  --accent:#1F5FA8; --accent-soft:#DCE8F6;
-  --late:#C8322A; --late-soft:#F8DEDB; --warn:#B87406; --warn-soft:#F7E8CC; --ok:#2C8A55; --ok-soft:#D9EFE2;
-  --firm:#5146B8; --slack:#B5AEEA; --free:#EFA22F; --freeink:#4A2E00; --new:#14A38B; --newink:#FFFFFF;
-  --wait:#C9D1D8; --make:#3C9BC2; --ship:#1F5FA8; --wh:#D9A21B; --truck:#7E6BC4;
-  --f-display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
-  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --bg:#FFFFFF; --ink:#15161C; --muted:#5F6370; --line:#E2E3E9; --edge:#C9CBD4; --track:#F0F1F4;
+  --accent:#4B40B8; --accent-soft:#F1F0FC;
+  /* data colors */
+  --ok:#1D8650; --ok-soft:#DDF2E6;        /* free space */
+  --swap:#4B40B8; --swap-soft:#E6E3FA;    /* booked orders move */
+  --warn:#A86400; --warn-soft:#FBEACB;    /* another customer waits */
+  --bad:#C2332B;                          /* does not fit */
+  --firm:#4B40B8; --firmink:#FFFFFF; --slack:#B7B0EC; --slackink:#15161C; --free:#6FCB96; --freeink:#0B3A20; --new:#15161C; --newink:#FFFFFF;
+  --stripe:rgba(255,255,255,.55);
+  --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
-  --accent:#6FA8EA; --accent-soft:#1B2B40;
-  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
-  --firm:#7C70E0; --slack:#4B4578; --free:#E8A93A; --freeink:#2A1A00; --new:#2CC2A6; --newink:#06201B;
-  --wait:#34404B; --make:#5BB6DB; --ship:#6FA8EA; --wh:#E2B23C; --truck:#A08FE6; color-scheme:dark}}
+  --bg:#101116; --ink:#ECEDF2; --muted:#9A9EAC; --line:#272932; --edge:#3B3E4B; --track:#1C1E26;
+  --accent:#A49CF8; --accent-soft:#201E3D;
+  --ok:#58CC8D; --ok-soft:#143323;
+  --swap:#9A90F5; --swap-soft:#2A2658;
+  --warn:#EBAE45; --warn-soft:#3A2B10;
+  --bad:#F2706A;
+  --firm:#7469DD; --firmink:#FFFFFF; --slack:#3D3870; --slackink:#ECEDF2; --free:#2F9860; --freeink:#FFFFFF; --new:#ECEDF2; --newink:#15161C;
+  --stripe:rgba(255,255,255,.3); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0E1318; --surface:#161D24; --ink:#E5EBF0; --muted:#94A2AD; --line:#2A353F; --track:#1E2730;
-  --accent:#6FA8EA; --accent-soft:#1B2B40;
-  --late:#F06A5F; --late-soft:#3A1D1B; --warn:#E8A93A; --warn-soft:#3A2C14; --ok:#5CC98A; --ok-soft:#173226;
-  --firm:#7C70E0; --slack:#4B4578; --free:#E8A93A; --freeink:#2A1A00; --new:#2CC2A6; --newink:#06201B;
-  --wait:#34404B; --make:#5BB6DB; --ship:#6FA8EA; --wh:#E2B23C; --truck:#A08FE6; color-scheme:dark}
+  --bg:#101116; --ink:#ECEDF2; --muted:#9A9EAC; --line:#272932; --edge:#3B3E4B; --track:#1C1E26;
+  --accent:#A49CF8; --accent-soft:#201E3D;
+  --ok:#58CC8D; --ok-soft:#143323;
+  --swap:#9A90F5; --swap-soft:#2A2658;
+  --warn:#EBAE45; --warn-soft:#3A2B10;
+  --bad:#F2706A;
+  --firm:#7469DD; --firmink:#FFFFFF; --slack:#3D3870; --slackink:#ECEDF2; --free:#2F9860; --freeink:#FFFFFF; --new:#ECEDF2; --newink:#15161C;
+  --stripe:rgba(255,255,255,.3); color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
-.wrap{max-width:1000px;margin:0 auto;padding-block:26px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
-.eyebrow{font:500 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-h1{font-family:var(--f-display);font-weight:800;font-size:clamp(32px,5.4vw,52px);line-height:.98;margin:4px 0 0;text-transform:uppercase;text-wrap:balance}
-h1 em{font-style:normal;color:var(--accent)}
-.lede{margin:8px 0 0;color:var(--muted);max-width:66ch}
-h2{font-family:var(--f-display);font-weight:700;font-size:24px;text-transform:uppercase;letter-spacing:.01em;margin:0;line-height:1.1}
-.sub{margin:2px 0 12px;color:var(--muted);font-size:14px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
-button,input,select{font:inherit;color:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding-block:24px 72px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{padding-bottom:24px}
+.eyebrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.demo{font-size:12px;line-height:1.5;padding:0 7px;border:1px solid var(--edge);border-radius:4px}
+h1{font-weight:700;font-size:clamp(25px,6.6vw,32px);line-height:1.15;letter-spacing:-.02em;margin:10px 0 0;text-wrap:balance}
+.lede{margin:8px 0 0;color:var(--muted);max-width:60ch}
+.panel{border-top:1px solid var(--line);padding-block:20px 28px;min-width:0}
+.panel:last-child{padding-bottom:0}
+h2{font-weight:600;font-size:17px;line-height:1.25;letter-spacing:-.01em;margin:0}
+.sub{margin:2px 0 14px;color:var(--muted);font-size:14px}
+.sub b{color:var(--ink);font-weight:600}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin:0}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+svg.ico{width:16px;height:16px;display:block}
 
-/* the ask */
-.controls{display:flex;flex-wrap:wrap;gap:14px 26px;align-items:end;margin-top:12px}
-.ctl{display:flex;flex-direction:column;gap:6px;min-width:0}
-.ctl label{font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--surface)}
-.qty button{border:0;background:var(--track);width:40px;height:40px;font-size:20px;font-weight:700}
-.qty input{width:84px;height:40px;border:0;text-align:center;font:700 20px var(--f-display);background:transparent;-moz-appearance:textfield}
+/* status marks: the only color outside the charts */
+.v-free,.z-free{--vc:var(--ok);--vs:var(--ok-soft)}
+.v-swap,.z-swap{--vc:var(--swap);--vs:var(--swap-soft)}
+.v-rush,.z-rush{--vc:var(--warn);--vs:var(--warn-soft)}
+.v-no{--vc:var(--bad);--vs:var(--track)}
+.z-no{--vc:var(--muted);--vs:var(--track)}
+.ic{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--vc);color:var(--bg)}
+
+/* the call */
+.calls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.call{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-height:52px;padding:7px 10px;border:1px solid var(--edge);border-radius:6px;background:transparent;text-align:left;min-width:0}
+.call b{font-weight:600;font-size:14.5px;line-height:1.25;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.call span{font-size:12px;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.call[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.call[aria-pressed="true"] b{color:var(--accent)}
+.quote{margin:16px 0 0;padding:1px 0 1px 12px;border-left:1px solid var(--ink)}
+.who{display:block;font-size:12.5px;color:var(--muted)}
+.quote p{margin:2px 0 0;font-size:19px;font-weight:600;line-height:1.3;letter-spacing:-.012em;text-wrap:balance}
+.ask-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0}
+.lab{font-size:14.5px;font-weight:500}
+.qty{display:flex;align-items:stretch;border:1px solid var(--edge);border-radius:6px;overflow:hidden;width:max-content}
+.qty button{border:0;background:transparent;width:52px;height:46px;font-size:22px;font-weight:400;line-height:1}
+.qty button:active{background:var(--track)}
+.qty input{width:84px;height:46px;border:solid var(--edge);border-width:0 1px;border-radius:0;text-align:center;font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;background:transparent;-moz-appearance:textfield;appearance:textfield}
 .qty input::-webkit-outer-spin-button,.qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.unit{font-size:14px;color:var(--muted);padding:0 10px}
-select{appearance:none;-webkit-appearance:none;height:42px;border:1px solid var(--line);border-radius:7px;background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235B6873' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center;padding:0 36px 0 12px;font-weight:600;font-size:15px;min-width:180px}
+.qty button:focus-visible,.qty input:focus-visible{outline-offset:-2px}
+.unit{font-size:14px;color:var(--muted)}
+.ans{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;padding:14px;border:1px solid var(--ink);border-radius:6px}
+.ans .ic{width:40px;height:40px}
+.ans .ic svg{width:22px;height:22px}
+.ans b{display:block;font-size:21px;font-weight:700;line-height:1.2;letter-spacing:-.015em;text-wrap:balance}
+.ans p{margin:4px 0 0;font-size:14.5px}
 
-/* answer cards */
-.answers{display:flex;flex-direction:column;gap:10px}
-.ans{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 14px;align-items:center;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
-.ans.lead{border:2px solid var(--vc);background:var(--vs);padding:16px}
-.v-warn{--vc:var(--warn);--vs:var(--warn-soft)}
-.v-ok{--vc:var(--ok);--vs:var(--ok-soft)} .v-late{--vc:var(--late);--vs:var(--late-soft)}
-.ic{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;font-weight:800;color:var(--surface)}
-.ans.lead .ic{width:48px;height:48px;font-size:24px}
-.ic.win{background:var(--ok)} .ic.lose{background:var(--late)} .ic.mid{background:var(--warn)}
-.ans h3{margin:0;font:800 clamp(19px,3vw,25px)/1.08 var(--f-display);text-transform:uppercase;text-wrap:balance}
-.ans.lead h3{font-size:clamp(23px,3.8vw,32px);color:var(--vc)}
-.ans p{margin:2px 0 0;font-size:14px;color:var(--muted)}
-.tag{font:700 10px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border-radius:3px;white-space:nowrap;background:var(--track);color:var(--muted)}
-.tag.ok{background:var(--ok-soft);color:var(--ok)} .tag.ask{background:var(--warn-soft);color:var(--warn)}
-.say{margin-top:4px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:15px}
-.say b{display:block;font:500 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+/* earliest dates: one bar per option on a shared day axis */
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:grid;grid-template-columns:28px minmax(0,1fr);gap:0 12px;align-items:start;width:100%;text-align:left;padding:12px;border:1px solid var(--edge);border-radius:6px;background:transparent}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt .ob{display:block;min-width:0}
+.opt .top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.opt .date{font-size:17px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.opt .in{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.opt .what{display:block;font-size:14px;color:var(--muted);margin-top:2px}
+.opt .what b{color:var(--ink);font-weight:600}
+.bar{display:block;position:relative;height:6px;border-radius:3px;background:var(--track);margin-top:10px}
+.opt[aria-pressed="true"] .bar{background:var(--bg)}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:3px;background:var(--vc)}
+.bar u{position:absolute;top:50%;width:10px;height:10px;transform:translate(-50%,-50%) rotate(45deg);background:var(--vc);border:1.5px solid var(--bg)}
+.opt[aria-pressed="true"] .bar u{border-color:var(--accent-soft)}
+.axis{position:relative;height:16px;margin:6px 13px 0 53px;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--muted)}
+.axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.axis span:first-child{transform:none}
+.axis span.end{transform:translateX(-100%)}
+.optnote{margin:10px 0 0;font-size:13.5px;color:var(--muted)}
 
-/* trip gantt */
-.g-track{position:relative;height:30px;background:var(--track);border-radius:5px;margin-top:6px}
-.g-seg{position:absolute;top:5px;bottom:5px;border-radius:3px}
-.g-seg.wait{background:repeating-linear-gradient(135deg,var(--wait) 0 4px,transparent 4px 8px)}
-.g-dia{position:absolute;top:50%;width:14px;height:14px;transform:translate(-50%,-50%) rotate(45deg);border:2px solid var(--surface)}
-.g-need{position:absolute;top:-6px;bottom:-6px;border-left:2px dashed var(--late);z-index:2}
-.g-axis{position:relative;height:18px;font:500 10.5px var(--f-mono);color:var(--muted);margin-top:4px}
-.g-axis span{position:absolute;transform:translateX(-50%);white-space:nowrap}
-.g-axis span:first-child{transform:none}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.wh{font-size:11.5px;color:var(--muted);text-align:center;padding-bottom:2px}
+.cd{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:50px;min-width:0;padding:3px 0;border:0;border-radius:4px;background:var(--vs);color:var(--vc)}
+.cd .m{font-size:9.5px;line-height:1;height:10px;color:var(--muted)}
+.cd .n{font-size:16px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
+.cd svg{width:12px;height:12px;display:block}
+.cd.z-no .n{color:var(--muted)}
+.cd.today{background:transparent;box-shadow:inset 0 0 0 1px var(--edge);cursor:default}
+.cd.sel{background:var(--vc);color:var(--bg)}
+.cd.sel .n,.cd.sel .m{color:var(--bg)}
+.cd.pad{background:transparent}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:12px;font-size:12.5px;color:var(--muted)}
-.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-2px;margin-right:5px}
-.trace{margin-top:10px;font-size:14px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1.5px;margin-right:5px}
+.legend .k{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:4px;background:var(--vs);color:var(--vc);vertical-align:-4px;margin-right:5px}
+.legend .k svg{width:11px;height:11px}
 
-/* weeks */
-.weeks{display:flex;flex-direction:column;gap:10px}
-.wk{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) auto;gap:12px;align-items:center}
-.wk .wl{font-weight:700;font-size:14px;line-height:1.2}
-.wk .wl small{display:block;font:500 11px var(--f-mono);color:var(--muted)}
-.wk .bar{position:relative;height:22px;background:var(--track);border-radius:4px;overflow:hidden}
-.wk .fill{position:absolute;inset:0 auto 0 0;border-radius:4px}
-.wk .need{position:absolute;top:0;bottom:0;border-left:2px dashed var(--ink)}
-.wk .val{font:600 13px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:76px;text-align:right}
+/* answer for the tapped date */
+.verdict{margin-top:16px;border:1px solid var(--ink);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.vhead{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:center}
+.vhead b{display:block;font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.01em;text-wrap:balance}
+.vhead div span{display:block;font-size:14px;color:var(--muted);margin-top:1px}
+.mv{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.mv li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.mv li:last-child{padding-bottom:0}
+.mv li div span{color:var(--muted)}
+.dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:var(--bg)}
+.dot svg{width:12px;height:12px}
+.late .dot{background:var(--warn)}
+.lt{font-style:normal;font-weight:600;color:var(--ink)}
+.vnote{margin:0;font-size:14px}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.go{min-height:44px;padding:8px 14px;border:1px solid var(--accent);border-radius:6px;background:transparent;color:var(--accent);font-weight:600;font-size:14.5px;text-align:left}
+.go:active{background:var(--accent-soft)}
 
 /* capacity grid */
-.grid{display:grid;grid-template-columns:52px repeat(5,minmax(0,1fr)) 54px;gap:5px 4px;align-items:center}
-.ch{font-size:12px;line-height:1.15;text-align:center;padding-bottom:6px}
-.ch b{display:block;font:700 14px var(--f-display);text-transform:uppercase;letter-spacing:.02em}
-.ch span{color:var(--muted);font-size:11px}
-.dl{font:600 11px/1.1 var(--f-mono)}
-.dl small{display:block;color:var(--muted);font-weight:500}
-.cell{height:24px;display:flex;border-radius:4px;overflow:hidden;min-width:0}
-.cell.none{border-top:1px dashed var(--line);height:0;border-radius:0;margin:0 4px}
+.pickbox{border:1px solid var(--edge);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:10px;margin:0 0 12px}
+.pickbox.res{margin:16px 0 0;border-color:var(--ink);padding:14px;gap:12px}
+.pb-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.pb-top b{font-size:15.5px;font-weight:600;line-height:1.25}
+.qty.sm button{width:44px;height:40px;font-size:20px}
+.qty.sm input{height:40px;width:64px;font-size:18px}
+.grid{--cols:42px repeat(5,minmax(0,1fr)) 58px;display:grid;grid-template-columns:var(--cols);gap:4px;align-items:center}
+.ghead{grid-column:1/-1;display:grid;grid-template-columns:var(--cols);column-gap:4px;align-items:start;position:sticky;top:env(safe-area-inset-top,0px);z-index:3;background:var(--bg);padding:6px 0;border-bottom:1px solid var(--line);margin-bottom:2px}
+.ch{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0;line-height:1.15}
+.ch svg{width:20px;height:20px;display:block;margin:0 0 3px;color:var(--muted)}
+.ch b{display:block;font-size:12.5px;font-weight:600;white-space:nowrap}
+.ch span{display:block;color:var(--muted);font-size:10.5px}
+.dl{font-size:11.5px;font-weight:600;line-height:1.15;font-variant-numeric:tabular-nums}
+.dl small{display:block;color:var(--muted);font-weight:400;font-size:10.5px}
+.cell{height:26px;display:flex;border-radius:3px;overflow:hidden;min-width:0}
+.cell.none{border-top:1px dashed var(--edge);height:0;border-radius:0;margin:0 4px}
 .cell.traced{outline:2px solid var(--ink);outline-offset:1px}
-.b{height:100%;display:flex;align-items:center;justify-content:center;font:600 9px var(--f-mono);overflow:hidden;white-space:nowrap;min-width:0;border-right:1px solid var(--surface)}
+.cell.short{outline-color:var(--bad)}
+.b{height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;overflow:hidden;white-space:nowrap;min-width:0;border-right:1px solid var(--bg)}
+.b>span.off{display:none}
 .b:last-child{border-right:0}
-.b.firm{background:var(--firm);color:#fff} .b.slack{background:var(--slack);color:var(--ink)}
-.b.new{background:var(--new);color:var(--newink)} .b.free{background:var(--free);color:var(--freeink)}
-.cust{font:600 10px/1.15 var(--f-mono);text-align:center;color:var(--muted);min-width:0;overflow:hidden}
-.cust .nb{display:inline-block;background:var(--new);color:var(--newink);border-radius:3px;padding:2px 4px;outline:2px solid var(--ink);outline-offset:1px}
-.day{font:600 10px/1.1 var(--f-mono);height:26px;border:1px solid var(--line);border-radius:5px;background:var(--surface);color:var(--ink);padding:0 2px;min-width:0;overflow:hidden;white-space:nowrap}
-.day:hover{border-color:var(--accent)}
-.day.soon{color:var(--muted);background:var(--track);border-style:dashed;text-decoration:line-through}
-.day.sel{border:2px solid var(--accent);background:var(--accent-soft)}
-.day.arr{background:var(--new);color:var(--newink);border:2px solid var(--ink);font-weight:700}
-.pickbox{border:2px solid var(--line);background:var(--surface);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:10px;margin:0 0 14px}
-.pickbox.res{margin:14px 0 0}
-.pickbox.v-ok,.pickbox.v-late,.pickbox.v-warn{border-color:var(--vc);background:var(--vs)}
-.pb-hint{grid-column:1/-1;color:var(--muted)}
-.pb-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
-.pb-top b{font:800 19px/1.1 var(--f-display);text-transform:uppercase}
-.pb-x{border:0;background:none;font-size:22px;line-height:1;padding:0 4px;color:var(--muted)}
-.qty.sm button{width:36px;height:36px} .qty.sm input{height:36px;width:70px;font-size:18px}
-.pb-res{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14px}
-.qty{width:max-content}
-.v-warn{--vc:var(--warn);--vs:var(--warn-soft)}
-#pb-res{display:flex;flex-direction:column;gap:10px}
-.pb-line{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14px}
-.steps{display:flex;flex-direction:column;gap:6px}
-.step{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px}
-.step b{font-weight:700} .step .sbody>span{color:var(--muted)} .step .sdot{color:#fff}
-.sdot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;line-height:1;font-weight:800;color:#fff}
-.step.ok .sdot{background:var(--ok)} .step.bad .sdot{background:var(--late)} .step.bad{border-color:var(--late)}
-.pb-sub{font:700 15px var(--f-display);text-transform:uppercase;margin-top:2px}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600}
-.chip.late{opacity:.55;cursor:not-allowed;text-decoration:line-through}
-.chip.on{background:var(--accent);color:var(--surface);border-color:var(--accent)}
-.cell.short{outline:2px solid var(--late);outline-offset:1px}
+.b.firm{background-color:var(--firm);color:var(--firmink)}
+.b.slack{background-color:var(--slack);color:var(--slackink)}
+.b.new{background-color:var(--new);color:var(--newink)}
+.b.free{background-color:var(--free);color:var(--freeink)}
+.b.mv,.legend i.mv{background-image:repeating-linear-gradient(135deg,transparent 0 3px,var(--stripe) 3px 5px)}
+.day{font-size:11px;font-weight:500;line-height:1;font-variant-numeric:tabular-nums;height:28px;min-width:0;padding:0 2px;border:0;border-radius:4px;background:var(--vs);color:var(--ink);overflow:hidden;white-space:nowrap}
+.day.z-no{color:var(--muted)}
+.day.arr{box-shadow:0 0 0 1px var(--bg),0 0 0 3px var(--ink);font-weight:600}
+.day.sel{background:var(--vc);color:var(--bg)}
+.pb-sub{font-size:15px;font-weight:600}
+#pb-res>.pb-sub{margin-top:8px}
+#pb-res>.pb-sub+.steps{margin-top:-4px}
+#pb-res{display:flex;flex-direction:column;gap:12px}
+.pb-line{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;font-size:14.5px}
+.pb-hint{margin-top:6px;font-size:13px;color:var(--muted)}
+.steps{display:flex;flex-direction:column}
+.step{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.step:last-child{padding-bottom:0}
+.step .sbody>span{color:var(--muted)}
+.sdot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--ok);color:var(--bg)}
+.sdot svg{width:12px;height:12px}
+.step.bad .sdot{background:var(--bad)}
+.step.warn .sdot{background:var(--warn)}
+.chips{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;margin-top:8px}
+.chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;min-height:44px;min-width:0;padding:7px 12px;border:1px solid var(--edge);border-radius:6px;background:transparent;text-align:left;font-size:14px}
+.chip b{font-weight:600}
+.chip span{font-size:12.5px;color:var(--muted)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft)}
+.chip.on b{color:var(--accent)}
+.chip.undo{display:inline-flex;min-height:36px;padding:4px 14px;margin-top:8px;font-weight:600;color:var(--accent);background:transparent}
 .note{font-size:12.5px;color:var(--muted);margin:12px 0 0}
 
+@media (min-width:620px){
+  .chips{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media (max-width:560px){
-  .day{font-size:8.5px;height:24px}
-  .panel{padding:12px}
-  .ans{grid-template-columns:auto minmax(0,1fr)}
-  .ans .tag{grid-column:2;justify-self:start}
-  .wk{grid-template-columns:78px minmax(0,1fr) auto;gap:8px}
-  .wk .val{min-width:0;font-size:12px}
-  .grid{grid-template-columns:38px repeat(5,minmax(0,1fr)) 40px;gap:5px 3px}
-  .ch b{font-size:12px} .ch span{font-size:9.5px}
-  .dl{font-size:10px} .b{font-size:8px} .cust{font-size:8.5px}
-  select{min-width:0;width:100%}
+  .grid{--cols:36px repeat(5,minmax(0,1fr)) 46px;gap:4px 3px}
+  .ghead{column-gap:3px}
+  .ch b{font-size:11px}
+  .ch span{font-size:9.5px}
+  .ch svg{width:18px;height:18px}
+  .dl{font-size:10.5px}
+  .dl small{font-size:9.5px}
+  .b{font-size:8px}
+  .day{font-size:10px}
+}
+@media (max-width:380px){
+  .ch b{font-size:10px}
+  .call{padding:7px 8px}
+  .call b{font-size:13.5px}
+  .call span{font-size:11px}
+}
+@media (max-width:350px){
+  .ch b{font-size:9px}
+  .ch span{font-size:8.5px}
+  .call{padding:7px 6px}
+  .call span{font-size:10.5px}
+  .qty button{width:46px}
+  .qty input{width:72px}
 }
 </style>
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">Tool · Order allocation</div>
-    <h1>What can we <em>promise</em> this customer?</h1>
-    <p class="lede">For use on a customer call. Enter how much they want. The tool checks booked space at the plant, trucks, the ship and the warehouse, and shows the earliest date you can promise.</p>
+    <div class="eyebrow"><span>Tool · Order allocation</span><span class="demo">Demo data</span></div>
+    <h1>What can we promise this customer?</h1>
+    <p class="lede">For sales calls. Set the quantity, tap the date the customer wants, and see if you can promise it.</p>
   </header>
 
   <section class="panel" aria-labelledby="h-ask">
-    <h2 id="h-ask">The customer asks for</h2>
-    <div class="controls">
-      <div class="ctl"><label for="qty">Quantity</label>
-        <div class="qty"><button type="button" id="minus" aria-label="Less">−</button><input id="qty" type="number" inputmode="numeric" min="10" max="600" step="10" value="100"><button type="button" id="plus" aria-label="More">+</button><span class="unit">units</span></div>
-      </div>
+    <h2 id="h-ask">The call</h2>
+    <p class="sub">Tap an example call, or set your own units.</p>
+    <div class="calls" id="calls" role="group" aria-label="Example calls"></div>
+    <div class="quote"><span class="who" id="who"></span><p id="quote"></p></div>
+    <div class="ask-row">
+      <label class="lab" for="qty">Units</label>
+      <div class="qty"><button type="button" id="minus" aria-label="10 units less">−</button><input id="qty" type="number" inputmode="numeric" min="10" max="400" step="10" value="100"><button type="button" id="plus" aria-label="10 units more">+</button></div>
     </div>
+    <div class="ans" id="ans" aria-live="polite"></div>
   </section>
 
-  <section class="panel" aria-labelledby="h-ans">
-    <h2 id="h-ans">Earliest dates</h2>
-    <p class="sub">The fastest date with swaps (another customer may get late), the date where every customer stays on time, and the date with free space only.</p>
-    <div class="answers" id="answers"></div>
+  <section class="panel" aria-labelledby="h-opt">
+    <h2 id="h-opt">Earliest dates</h2>
+    <p class="sub">Fastest first. Tap one to see what it takes.</p>
+    <div class="opts" id="opts"></div>
+    <div class="axis" id="axis" aria-hidden="true"></div>
+    <p class="optnote" id="optnote" hidden></p>
   </section>
 
-  <section class="panel" aria-labelledby="h-wk">
-    <h2 id="h-wk">Free capacity by week</h2>
-    <p class="sub">Most units we can still promise for delivery by each date. The dashed line is this customer's quantity.</p>
-    <div class="weeks" id="weeks"></div>
-  </section>
-
-  <section class="panel" aria-labelledby="h-trip">
-    <h2 id="h-trip">The order's trip</h2>
-    <p class="sub">The earliest delivery with free space only, step by step.</p>
-    <div class="g-track" id="trip"></div>
-    <div class="g-axis" id="axis"></div>
-    <div class="legend">
-      <span><i style="background:repeating-linear-gradient(135deg,var(--wait) 0 3px,transparent 3px 6px);border:1px solid var(--wait)"></i>Waiting for space</span>
-      <span><i style="background:var(--make)"></i>Made</span>
-      <span><i style="background:var(--ship)"></i>At sea</span>
-      <span><i style="background:var(--wh)"></i>Warehouse</span>
-      <span><i style="background:var(--truck)"></i>Truck to customer</span>
-    </div>
-    <div class="trace" id="trace"></div>
+  <section class="panel" aria-labelledby="h-cal">
+    <h2 id="h-cal">Check a date</h2>
+    <p class="sub">Tap the date the customer wants. The color shows what it takes for <b id="cal-q"></b>.</p>
+    <div class="cal" id="cal"></div>
+    <div class="legend" id="cal-legend"></div>
+    <div class="verdict" id="verdict"></div>
   </section>
 
   <section class="panel" aria-labelledby="h-grid">
     <h2 id="h-grid">Where space is tight</h2>
-    <p class="sub">Booked space at each step, day by day. Set a quantity, then tap a date under Arrives to see the route an order takes to arrive that day.</p>
-    <div class="pickbox" id="pick"></div>
+    <p class="sub">Booked space at each step, day by day. The outlined cells are this order's route. Tap a date under Arrives to check it.</p>
+    <div class="pickbox" id="pick"><div class="pb-top"><div class="qty sm"><button type="button" id="pb-m" aria-label="10 units less">−</button><input id="pb-q" type="number" inputmode="numeric" min="10" max="400" step="10" value="100" aria-label="Units"><button type="button" id="pb-p" aria-label="10 units more">+</button></div><span class="unit">units</span><b id="pb-day"></b></div></div>
     <div class="grid" id="grid"></div>
     <div class="pickbox res" id="pickres"><b class="pb-sub" id="pb-day2"></b><div id="pb-res"></div></div>
     <div class="legend">
       <span><i style="background:var(--firm)"></i>Booked, fixed date</span>
-      <span><i style="background:var(--slack)"></i>Booked, can move</span>
-      <span><i style="background:var(--new)"></i>This order</span>
+      <span><i style="background:var(--slack)"></i>Booked, can wait</span>
       <span><i style="background:var(--free)"></i>Free (% of space)</span>
+      <span><i style="background:var(--new)"></i>This order</span>
+      <span><i class="mv" style="background-color:var(--slack)"></i>Order that moved</span>
       <span><i style="border:2px solid var(--ink)"></i>Route</span>
-      <span><i style="border:2px solid var(--late)"></i>Route step that is full</span>
-      <span><i style="background:var(--track);border:1px dashed var(--muted)"></i>Too soon to make new, stock only</span>
+      <span><i style="border:2px solid var(--bad)"></i>Route step that is full</span>
     </div>
-    <p class="note">Bookings shown are example data.</p>
+    <p class="note">Customers, orders and bookings are example data.</p>
   </section>
 </div>
 
@@ -230,11 +297,9 @@ const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec
 const BASE=new Date();BASE.setHours(12,0,0,0);
 const TODAY=BASE.getDay();
 const dateOf=d=>{const x=new Date(BASE);x.setDate(x.getDate()+d);return x};
-const wd=d=>WD[(TODAY+d)%7];
 const dayLabel=d=>{if(d===0)return'Today';const x=dateOf(d);return WD[x.getDay()]+' '+x.getDate()+' '+MO[x.getMonth()]};
 const short=d=>{if(d===0)return'Today';const x=dateOf(d);return x.getDate()+' '+MO[x.getMonth()]};
 const isWk=d=>true;                       // plant and trucks run every day
-const isBiz=d=>{const w=((TODAY+d)%7+7)%7;return w>=1&&w<=5};
 const isShip=d=>((d%3)+3)%3===1;          // a ship leaves every 3 days (tomorrow, then every 3rd day)
 
 const LEGS=['P','T1','O','W','T2'];
@@ -302,39 +367,12 @@ function book(S){const s=empty();preload(s);ORD.filter(o=>!S.includes(o.c)).forE
 const BASEBOOK=book([]);
 const clone=s=>{const n={};LEGS.forEach(l=>n[l]=s[l].map(a=>a.slice()));return n};
 
-function standard(q,air){const s=clone(BASEBOOK);const nr=route(s,q,0,air);if(nr)place(s,nr,'NEW',q,'new');return{s,nr}}
 function stdPlan(q){const P=planFor(q);if(P.left>0||!P.legs.length)return{s:P.s,nr:null,legs:[]};const last=P.legs.reduce((a,b)=>b.del>a.del?b:a);return{s:P.s,nr:last,legs:P.legs}}
 function maxOne(s,D){let best=0;for(let q=10;q<=600;q+=10){const r=route(s,q,0,false);if(r&&r.del<=D)best=q;else break}return best}
 const ATP={};
 function maxBy(D){if(ATP[D]!=null)return ATP[D];const s=clone(BASEBOOK);let tot=0;for(let i=0;i<30;i++){const m=maxOne(s,D);if(!m)break;place(s,route(s,m,0,false),'NEW',m,'new');tot+=m}return ATP[D]=tot}
 function fullBy(q){for(let d=1;d<H-1;d++)if(maxBy(d)>=q)return d;return null}
 function planFor(q){const s=clone(BASEBOOK);const legs=[];let left=q;for(let i=0;i<30&&left>0;i++){const D=fullBy(q)||H;let m=Math.min(left,maxOne(s,D));if(!m)break;const r=route(s,m,0,false);place(s,r,'NEW',m,'new');legs.push(r);left-=m}return{s,legs,left}}
-function withMoves(q){
-  const cand=ORD.filter(o=>INFO[o.c].slack>0).map(o=>o.c);
-  const sets=[];cand.forEach((a,i)=>{sets.push([a]);cand.slice(i+1).forEach(b=>sets.push([a,b]))});
-  let best=null;
-  for(const S of sets){
-    const s=book(S);const nr=route(s,q,0,false);if(!nr)continue;place(s,nr,'NEW',q,'new');
-    const moved=[];let ok=true;
-    for(const c of S){const o=ORD.find(x=>x.c===c);const rt=route(s,o.q,o.r,false);if(!rt||rt.del>o.nb){ok=false;break}place(s,rt,c,o.q,kind(c));moved.push({c,to:rt.del,nb:o.nb})}
-    if(!ok)continue;
-    if(!best||nr.del<best.nr.del||(nr.del===best.nr.del&&S.length<best.moved.length))best={s,nr,moved};
-  }
-  return best;
-}
-
-// ---------- UI ----------
-const $=id=>document.getElementById(id);
-const st={q:100,nb:6};
-const clampQ=v=>Math.max(10,Math.min(600,Math.round((+v||10)/10)*10));
-$('qty').addEventListener('change',e=>{const v=clampQ(e.target.value);if(v===st.q)return;st.q=v;render()});
-$('qty').addEventListener('input',e=>{if(+e.target.value>=10){const v=clampQ(e.target.value);if(v!==st.q){st.q=v;render()}}});
-$('minus').onclick=()=>{st.q=clampQ(st.q-10);render()};
-$('plus').onclick=()=>{st.q=clampQ(st.q+10);render()};
-
-function card(cls,ic,icCls,title,text,tag,tagCls){return'<div class="ans '+cls+'"><span class="ic '+icCls+'">'+ic+'</span><div><h3>'+title+'</h3><p>'+text+'</p></div>'+(tag?'<span class="tag '+(tagCls||'')+'">'+tag+'</span>':'')+'</div>'}
-
-// candidates that free space on a full step without making their own customer late
 function candidates(x,np,S,any){
   let codes=[];
   if(x.l==='STOCK')codes=PRE.filter(o=>o.a<=np.t2-1).map(o=>o.c);
@@ -348,71 +386,12 @@ function bestSwap(q,D,any){
     const sw=withSwaps(q,D,S);if(!sw)return null;
     if(sw.allFit)return any||sw.moved.every(m=>m.ok)?{S,sw}:null;
     const bad=sw.steps.find(x=>!x.ok);let pickC=null;
-    for(const c of candidates(bad,sw.np,S,any)){const t=withSwaps(q,D,[...S,c]);if(!t||(!any&&!t.moved.every(m=>m.ok)))continue;
+    for(const c of candidates(bad,sw.np,S,any)){const t=withSwaps(q,D,[...S,c]);if(!t||t.moved.some(m=>m.to==null)||(!any&&!t.moved.every(m=>m.ok)))continue;
       const tb=t.steps.find(x=>x.l===bad.l&&x.d===bad.d);if(tb&&tb.free>bad.free){pickC=c;break}}
     if(!pickC)return null;S=[...S,pickC];
   }
   return null;
 }
-function earliestSwap(q,until,any){
-  for(let D=1;D<until;D++){
-    if(jit(q,D))return{D,S:[],free:true};
-    const b=bestSwap(q,D,any);if(b)return{D,S:b.S,sw:b.sw};
-  }
-  return null;
-}
-let LASTSWAP=null;
-function render(){
-  $('qty').value=st.q;
-  if(pick.q!==st.q){pick.q=st.q;pick.swaps=[]}
-  const q=st.q;
-  const A=stdPlan(q);
-  const freeD=A.nr?A.nr.del:null;
-  const E=earliestSwap(q,freeD||H-2,false);           // swaps where everyone stays on time
-  const L=earliestSwap(q,(E?E.D:freeD)||H-2,true);    // any swap, someone may be late
-  const onD=E&&(!freeD||E.D<freeD)?E.D:freeD;
-  LASTSWAP=null;let h='',btn=[];
-  const nm=c=>c.startsWith('DL:')?c.slice(3)+' (later truck)':c;
-  const lateTxt=e=>e.sw.moved.map(m=>m.c+' '+(m.ok?'still on time ('+short(m.to)+')':(m.to!=null?(m.to-m.nb)+' days late':'no new date'))).join(', ');
-  if(L&&(!onD||L.D<onD)){
-    h+=card('lead v-warn','!','mid',q+' units by '+dayLabel(L.D),'Fastest with swaps. Takes from '+L.S.map(nm).join(', ')+'. '+lateTxt(L)+'.','Others get late','ask');
-    btn.push(['sw-late','Show this swap in the grid',L]);
-  }
-  if(E&&(!freeD||E.D<freeD)){
-    h+=card(L&&L.D<E.D?'':'lead v-ok','✓','win',q+' units by '+dayLabel(E.D),'With swaps where every customer stays on time: '+E.S.map(nm).join(', ')+'. '+lateTxt(E)+'.','Swaps, all on time','ok');
-    btn.push(['sw-ok','Show this swap in the grid',E]);
-  }else if(!(L&&(!onD||L.D<onD))){
-    h+=card('lead v-ok','✓','win',q+' units by '+(freeD?dayLabel(freeD):'no date'),'Earliest date you can promise. Swapping does not make it faster.','Swaps','ok');
-  }
-  h+=card('','✓','win',q+' units by '+(freeD?dayLabel(freeD):'no date in the next weeks'),'Earliest through the supply chain using free space only. Nothing else moves.'+(A.legs.length>1?' Comes in '+A.legs.length+' deliveries.':''),'Free space','ok');
-  $('answers').innerHTML=h+btn.map(([id,t])=>'<button type="button" class="reset" id="'+id+'">'+t+' ('+(id==='sw-late'?'fastest':'all on time')+')</button>').join('');
-  btn.forEach(([id,t,e])=>{$(id).onclick=()=>{pick.d=e.D;pick.swaps=e.S.slice();renderGrid();$('h-grid').scrollIntoView({behavior:'smooth'})}});
-  const D=freeD||0,okA=true;
-
-  // weeks
-  const fridays=[];for(let d=1;d<=28&&fridays.length<4;d++)if((TODAY+d)%7===5)fridays.push(d);
-  const MAXQ=Math.max(q,...fridays.map(maxBy))*1.05;
-  $('weeks').innerHTML=fridays.map(d=>{
-    const m=maxBy(d);const col=m>=q?'var(--ok)':m>0?'var(--warn)':'var(--late)';
-    return'<div class="wk"><div class="wl">By '+dayLabel(d)+'<small>'+(m>=q?'fits':'short by '+(q-m))+'</small></div><div class="bar"><div class="fill" style="width:'+(m/MAXQ*100)+'%;background:'+col+'"></div><div class="need" style="left:'+(q/MAXQ*100)+'%"></div></div><div class="val">'+m+' units</div></div>';
-  }).join('');
-
-  // trip
-  const MAX=28,X=d=>Math.min(d,MAX)/MAX*100;
-  let t='';
-  if(A.nr){const r=A.nr;
-    [['wait',0,r.p0],['',r.p0,r.p+1,'var(--make)'],['wait',r.p+1,r.o],['',r.o,r.a,'var(--ship)'],['',r.a,r.t2,'var(--wh)'],['',r.t2,r.del,'var(--truck)']].forEach(([c,a,b,col])=>{if(b>a)t+='<div class="g-seg '+c+'" style="left:'+X(a)+'%;width:'+(X(b)-X(a))+'%;'+(col?'background:'+col:'')+'"></div>'});
-    t+='<div class="g-dia" style="left:'+X(r.del)+'%;background:'+(okA?'var(--ok)':'var(--late)')+'"></div>';
-    $('trace').textContent=(A.legs.length>1?'Last of '+A.legs.length+' deliveries. ':'')+'Made '+(r.p0===r.p?dayLabel(r.p):dayLabel(r.p0)+' to '+dayLabel(r.p))+', ship '+dayLabel(r.o)+', warehouse '+dayLabel(r.a)+', truck '+dayLabel(r.t2)+', delivered '+dayLabel(r.del)+'.';
-  }else $('trace').textContent='No free space in the next weeks.';
-  $('trip').innerHTML=t;
-  $('axis').innerHTML=[0,7,14,21,28].map(d=>'<span style="left:'+X(d)+'%">'+short(d)+'</span>').join('');
-
-  LASTA=A;renderGrid();
-}
-let LASTA=null;
-const pick={d:null,q:100,swaps:[]};
-
 const LEGN={STOCK:'Stock that can still make it',P:'Plant',T1:'Truck to port',O:'Ship',W:'Warehouse',T2:'Truck to customer'};
 const PRECODES=PRE.map(o=>o.c);
 function jit(q,D){ // latest start that still arrives by D, so the order flows just in time
@@ -442,10 +421,13 @@ function stepList(np,q){
   L.push({l:'T2',d:np.t2,n:q});
   return L;
 }
-function delayPlace(s,o,from){ // put an order already in the warehouse on a later truck
-  for(let t2=from;t2<H-1;t2++){if(!fits(s,'T2',t2,o.q))continue;let ok=true;for(let d=o.a;d<t2;d++)if(!fits(s,'W',d,o.q)){ok=false;break}
-    if(ok){const b={c:o.c,q:o.q,k:kind(o.c)};for(let d=o.a;d<t2;d++)s.W[d].push(b);s.T2[t2].push(b);return t2+1}}
-  return null;
+function delayPlace(s,o,from){ // put an order already in the warehouse on a later truck: one truck if it has room, otherwise split over several
+  const put=(x,t2,m)=>{const b={c:o.c,q:m,k:kind(o.c)};for(let d=o.a;d<t2;d++)x.W[d].push(b);x.T2[t2].push(b)};
+  const room=(x,t2)=>{let m=cap('T2',t2)-used(x,'T2',t2);for(let d=o.a;d<t2&&m>0;d++)m=Math.min(m,cap('W',d)-used(x,'W',d));return Math.max(0,Math.floor(m/10)*10)};
+  const lots=x=>{let left=o.q,last=null;for(let t2=from;t2<H-1&&left>0;t2++){const m=Math.min(left,room(x,t2));if(m>0){put(x,t2,m);left-=m;last=t2}}return left>0?null:last};
+  const last=lots(clone(s));if(last==null)return null;
+  for(let t2=from;t2<=last;t2++)if(room(s,t2)>=o.q){put(s,t2,o.q);return t2+1}
+  lots(s);return last+1;
 }
 function withSwaps(q,D,ALL){
   const S=ALL.filter(c=>!c.startsWith('DL:')),DL=ALL.filter(c=>c.startsWith('DL:')).map(c=>c.slice(3));
@@ -468,81 +450,6 @@ function withSwaps(q,D,ALL){
   const moved=delayed(np).concat(S.map(c=>{const P0=PRE.find(z=>z.c===c),o=P0||ORD.find(z=>z.c===c);const to=rePlace(s,c,o.q,P0?0:o.r);return{c,to,nb:o.nb,ok:to!=null&&to<=o.nb,give:!!P0}}));
   return{s,np,steps,moved,allFit:steps.every(x=>x.ok)};
 }
-function renderGrid(){
-  const A=LASTA;
-  let s,r=null,res=null,np=null,sw=null;
-  if(pick.d!=null){
-    res=jit(pick.q,pick.d);
-    if(res){s=res.s;r=res.r}
-    else{sw=withSwaps(pick.q,pick.d,pick.swaps);np=sw&&sw.np;
-      if(np){s=sw.s;r=np}
-      else{const e=standard(pick.q,false);s=e.s;r=e.nr}}
-  }else s=clone(BASEBOOK);
-  let g='<div></div>'+[['Plant','200 a day'],['Truck','to port, daily'],['Ship','every 3 days'],['Warehouse','600 spaces'],['Truck','to customer, daily']].map(([a,b])=>'<div class="ch"><b>'+a+'</b><span>'+b+'</span></div>').join('')+'<div class="ch"><b>Arrives</b><span>tap a day</span></div>';
-  const rows=Math.min(H-2,Math.max(21,r?r.del+1:0,pick.d!=null?pick.d+1:0));
-  const tr=r?{T1:r.t1,O:r.o,T2:r.t2}:{};
-  const ideal=route(empty(),pick.q,0,false);const soonD=ideal?ideal.del:0;
-  for(let d=0;d<rows;d++){
-    const x=dateOf(d);
-    g+='<div class="dl">'+(d===0?'Today':wd(d))+'<small>'+x.getDate()+' '+MO[x.getMonth()]+'</small></div>';
-    LEGS.forEach(l=>{
-      const c=cap(l,d);if(c===0){g+='<div class="cell none"></div>';return}
-      let inner='',u=0;const tot=Math.max(c,used(s,l,d));
-      s[l][d].forEach(b=>{u+=b.q;inner+='<div class="b '+b.k+'" style="flex:'+b.q+'" title="'+b.c+' '+b.q+'">'+(b.q/tot>=.28?(b.c==='NEW'?'THIS':b.c):'')+'</div>'});
-      const fr=c-u;if(fr>0)inner+='<div class="b free" style="flex:'+fr+'">'+(fr/c>=.3?Math.round(fr/c*100)+'%':'')+'</div>';
-      const on=r&&(tr[l]===d||(l==='P'&&r.pd.some(x=>x.d===d))||(l==='W'&&d>=r.a&&d<r.t2));
-      g+='<div class="cell'+(on?' traced':'')+(on&&fr<0?' short':'')+'">'+inner+'</div>';
-    });
-    const arr=r&&r.del===d;
-    const sel=pick.d===d;
-    g+='<button type="button" class="day'+(sel?' sel':'')+(arr?' arr':'')+(d<soonD?' soon':'')+'" data-d="'+d+'" aria-pressed="'+sel+'">'+x.getDate()+' '+MO[x.getMonth()]+'</button>';
-  }
-  $('grid').innerHTML=g;
-  document.querySelectorAll('#grid .day').forEach(b=>b.onclick=()=>{const d=+b.dataset.d;pick.d=pick.d===d?null:d;pick.swaps=[];renderGrid()});
-  const d=pick.d,pb=$('pick');
-  $('pb-q').value=pick.q;
-  $('pb-day').textContent=d==null?'Tap a date under Arrives':'Arrive by '+dayLabel(d)+'. Result below the grid.';
-  let cls='',h='';
-  if(d==null){h=''}
-  else if(res){cls='v-ok';h='<div class="pb-line"><span class="ic win">✓</span><div><b>Fits.</b> '+pathText(r)+'</div></div>'}
-  else if(!np){cls='v-late';h='<div class="pb-line"><span class="ic lose">✕</span><div><b>Too soon for any order.</b> The next ship leaves '+dayLabel(ideal.o)+' and is 4 days at sea, so the earliest any order can arrive is '+dayLabel(soonD)+'. '+(r?'With today\'s bookings, the earliest for '+pick.q+' units is '+dayLabel(r.del)+'. The grid shows that route.':'')+'</div></div>'}
-  else{
-    const E=stdPlan(pick.q).nr;
-    const lateMoves=sw.moved.filter(m=>!m.ok);
-    cls=sw.allFit?(lateMoves.length?'v-warn':'v-ok'):'v-late';
-    h+='<div class="pb-line"><span class="ic '+(sw.allFit?(lateMoves.length?'mid':'win'):'lose')+'">'+(sw.allFit?(lateMoves.length?'!':'✓'):'✕')+'</span><div>'+
-      (sw.allFit?'<b>Fits with swaps.</b> ':'<b>Does not fit by '+short(d)+'.</b> '+(E?'With free space only, earliest is '+dayLabel(E.del)+' (in smaller deliveries). ':''))+
-      (np.wOnly?(sw.allFit?'Uses stock already on its way. Path: '+pathText(np):'Too late to make new units. Take stock from other customers that is already in the warehouse, on a truck, or on a ship that lands in time.'):'Latest path needed: '+pathText(np))+'</div></div>';
-    // steps
-    const seen={};
-    h+='<div class="steps">'+sw.steps.filter(x=>{const k=x.l+(x.l==='W'?'':x.d);if(x.l==='W'&&x.ok){if(seen.W)return false;seen.W=1}return true}).map(x=>{
-      const base=x.l==='STOCK'?PRE.map(o=>({c:o.c})):BASEBOOK[x.l][x.d].filter(b=>b.c!=='NEW'&&(x.l==='O'||!PRECODES.includes(b.c)));
-      const codes=[...new Set(base.map(b=>b.c))].sort((a,b)=>(kind(a)==='slack'?0:1)-(kind(b)==='slack'?0:1));
-      let chips='';
-      if(!x.ok||x.l==='STOCK'||(x.l==='T2'&&pick.swaps.some(c=>c.startsWith('DL:')))){
-        chips='<div class="chips">'+codes.map(c=>{const o=ORD.find(z=>z.c===c)||PRE.find(z=>z.c===c);const on=pick.swaps.includes(c);
-          return'<button type="button" class="chip'+(on?' on':'')+'" data-c="'+c+'" aria-pressed="'+on+'">'+(x.l==='STOCK'?(on?'Taken from ':'Take from '):(on?'Swapped ':'Swap '))+c+' · '+o.q+(x.l==='STOCK'?' · '+stageOf(o,np):'')+' · '+(kind(c)==='slack'?'can move':'fixed date')+'</button>'}).join('')+
-          (x.l==='T2'?BASEBOOK.T2[x.d].filter(b=>PRECODES.includes(b.c)&&!pick.swaps.includes(b.c)).map(b=>{const k='DL:'+b.c,on=pick.swaps.includes(k);return'<button type="button" class="chip'+(on?' on':'')+'" data-c="'+k+'" aria-pressed="'+on+'">'+(on?'Moved ':'Move ')+b.c+' · '+b.q+' to a later truck · '+(kind(b.c)==='slack'?'can move':'fixed date')+'</button>'}).join(''):'')+
-          (codes.length||x.l==='T2'?'':'<span class="pb-hint">No customer orders here to swap.</span>')+'</div>';
-      }
-      if(x.l==='STOCK')chips=chips.replace(/<button type="button" class="chip([^"]*)" data-c="(\w+)"/g,(m,cl,c)=>{const o=PRE.find(z=>z.c===c);return o&&o.a>np.t2-1?'<button type="button" disabled class="chip late'+cl+'" data-c="'+c+'"':m});
-      return'<div class="step '+(x.l==='STOCK'&&x.ok?'ok':x.ok?'ok':'bad')+'"><span class="sdot">'+(x.ok?'✓':'✕')+'</span><div class="sbody"><b>'+LEGN[x.l]+(x.l==='STOCK'?'':' '+short(x.d))+'</b> <span>'+(x.l==='STOCK'?'needs '+x.n+', taken so far '+x.free:'needs '+x.n+', free '+Math.max(0,x.free))+'</span>'+chips+'</div></div>';
-    }).join('')+'</div>';
-    if(sw.moved.length)h+='<b class="pb-sub">Swapped orders</b><div class="steps">'+sw.moved.map(m=>'<div class="step '+(m.ok?'ok':'bad')+'"><span class="sdot">'+(m.ok?'✓':'✕')+'</span><div class="sbody"><b>'+m.c+(m.give?' gives its stock. Its replacement arrives ':m.delay?' goes on a later truck and arrives ':' moves to ')+(m.to!=null?short(m.to):'no slot')+',</b> <span>its customer needs it by '+short(m.nb)+(m.ok?', still on time':(m.to!=null?', '+(m.to-m.nb)+' days late':''))+'</span><div class="chips"><button type="button" class="chip on" data-c="'+(m.delay?'DL:':'')+m.c+'">Undo</button></div></div></div>').join('')+'</div>';
-  }
-  pb.className='pickbox';$('pickres').className='pickbox res'+(cls?' '+cls:'');$('pickres').hidden=d==null;$('pb-day2').textContent=d==null?'':'Result: arrive by '+dayLabel(d);
-  $('pb-res').innerHTML=h;
-  document.querySelectorAll('#pb-res .chip').forEach(b=>b.onclick=()=>{const c=b.dataset.c;pick.swaps=pick.swaps.includes(c)?pick.swaps.filter(z=>z!==c):[...pick.swaps,c];renderGrid()});
-}
-(function(){
-  $('pick').innerHTML='<div class="pb-top"><div class="qty sm"><button type="button" id="pb-m" aria-label="Less">−</button><input id="pb-q" type="number" inputmode="numeric" min="10" max="400" step="10" value="100"><button type="button" id="pb-p" aria-label="More">+</button><span class="unit">units</span></div><b id="pb-day"></b></div>';
-  const cq=v=>Math.max(10,Math.min(400,Math.round((+v||10)/10)*10));
-  $('pb-m').onclick=()=>{st.q=cq(st.q-10);render()};
-  $('pb-p').onclick=()=>{st.q=cq(st.q+10);render()};
-  const setQ=e=>{const v=cq(e.target.value);if(v===st.q)return;st.q=v;render()};
-  $('pb-q').onchange=setQ;
-  $('pb-q').oninput=e=>{if(+e.target.value>=10)setQ(e)};
-})();
 function stageOf(o,np){
   if(o.port)return o.a>np.t2-1?'at port, ship '+short(o.o)+', too late':'at port, ship '+short(o.o);
   if(o.a>0)return o.a>np.t2-1?'at sea, lands '+short(o.a)+', too late':'at sea, lands '+short(o.a);
@@ -552,6 +459,298 @@ function pathText(r){
   if(r.wOnly)return (r.a>0?'At sea, lands '+short(r.a)+', warehouse':'In the warehouse now')+', truck '+short(r.t2)+', arrives '+short(r.del)+'.';
   return 'Made '+(r.p0===r.p?short(r.p):short(r.p0)+' to '+short(r.p))+', truck to port '+short(r.t1)+', ship '+short(r.o)+', warehouse '+short(r.a)+(r.t2-r.a>1?' to '+short(r.t2-1):'')+', truck '+short(r.t2)+', arrives '+short(r.del)+'.';
 }
+
+// ---------- demo customers ----------
+const CO={ALB:'Albion Ltd',HEX:'Hexa GmbH',NRD:'Nordvik AS',OSL:'Oslund AB',BRX:'Brixen SpA',TVO:'Tivoro Oy',KAI:'Kaito KK',DUN:'Dunmore Ltd',PIR:'Pirano SpA',ZEN:'Zenda BV',MOR:'Morland Ltd',KIP:'Kippen BV',VEN:'Ventor SAS',ORA:'Orava Oy',LUX:'Luxen GmbH',RIO:'Riomar SA',SOL:'Solvik AS',FAR:'Faro Lda',GEM:'Gemmel AG',JUN:'Junot SAS',KEL:'Kelso Ltd',MAX:'Maxen AG',NOX:'Noxon BV',PAX:'Paxley Ltd',ROV:'Rovik AS',SKY:'Skyfield Ltd',TAL:'Talvik AS',UMA:'Umara Lda',VIX:'Vixby AB',YAK:'Yakara Pty',BEA:'Beaumont SAS',CRU:'Crux BV',DAX:'Daxon GmbH',ELM:'Elmhurst Ltd',FIG:'Figueras SL',HOP:'Hopwood Ltd'};
+const base=c=>c.replace(/\d+$/,'');
+const co=c=>CO[base(c)]||c;
+const ordOf=c=>PRE.find(z=>z.c===c)||ORD.find(z=>z.c===c);
+// three example calls: a regular order that needs a swap, a small first order that fits, an urgent one that costs another customer
+const CALLS=[
+  {co:'Bergmann GmbH',nick:'Bergmann',note:'regular order',q:100,D:8},
+  {co:'Lindqvist AB',nick:'Lindqvist',note:'first order',q:30,D:null},
+  {co:'Meridian Ltd',nick:'Meridian',note:'out of stock',q:60,D:3}
+];
+
+// ---------- helpers ----------
+const $=id=>document.getElementById(id);
+const pl=(n,w)=>n+' '+w+(n===1?'':'s');
+const inDays=d=>d===0?'today':d===1?'tomorrow':'in '+d+' days';
+const list=a=>a.length<2?a.join(''):a.slice(0,-1).join(', ')+' and '+a[a.length-1];
+const uniq=a=>[...new Set(a)];
+const PATHS={
+  ok:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  swap:'<path d="M4 8.5h15l-3.5-3.5M20 15.5H5l3.5 3.5"/>',
+  warn:'<path d="M12 5v9M12 18.6v.1"/>',
+  no:'<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  plant:'<path d="M3 20V11l5.5 3.2V11l5.5 3.2V5h4l1 15z"/>',
+  truck:'<path d="M2 7h11v9H2zM13 10h4.5l3.5 3.5V16h-8"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  ship:'<path d="M3 14h18l-2.5 5.5h-13zM7 14V9h10v5M12 9V5"/>',
+  wh:'<path d="M3 20V9.5L12 5l9 4.5V20M8 20v-7h8v7"/>',
+  pin:'<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.3"/>'
+};
+const svg=(n,w)=>'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(w||2.6)+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+PATHS[n]+'</svg>';
+const K={free:['v-free','ok'],swap:['v-swap','swap'],rush:['v-rush','warn'],no:['v-no','no']};
+const ZL={free:'Free space',swap:'With a swap',rush:'Someone waits',no:'Too soon'};
+
+// ---------- what each date takes ----------
+// cost of a swap plan: customers made late, days late, orders moved
+const cost=sw=>{const late=sw.moved.filter(m=>!m.ok);return[late.length,late.reduce((a,m)=>a+(m.to==null?99:m.to-m.nb),0),sw.moved.length]};
+const less=(a,b)=>{for(let i=0;i<a.length;i++)if(a[i]!==b[i])return a[i]<b[i];return false};
+const ZC={};
+function zones(q){
+  if(ZC[q])return ZC[q];
+  const A=stdPlan(q);const freeD=A.nr?A.nr.del:null;
+  const at={};let swapD=null,rushD=null;
+  if(q<=200)for(let D=1;D<(freeD||H-2);D++){   // one truck carries 200, so swaps are checked for single loads
+    let best=null;
+    [bestSwap(q,D,false),bestSwap(q,D,true)].forEach(b=>{if(!b)return;const c=cost(b.sw);if(!best||less(c,best.c))best={S:b.S,sw:b.sw,c,d:D}});
+    const prev=at[D-1];if(prev&&(!best||less(prev.c,best.c)))best=prev;   // a plan that arrives earlier also meets a later date
+    at[D]=best;
+    if(best&&rushD==null)rushD=D;
+    if(best&&best.c[0]===0&&swapD==null)swapD=D;
+  }
+  if(rushD===swapD)rushD=null;
+  return ZC[q]={A,freeD,at,swapD,rushD,onD:swapD!=null?swapD:freeD};
+}
+function statusAt(q,D){
+  const z=zones(q);
+  if(z.freeD!=null&&D>=z.freeD)return'free';
+  const p=z.at[D];
+  return p?(p.c[0]===0?'swap':'rush'):'no';
+}
+const fitBy=D=>{let m=0;for(let d=1;d<=D;d++)m=Math.max(m,maxBy(d));return m};
+const legsOf=rs=>rs.map(r=>({r,q:r.pd.reduce((a,b)=>a+b.q,0)})).sort((a,b)=>a.r.del-b.r.del);
+function swapPlan(q,D,pd,S,sw,manual){
+  const late=sw.moved.filter(m=>!m.ok);
+  const kind=!sw.allFit?'no':late.length?'rush':sw.moved.length?'swap':'free';
+  return{kind,D,pd,del:sw.np.del,s:sw.s,np:sw.np,steps:sw.steps,moved:sw.moved,late,S,manual,allFit:sw.allFit,legs:[{r:sw.np,q}]};
+}
+const AP={};
+function autoPlan(q,D){
+  const key=q+':'+D;if(AP[key])return AP[key];
+  const z=zones(q);let P;
+  if(z.freeD!=null&&D>=z.freeD){
+    const j=jit(q,D);
+    if(j)P={kind:'free',D,pd:D,del:j.r.del,s:j.s,legs:[{r:j.r,q}],moved:[],late:[],S:[]};
+    else{const f=planFor(q);P={kind:'free',D,pd:D,del:z.freeD,s:f.s,legs:legsOf(f.legs),moved:[],late:[],S:[]}}
+  }else if(z.at[D]){const p=z.at[D];P=swapPlan(q,D,p.d,p.S,p.sw,false)}
+  else if(q>200&&z.freeD!=null){const f=planFor(q);P={kind:'no',big:true,D,pd:D,del:z.freeD,s:f.s,legs:legsOf(f.legs),moved:[],late:[],S:[]}}
+  else{
+    const sw=withSwaps(q,D,[]);
+    P=sw?swapPlan(q,D,D,[],sw,false):{kind:'no',tooSoon:true,D,pd:D,del:null,s:clone(BASEBOOK),legs:[],moved:[],late:[],S:[]};
+  }
+  return AP[key]=P;
+}
+
+// ---------- state ----------
+const st={q:CALLS[0].q,D:CALLS[0].D,call:0,manual:null};   // D null = "how soon?"; manual = swaps the rep picked by hand
+function curPlan(){
+  const q=st.q,z=zones(q);
+  const D=st.D!=null?st.D:z.onD;   // no date asked: the earliest date where every customer stays on time
+  if(D==null)return{kind:'none',D:null,pd:null,del:null,s:clone(BASEBOOK),legs:[],moved:[],late:[],S:[]};
+  if(st.manual){const sw=withSwaps(q,st.manual.pd,st.manual.swaps);if(sw)return swapPlan(q,D,st.manual.pd,st.manual.swaps,sw,true)}
+  return autoPlan(q,D);
+}
+const lateDays=late=>Math.max(...late.map(m=>m.to==null?99:m.to-m.nb));
+function lateLine(late){
+  const nm=uniq(late.map(m=>co(m.c)));
+  if(nm.length===1)return nm[0]+' gets its order '+pl(lateDays(late),'day')+' late.';
+  if(nm.length===2)return list(nm)+' get their orders late.';
+  return nm.length+' customers get their orders late.';
+}
+function moveLine(moved,brief){   // who moves in a swap where everyone stays on time
+  const nm=uniq(moved.map(m=>co(m.c)));
+  if(nm.length===1)return'The order for '+nm[0]+(brief?' moves later.':' moves to a later slot and stays on time.');
+  if(nm.length===2)return'Orders for '+list(nm)+(brief?' move later.':' move to later slots. Both stay on time.');
+  return moved.length+' other orders'+(brief?' move later.':' move to later slots. All stay on time.');
+}
+function answerText(P,q,z){
+  const asap=st.D==null;
+  if(P.kind==='none')return{k:'no',t:'No date in the next weeks',s:'Free space does not fit '+q+' units in the next 5 weeks.'};
+  if(P.tooSoon)return{k:'no',t:'No, too soon',s:z.rushD!=null?'The fastest possible is '+dayLabel(z.rushD)+', if another customer waits.':z.onD!=null?'The earliest is '+dayLabel(z.onD)+'.':'Nothing can arrive that soon.'};
+  if(P.big){const f=fitBy(P.D);return{k:'no',t:'Not all by then',s:(f>0?f+' of '+q+' units fit by '+short(P.D)+'.':'No free space arrives by '+short(P.D)+'.')+' The last part arrives '+dayLabel(P.del)+'.'}}
+  if(P.kind==='free'){
+    const n=P.legs.length;
+    if(asap)return{k:'free',t:dayLabel(P.del),s:'Fits in free space'+(n>1?', in '+n+' deliveries':'')+'. No other order moves.'};
+    return{k:'free',t:'Yes',s:'Fits in free space. '+(n>1?n+' deliveries, the last on '+dayLabel(P.del)+'.':'Arrives '+dayLabel(P.del)+'.')};
+  }
+  if(P.kind==='swap'){
+    return{k:'swap',t:asap?dayLabel(P.del):'Yes, with a swap',s:(asap?'With a swap. ':'Arrives '+dayLabel(P.del)+'. ')+moveLine(P.moved)};
+  }
+  if(P.kind==='rush')return{k:'rush',t:'Only if another customer waits',s:'Arrives '+dayLabel(P.del)+'. '+lateLine(P.late)};
+  const bad=P.steps&&P.steps.find(x=>!x.ok);
+  return{k:'no',t:P.manual?'Does not fit yet':'No, does not fit',s:(bad?(bad.l==='STOCK'?'Not enough stock is taken yet. ':LEGN[bad.l]+' on '+short(bad.d)+' is full. '):'')+'Pick orders to swap below the grid.'};
+}
+
+// ---------- render ----------
+function render(src){
+  const q=st.q,z=zones(q),P=curPlan(),sel=P.D,A=answerText(P,q,z);
+  const a=document.activeElement,ad=a&&a.dataset,host=a&&a.closest&&a.closest('#opts,#cal,#verdict,#grid,#pb-res');
+  const key=!host||!ad?null:ad.d!=null?'[data-d="'+ad.d+'"]':ad.c!=null?'[data-c="'+ad.c+'"]':ad.act?'[data-act="'+ad.act+'"]':null;
+  [$('qty'),$('pb-q')].forEach(el=>{if(el!==src)el.value=q});
+  document.querySelectorAll('#calls .call').forEach((b,i)=>b.setAttribute('aria-pressed',i===st.call));
+  const c=CALLS[st.call];
+  $('who').textContent=c.co+' · '+c.note;
+  $('quote').textContent=st.D==null?'“How soon can I get '+q+' units?”':'“Can I get '+q+' units by '+dayLabel(st.D)+'?”';
+  $('ans').className='ans '+K[A.k][0];
+  $('ans').innerHTML='<span class="ic">'+svg(K[A.k][1])+'</span><div><b>'+A.t+'</b><p>'+A.s+'</p></div>';
+  renderOpts(P,z,q,sel);renderCal(q,sel);renderVerdict(P,q,z,A);renderGrid(P,q,sel);renderResult(P,q,z,A);
+  if(key){const n=host.querySelector(key);if(n)n.focus({preventScroll:true})}
+}
+
+function renderOpts(P,z,q,sel){
+  const rows=[];
+  if(z.rushD!=null){const p=z.at[z.rushD];rows.push({k:'rush',D:z.rushD,tag:'Someone waits.',txt:lateLine(p.sw.moved.filter(m=>!m.ok)),marks:[z.rushD]})}
+  if(z.swapD!=null){const p=z.at[z.swapD];rows.push({k:'swap',D:z.swapD,tag:'Swap, all on time.',txt:moveLine(p.sw.moved,true),marks:[z.swapD]})}
+  if(z.freeD!=null){const n=z.A.legs.length;rows.push({k:'free',D:z.freeD,tag:'Free space.',txt:'No other order moves.'+(n>1?' '+n+' deliveries.':''),marks:uniq(z.A.legs.map(r=>r.del))})}
+  const max=Math.min(35,Math.max(14,z.freeD||0)+1),X=d=>Math.min(d,max)/max*100;
+  const zn=sel!=null&&P.kind!=='none'?statusAt(q,sel):null;
+  $('opts').innerHTML=rows.map(r=>'<button type="button" class="opt v-'+r.k+'" data-d="'+r.D+'" aria-pressed="'+(zn===r.k)+'"><span class="ic">'+svg(K[r.k][1])+'</span><span class="ob"><span class="top"><span class="date">'+dayLabel(r.D)+'</span><span class="in">'+inDays(r.D)+'</span></span><span class="what"><b>'+r.tag+'</b> '+r.txt+'</span><span class="bar"><i style="width:'+X(r.D)+'%"></i>'+r.marks.map(d=>'<u style="left:'+X(d)+'%"></u>').join('')+'</span></span></button>').join('')||'<p class="optnote">No date in the next 5 weeks.</p>';
+  const ticks=[0,7,14,21,28,35].filter(d=>d<=max);
+  $('axis').innerHTML=ticks.map((d,i)=>'<span'+(d===max&&i?' class="end"':'')+' style="left:'+X(d)+'%">'+short(d)+'</span>').join('');
+  $('axis').hidden=!rows.length;
+  const note=$('optnote');note.hidden=q<=200;
+  note.textContent='More than 200 units is more than one truck load, so the order arrives in several deliveries.';
+}
+
+function renderCal(q,sel){
+  $('cal-q').textContent=q+' units';
+  const off=(TODAY+6)%7;   // weeks start on Monday
+  let h=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(w=>'<div class="wh">'+w+'</div>').join('');
+  for(let i=0;i<35;i++){
+    const d=i-off;
+    if(d<0){h+='<div class="cd pad" aria-hidden="true"></div>';continue}
+    const x=dateOf(d),zn=d===0?'no':statusAt(q,d),on=sel===d;
+    const m=d===0?'Today':x.getDate()===1?MO[x.getMonth()]:'';
+    if(d===0)h+='<div class="cd z-no today"><span class="m">'+m+'</span><span class="n">'+x.getDate()+'</span><span class="m"></span></div>';
+    else h+='<button type="button" class="cd tog z-'+zn+(on?' sel':'')+'" data-d="'+d+'" aria-pressed="'+on+'" aria-label="'+dayLabel(d)+', '+ZL[zn].toLowerCase()+'"><span class="m">'+m+'</span><span class="n">'+x.getDate()+'</span>'+svg(K[zn][1],3)+'</button>';
+  }
+  $('cal').innerHTML=h;
+}
+
+const delivList=P=>'<ul class="mv">'+P.legs.map(x=>'<li><span class="dot">'+svg('ok',3)+'</span><div><b>'+x.q+' units</b> arrive '+dayLabel(x.r.del)+'</div></li>').join('')+'</ul>';
+function movedText(m){
+  const when=m.to!=null?dayLabel(m.to):'no date in the next weeks';
+  const o=ordOf(m.c),was=o.del!=null?o.del:INFO[m.c].del;
+  const what=m.give?'Gives its stock. New units arrive '+when:m.delay?'Goes on a later truck. Arrives '+when:'Moves from '+short(was)+' to '+when;
+  const need=m.ok?'On time, needed by '+short(m.nb)+'.':m.to!=null?'<em class="lt">'+pl(m.to-m.nb,'day')+' late</em>, needed by '+short(m.nb)+'.':'Needed by '+short(m.nb)+'.';
+  return what+'. '+need;
+}
+function renderVerdict(P,q,z,A){
+  const v=$('verdict');v.className='verdict '+K[A.k][0];
+  const fits=P.kind==='free'||P.kind==='swap'||P.kind==='rush';
+  let line;
+  if(P.kind==='none')line='';
+  else if(st.D==null)line='Earliest date where every customer stays on time.';
+  else line='Wanted by '+dayLabel(P.D)+'.'+(fits?' Arrives '+dayLabel(P.del)+(P.del<P.D?', '+pl(P.D-P.del,'day')+' early':'')+'.':'');
+  let h='<div class="vhead"><span class="ic">'+svg(K[A.k][1])+'</span><div><b>'+A.t+'</b><span>'+line+'</span></div></div>';
+  if(P.moved.length)h+='<ul class="mv">'+P.moved.map(m=>'<li class="'+(m.ok?'':'late')+'"><span class="dot">'+svg(m.ok?'ok':'warn',3)+'</span><div><b>'+co(m.c)+'</b> · '+ordOf(m.c).q+' units<br><span>'+movedText(m)+'</span></div></li>').join('')+'</ul>';
+  else if(P.legs.length&&(P.kind==='free'||P.big))h+=delivList(P);
+  if((P.kind==='rush'||(P.kind==='no'&&!P.big&&!P.tooSoon))&&P.D!=null){const f=fitBy(P.D);if(f>0&&f<q)h+='<p class="vnote">Free space alone fits '+f+' of '+q+' units by '+short(P.D)+'.</p>'}
+  const acts=[];
+  if(P.manual)acts.push('<button type="button" class="go" data-act="best">Back to the best plan</button>');
+  else if(P.tooSoon||P.big){
+    if(z.rushD!=null)acts.push('<button type="button" class="go" data-d="'+z.rushD+'">Fastest: '+dayLabel(z.rushD)+'</button>');
+    if(z.onD!=null)acts.push('<button type="button" class="go" data-d="'+z.onD+'">'+(z.rushD!=null?'Everyone on time: ':'Earliest: ')+dayLabel(z.onD)+'</button>');
+  }
+  if(acts.length)h+='<div class="acts">'+acts.join('')+'</div>';
+  v.innerHTML=h;
+}
+
+// a block shows its label only when the label fits inside it
+function fitLabels(){
+  const sp=[...$('grid').querySelectorAll('.b>span')];
+  sp.forEach(s=>s.classList.remove('off'));
+  sp.filter(s=>s.offsetWidth+3>s.parentNode.clientWidth).forEach(s=>s.classList.add('off'));
+}
+const COLS=[['plant','Plant','200 a day'],['truck','Truck','to port'],['ship','Ship','every 3 days'],['wh','Warehouse','600 spaces'],['truck','Truck','to customer']];
+function renderGrid(P,q,sel){
+  const s=P.s,dels=P.legs.map(x=>x.r.del),mv=new Set(P.moved.map(m=>m.c));
+  const rows=Math.min(H-2,Math.max(21,(dels.length?Math.max(...dels):0)+2,(sel||0)+2));
+  let g='<div class="ghead"><div></div>'+COLS.map(([ic,a,b])=>'<div class="ch">'+svg(ic,1.5)+'<b>'+a+'</b><span>'+b+'</span></div>').join('')+'<div class="ch">'+svg('pin',1.5)+'<b>Arrives</b><span>tap a day</span></div></div>';
+  for(let d=0;d<rows;d++){
+    const x=dateOf(d);
+    g+='<div class="dl">'+(d===0?'Today':WD[x.getDay()])+'<small>'+x.getDate()+' '+MO[x.getMonth()]+'</small></div>';
+    LEGS.forEach(l=>{
+      const c=cap(l,d);if(c===0){g+='<div class="cell none"></div>';return}
+      let inner='',u=0;const tot=Math.max(c,used(s,l,d));
+      s[l][d].forEach(b=>{u+=b.q;const nw=b.c==='NEW';inner+='<div class="b '+b.k+(mv.has(b.c)?' mv':'')+'" style="flex:'+b.q+'" title="'+(nw?'This order':co(b.c))+', '+b.q+' units">'+(b.q/tot>=.1?'<span>'+(nw?'NEW':base(b.c))+'</span>':'')+'</div>'});
+      const fr=c-u;if(fr>0)inner+='<div class="b free" style="flex:'+fr+'" title="Free, '+fr+' units">'+(fr/c>=.1?'<span>'+Math.round(fr/c*100)+'%</span>':'')+'</div>';
+      const on=s[l][d].some(b=>b.c==='NEW');
+      g+='<div class="cell'+(on?' traced':'')+(on&&fr<0?' short':'')+'">'+inner+'</div>';
+    });
+    const zn=d===0?'no':statusAt(q,d),on=sel===d;
+    g+='<button type="button" class="day tog z-'+zn+(on?' sel':'')+(dels.includes(d)?' arr':'')+'" data-d="'+d+'" aria-pressed="'+on+'" aria-label="'+dayLabel(d)+', '+ZL[zn].toLowerCase()+'">'+x.getDate()+' '+MO[x.getMonth()]+'</button>';
+  }
+  $('grid').innerHTML=g;fitLabels();
+  $('pb-day').textContent=sel==null?'Tap a date under Arrives':(st.D==null?'Earliest: ':'Arrive by ')+dayLabel(sel);
+}
+
+function chip(key,mode,on,np){
+  const c=key.replace('DL:',''),o=ordOf(c);
+  const verb=mode==='take'?(on?'Taken from ':'Take from '):mode==='later'?(on?'On a later truck: ':'Move to a later truck: '):(on?'Swapped: ':'Swap ');
+  const meta=o.q+' units'+(mode==='take'?' · '+stageOf(o,np):'')+' · '+(kind(c)==='slack'?'needed by '+short(o.nb):'fixed date');
+  return'<button type="button" class="chip'+(on?' on':'')+'" data-c="'+key+'" aria-pressed="'+on+'"><b>'+verb+co(c)+'</b><span>'+meta+'</span></button>';
+}
+function renderResult(P,q,z,A){
+  const line=(k,html)=>'<div class="pb-line"><span class="ic">'+svg(K[k][1])+'</span><div>'+html+'</div></div>';
+  const deliv=()=>'<div class="steps">'+P.legs.map(x=>'<div class="step ok"><span class="sdot">'+svg('ok',3)+'</span><div class="sbody"><b>'+x.q+' units arrive '+short(x.r.del)+'.</b> <span>'+pathText(x.r)+'</span></div></div>').join('')+'</div>';
+  let h='';const acts=[];
+  if(P.kind==='none')h=line('no','<b>No date in the next weeks.</b>');
+  else if(P.tooSoon)h=line('no','<b>Too soon for any order.</b> Stock in the warehouse can leave on tomorrow’s truck at the earliest, so nothing arrives before '+dayLabel(2)+'.');
+  else if(P.big)h=line('no','<b>Not all by '+short(P.D)+'.</b> '+q+' units are more than one truck load. In free space they arrive in '+P.legs.length+' deliveries.')+deliv();
+  else if(!P.np){
+    h=line('free','<b>Fits in free space.</b> '+(P.legs.length>1?P.legs.length+' deliveries.':'One delivery.')+' No other order moves.')+deliv();
+    if(P.legs.length>1&&q<=200)acts.push('<button type="button" class="go" data-act="one">Check one delivery with swaps</button>');
+  }else{
+    const np=P.np,S=P.S;
+    h=line(A.k,(P.allFit?(P.kind==='rush'?'<b>Fits, but another customer waits.</b> ':P.kind==='swap'?'<b>Fits with a swap.</b> ':'<b>Fits.</b> '):'<b>Does not fit by '+short(P.pd)+'.</b> ')+
+      (np.wOnly?(P.allFit?'Uses stock that is already on its way. '+pathText(np):'Too late to make new units. Take stock from other customers that is in the warehouse or lands in time.'):(P.allFit?'Route: ':'Latest route needed: ')+pathText(np)));
+    const seen={};
+    h+='<div class="steps">'+P.steps.filter(x=>{if(x.l==='W'&&x.ok){if(seen.W)return false;seen.W=1}return true}).map(x=>{
+      let chips='';
+      if(!x.ok||x.l==='STOCK'||(x.l==='T2'&&S.some(c=>c.startsWith('DL:')))){
+        let codes=x.l==='STOCK'?PRE.filter(o=>o.a<=np.t2-1).map(o=>o.c):uniq(BASEBOOK[x.l][x.d].filter(b=>b.c!=='NEW'&&(x.l==='O'||!PRECODES.includes(b.c))).map(b=>b.c));
+        codes=codes.slice().sort((a,b)=>(kind(a)==='slack'?0:1)-(kind(b)==='slack'?0:1));
+        chips=codes.map(c=>chip(c,x.l==='STOCK'?'take':'swap',S.includes(c),np)).join('');
+        if(x.l==='T2')chips+=BASEBOOK.T2[x.d].filter(b=>PRECODES.includes(b.c)&&!S.includes(b.c)).map(b=>chip('DL:'+b.c,'later',S.includes('DL:'+b.c),np)).join('');
+        chips=chips?'<div class="chips">'+chips+'</div>':'<div class="pb-hint">No customer orders here to swap.</div>';
+      }
+      return'<div class="step '+(x.ok?'ok':'bad')+'"><span class="sdot">'+svg(x.ok?'ok':'no',3)+'</span><div class="sbody"><b>'+LEGN[x.l]+(x.l==='STOCK'?'':' · '+short(x.d))+'</b> <span>'+(x.l==='STOCK'?'needs '+x.n+', taken so far '+x.free:'needs '+x.n+', free '+Math.max(0,x.free))+'</span>'+chips+'</div></div>';
+    }).join('')+'</div>';
+    if(P.moved.length)h+='<b class="pb-sub">Orders that move</b><div class="steps">'+P.moved.map(m=>'<div class="step '+(m.ok?'ok':'warn')+'"><span class="sdot">'+svg(m.ok?'ok':'warn',3)+'</span><div class="sbody"><b>'+co(m.c)+'</b> · '+ordOf(m.c).q+' units<br><span>'+movedText(m)+'</span><br><button type="button" class="chip on undo" data-c="'+(m.delay?'DL:':'')+m.c+'">Undo</button></div></div>').join('')+'</div>';
+    if(S.length)acts.push('<button type="button" class="go" data-act="clear">Start without swaps</button>');
+    if(P.manual)acts.push('<button type="button" class="go" data-act="best">Back to the best plan</button>');
+  }
+  if(acts.length)h+='<div class="acts">'+acts.join('')+'</div>';
+  $('pickres').className='pickbox res '+K[A.k][0];
+  $('pb-day2').textContent=P.D==null?'Result':'Result: '+(st.D==null?'earliest date, ':'arrive by ')+dayLabel(P.D);
+  $('pb-res').innerHTML=h;
+}
+
+// ---------- actions ----------
+const clampQ=v=>Math.max(10,Math.min(400,Math.round((+v||10)/10)*10));
+function setQ(v,src){v=clampQ(v);if(v===st.q)return;st.q=v;st.manual=null;render(src)}
+['qty','pb-q'].forEach(id=>{const el=$(id);
+  el.addEventListener('input',()=>{if(+el.value>=10)setQ(el.value,el)});
+  el.addEventListener('change',()=>{if(+el.value>=1)setQ(el.value,null);el.value=st.q});
+});
+$('minus').onclick=$('pb-m').onclick=()=>setQ(st.q-10);
+$('plus').onclick=$('pb-p').onclick=()=>setQ(st.q+10);
+$('calls').innerHTML=CALLS.map((c,i)=>'<button type="button" class="call" data-call="'+i+'" aria-pressed="false"><b>'+c.nick+'</b><span>'+c.q+(c.D==null?', how soon':' by '+short(c.D))+'</span></button>').join('');
+$('cal-legend').innerHTML=['free','swap','rush','no'].map(k=>'<span><span class="k z-'+k+'">'+svg(K[k][1],3)+'</span>'+ZL[k]+'</span>').join('');
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  const ds=b.dataset;
+  if(ds.call!=null){const c=CALLS[+ds.call];st.call=+ds.call;st.q=c.q;st.D=c.D;st.manual=null;render()}
+  else if(ds.d!=null){const d=+ds.d;st.D=b.classList.contains('tog')&&st.D===d?null:d;st.manual=null;render()}
+  else if(ds.c!=null){const P=curPlan();if(!P.np)return;const S=P.S;st.manual={pd:P.pd,swaps:S.includes(ds.c)?S.filter(x=>x!==ds.c):[...S,ds.c]};render()}
+  else if(ds.act==='best'){st.manual=null;render()}
+  else if(ds.act==='clear'||ds.act==='one'){const P=curPlan();st.manual={pd:P.pd,swaps:[]};render()}
+});
+let fitT=0;window.addEventListener('resize',()=>{cancelAnimationFrame(fitT);fitT=requestAnimationFrame(fitLabels)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitLabels);
 render();
 })();
 </script>
