@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CAresume</title>
+<meta name="description" content="Resume of Jevgeni Reusenmann: last-mile, launch and supply chain operations.">
+<meta name="robots" content="noindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one plain column that reads like the printed resume, tuned for reading on a phone. Single white look by choice. */
+:root{--bg:#ffffff;--ink:#111418;--text:#2c323b;--muted:#5f6773;--line:#e3e6eb;--page:#f3f5f8;--card:#ffffff;--accent:#1f4e8c;
+  --sans:"Inter",-apple-system,"Segoe UI",Roboto,sans-serif;color-scheme:light}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--accent)}
+.page{max-width:880px;margin:0 auto;padding-block:40px 72px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.btn{display:inline-block;margin-top:18px;padding:11px 18px;border-radius:10px;background:var(--accent);color:#ffffff;font-size:15px;font-weight:600;text-decoration:none}
+.btn:hover{filter:brightness(1.12)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.mail{margin:28px 0 0;text-align:center;font-size:16px;color:var(--text)}
+.mail a{user-select:text}
+.end{margin-top:40px;text-align:center}
+.topbar{display:flex;justify-content:flex-end}
+.topbar .btn{margin-top:0}
+header{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;border-top:4px solid var(--accent)}
+h1{margin:0;color:var(--ink);font-size:26px;font-weight:700;letter-spacing:-.01em;line-height:1.2}
+.contact{margin:6px 0 0;display:flex;flex-wrap:wrap;gap:2px 10px;font-size:15px;color:var(--muted)}
+.contact a{text-decoration:none;user-select:text}
+.contact a:hover{text-decoration:underline}
+.role{margin:6px 0 0;color:var(--ink);font-size:19px;font-weight:500;line-height:1.4}
+.sum{margin:14px 0 0;max-width:68ch}
+h2{margin:44px 0 0;padding-left:4px;color:var(--ink);font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.job,.rows,.skills{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 24px;box-shadow:0 1px 2px rgba(17,20,24,.04)}
+.job{margin-top:14px}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 16px;align-items:baseline}
+.top h3{margin:0;color:var(--ink);font-size:18px;font-weight:600;line-height:1.35}
+.date{color:var(--muted);font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.co{margin:2px 0 0;color:var(--accent);font-weight:600}
+.co span{color:var(--muted);font-weight:400}
+ul{margin:12px 0 0;padding-left:20px;display:grid;gap:6px}
+.job li{font-size:16px;line-height:1.55}
+li{padding-left:4px}
+li::marker{color:var(--muted)}
+strong{color:var(--ink);font-weight:600}
+.job .top h3{font-size:20px}
+.job>.top h3{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;flex:none;border-radius:8px;border:1px solid var(--line);background:#ffffff;object-fit:contain}
+.logo.mono{display:grid;place-items:center;background:var(--ink);border-color:var(--ink);color:#ffffff;font-size:17px;font-weight:700}
+.rows .lg{display:flex;align-items:center;gap:10px;min-width:0}
+.logo.sm{width:28px;height:28px;border-radius:6px;font-size:12px}
+.rows .lg~.d{padding-left:38px}
+.roles{margin-top:14px;display:grid;gap:20px}
+.step .top h4{margin:0;color:var(--ink);font-size:17px;font-weight:600;line-height:1.35}
+.step .loc{margin:1px 0 0;color:var(--muted);font-size:15px}
+.multi .roles{gap:22px}
+.multi .step{position:relative;padding-left:22px}
+.multi .step::before{content:"";position:absolute;left:0;top:7px;width:10px;height:10px;border-radius:50%;background:var(--card);border:2px solid var(--accent)}
+.multi .step:first-child::before{background:var(--accent)}
+.multi .step:not(:last-child)::after{content:"";position:absolute;left:5px;top:22px;bottom:-18px;width:2px;background:var(--line)}
+
+.rows{list-style:none;margin:14px 0 0;gap:18px}
+.rows li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 16px;padding:0}
+.rows li+li{border-top:1px solid var(--line);padding-top:18px}
+.rows b{color:var(--ink);font-weight:600}
+.rows .d{grid-column:1/-1}
+.skills{margin:14px 0 0;display:grid;gap:16px}
+.skills p{margin:0}
+.skills b{display:block;color:var(--ink);font-weight:600}
+footer{margin-top:56px;color:var(--muted);font-size:14px}
+@media (max-width:900px){.job li{font-size:15.5px}}
+@media (max-width:480px){body{font-size:16.5px}h1{font-size:23px}.page{padding-block:24px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}h2{margin-top:36px}header,.job,.rows,.skills{padding:18px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar"><a class="btn" href="https://lunarked.github.io/library/">See my tools and data stories →</a></div>
+
+  <header>
+    <h1>Jevgeni Reusenmann</h1>
+    <p class="role">Last-mile, launch and supply chain operations</p>
+    <p class="sum">10 years moving goods at scale. I launch networks and stores, plan the capacity behind them, and keep them in stock once they are live. Amazon, JD.com, Bose and Arburg, across Europe and the US.</p>
+    </header>
+
+  <h2>Experience</h2>
+
+  <div class="job">
+    <div class="top"><h3><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAAAeFBMVEXIFSLMJzP44uTmmJ3VTVfecnrvvcHJGSbKICzNLDjfd3/55+j9+vrWUVvonKLwwsX11Nfsr7TkipHbZG3SP0nTRlDPMz72293ppKjcbHPQOUTyyMvPNUDXVl/ssLTzztDhg4nlkJbZXWbgfoXjh4789fbuuLz67e7gNlN8AAACVUlEQVRIie2V23akIBBFA14AjYoCCqLiLfT//2HKTreT2OmkM2vmLefFtUo2YFWd8unpV/9ZhBBKKSFP5+dVEL23nlLEaoZgOat3MUTvEYSiupWypgS1apesgfgcoKxVvRAKkS4zu0SvZMc+hWibiSWYREfDRe/KpyoxvarpLYCUWbUtRoWEbnZxZ32+wLm3AMuSvEhxEKIofn5+OZ1SjNNNTazXuaU3t/oAnBobl0GutS8ct0W5CtUdb/UBaApdmawXZsy95Q0fJhOyrwBeVkJCQdo+yT0/ndwA2fgeIIjJ3lSla7gtE/kAsBVTzqt3vLGr+h54e1GLIOYneEEeBFg/apumej7U+y4AFZ08TrVpGX0IgJ5JyiYdkrBDDwJhpH8EdD8FamX+7gT1IIBkn5Q4LaODK74A5nHYAHkA+gXqcwuQbacYYy3A3u+Beq4GmzbTASCkNYF3mAf9odJby0D8AED/qcXzBrsqvM4b8jaRsqW056Y8A+AYhRCEpTK5w40bru1Ntq5vVTYn2oLlfSLPjvNB0ndbOFq2D7Bw4sVAsD2ToYhWXeCUx7lpLxYdBYypqNJw/xfsJ6HYFYC0RWtQxjzFsGyuNwA7n68mqbZwg7HLo7C9pGjz7aKH2DrHC73McPNtamBXeF36uLDOxkOQZN21t1GnIs0xhu+K9dJDz1/mUoph67RxxRAsIqz3uXQBwOY+H2FeQQ6Exrt4XE5RL99ZB2yeRVMwTWtiZsUg11RFwa5pjEQGI/xPyc5ZUmEYKtm+jXYCWdulLsP73l/lV/9Er+6FQssVENUUAAAAAElFTkSuQmCC" alt="">JD.com Europe</h3><span class="date">Feb 2026 – now</span></div>
+    <p class="co">Berlin · DE, NL, BE</p>
+    <div class="roles">
+      <div class="step">
+        <div class="top"><h4>Capacity Planning Manager, Last Mile</h4></div>
+        <ul>
+          <li>Scaled delivery capacity <strong>from 1,000 to 20,000 packages a day</strong> across 20+ depots.</li>
+          <li>Grew postcode coverage <strong>7x</strong> by planning drivers, routes and depots for each new area.</li>
+          <li>Brought MediaMarkt/Saturn store-pickup volume into live operations.</li>
+          <li>Weekly readout to European Ops leadership on utilization, service and partner risk.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="job">
+    <div class="top"><h3><span class="logo mono" aria-hidden="true">D</span>Darkchain</h3><span class="date">Mar 2025 – Jan 2026</span></div>
+    <p class="co">Berlin</p>
+    <div class="roles">
+      <div class="step">
+        <div class="top"><h4>Supply Chain and Operations Consultant</h4></div>
+        <ul>
+          <li>Held availability <strong>above 95%</strong> for growth brands selling on Amazon in the EU.</li>
+          <li>Ran warehouse system design, inventory policy and standard reporting.</li>
+          <li>Shaped AI agents that watch constraints, inventory health and master data.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="job multi">
+    <div class="top"><h3><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAY1BMVEUjLz7///8dKjoaKDggLTzu7u9dZnBobncXJTb6+/v39/grN0ba3N/P0dSVm6FFT1vh4+WorLJLVGAQIjRZYWx6gIifpKpRWmWxtbp0eoKHjZTGycw/SlgAGi+7v8Pn6eozP04y+PweAAACqklEQVR4nO3XXXejIBAGYAVUFEUU8QOJ8v9/5Q5J2iZNG02T7l7sPDftOe0JrzAzmChCCCGEEEIIIYQQQgghhBBC/wVGCKWUEPZvVqda1F2WZV0tONn455eHZFx7M1alSpJkLasx3UjQdmIr40OImJY8vlAYfi+uWJKxpvRl67PuennQ3w0QyThWst48qb3r+xKeeVVlVcEh5NsBIsZkEiIM5DURhLUmG5yHwhLOVLB+fj8A7IGBBLmy7kBfUY6Ucw7tB7XNiJ5CDdj7ASKmuzns1Np0gr+oIwj1PvwY4BCSbLPCaD0eD2tdJq+f70qYAs4slWURDTtQ1tuHS4RcTy1TykHwZ46CUS6GviziuBKM9/CZo9jxcYx31VvbVjaNftoUhEeprZJT8TMmwtneHQMfqOuLc4R8naEi9YMbwQjXB2fn9dR7hRSMDAoazO18GKLb+S0CUI3pPIVS3pMCCp6KYWrU+/SbnWYRt/Brc9j9DFQYFV9Yq9G04VB5CPLNY4e/sqg1zaw+JqCyPlQ+XeBDugemLKNOXkWI82KdewuXmodLixzb+4yGy5YJN6RGLqq4HL9rUx9Pj3jY0Wb/8gHRTpbxjaScl7GXxmTpm8lY2SxzqT5PftW05xLWcl8PforA6v6LCKftKJJ3RVF8Xvr09F103vPQA/m0rwWuIxyEmdevM9yXVNbp996hU1FY/fj6ITv1aVNtL3itHCdHLzacyNVGPx1pjBI/NWWxvexJoZrMsevBwVy7q4e/Q+BiyuR8U2S31Nxknt0Oz+cveJgvYsjk8n1B5Osip8H/4stvGLBai9TKBV5xji+aQJXwxjM3NvUabv+/8OoNA4/qyNftkB11bS0iHQbkry99mYKdB+Dx+8ZT9YUQQgghhBBCCCGEEEIIIYT+sT8HHSHKf3qdsAAAAABJRU5ErkJggg==" alt="">Amazon</h3><span class="date">Jun 2021 – Jan 2025</span></div>
+    <p class="co">Seattle · New York · Berlin</p>
+    <div class="roles">
+      <div class="step">
+        <div class="top"><h4>Supply Chain Manager, Freight Partner Onboarding</h4><span class="date">Oct 2024 – Jan 2025</span></div>
+        <p class="loc">Berlin</p>
+        <ul>
+          <li>Stood up <strong>Amazon Freight Partner Germany</strong>, bringing carriers into live EU middle mile.</li>
+          <li>Connected partner ops with middle mile, safety, finance and legal.</li>
+          <li>Owned on-road KPIs, capacity and EU compliance.</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="top"><h4>Instock Manager, Omnichannel Procurement</h4><span class="date">Jan 2023 – Sep 2024</span></div>
+        <p class="loc">New York</p>
+        <ul>
+          <li>Raised perishable instock <strong>from 80% to 93%</strong> across 100 stores by fixing top stockout causes.</li>
+          <li>Cut cross-channel stockouts <strong>30%</strong> by sharing grocery stock between store and online.</li>
+          <li>Cut dairy waste <strong>15% (about $1.2M a year)</strong> while holding 98% instock.</li>
+          <li>Spotted risk <strong>21 days earlier</strong> with daily SQL alarms; raised vendor fill rate from 83% to 95%.</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="top"><h4>Launch Manager, Just Walk Out</h4><span class="date">Apr 2022 – Dec 2022</span></div>
+        <p class="loc">Amazon Fresh · 50% travel</p>
+        <ul>
+          <li>Launched <strong>23 grocery stores at 97% opening-day instock</strong> across 14,000+ items, on schedule.</li>
+          <li>Built a launch model that sets first allocation and safety stock with no sales history.</li>
+          <li>Cut readiness <strong>from 9 to 6 weeks</strong> and scaled from 1 launch a month to 2 a week.</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="top"><h4>Supply Chain Manager, Urban Same-Day</h4><span class="date">Jun 2021 – Apr 2022</span></div>
+        <p class="loc">Seattle</p>
+        <ul>
+          <li>Scaled inbound planning <strong>from 15 to 80 same-day nodes</strong> (3,500 today) and wrote the SOPs.</li>
+          <li>Saved <strong>$3M a year</strong> by cutting $0.09 per package on West Coast inbound.</li>
+          <li>Tuned trailers, consolidation and timing as volume grew from 2M to 5M units a week.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="job multi">
+    <div class="top"><h3><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAaVBMVEUfHx/39/f///8AAAAWFhZaWlpXV1fj4+Pm5ub7+/saGhoYGBgcHByLi4uOjo4PDw9MTEyhoaFFRUXs7Oy3t7fZ2dk6OjolJSWoqKhkZGSAgICUlJTHx8fPz8+/v79wcHAsLCx4eHgzMzPeJ8gPAAAB/0lEQVR4nO3V2XqDIBAFYOXgGiNG0yQ1S5f3f8iCgFHTtNLbnv+Kj2BmGAaNIiIiIiIiIiIiIiIiIiKiX2zk3DA5n6oe1230TCWfqELiqyaZQxRBzafeZbTBfF2KqDwkT7RlwP5bsXABzsu5g2y7xdQJWE6N9lifAF6KWCu6LMviYXTBqxhGIs+G3/ToE51dFttFeuqk07TDbCnfrU9Avbl/gXYyQcTRBRNnwGagg9XCpgn0dpMFlM1OvOJRQAFiG6JXUXkU053pYOpjzM4HU6qvt1qdYm9rcg2I9k38nQ32YtK+FqbG950puGr32At3Op5SB3dO6g/bHlWV22IxVNVkcvDBrvDZZficLjNq5XpHZ+D9pRS4FeOfDCNd9tbtTF89N2qkHMO4oHu43pm0fhl0+weymZTRdmDrdmZu2cUe8k3X21fZ173yjbq9N154/Mg3ubk1w3mLm9uZbgWZjsHOtXFuq/sD7nTy0LLPL0s/3i3YnhYlutjvbBLMVh/Y2pw6SJdcG9iB2HX5nX+ndFmed2K6M/N2id2bB6XvwDx3Yd9878SZ+6vusi4D3eE/ucHvdhQ3uhcXdkgeHl359i/bh+9GOkqOphWayUyaNtjoF9RsKlGo5ovMOrXuCJ5/QJ98dMtvHtLLyuWjAV8/IiIiIiIiIiIiIiIiIvqHvgC8lRsZjPK4JAAAAABJRU5ErkJggg==" alt="">Bose</h3><span class="date">Jun 2018 – Jun 2021</span></div>
+    <p class="co">Boston</p>
+    <div class="roles">
+      <div class="step">
+        <div class="top"><h4>Global S&amp;OP Planning Lead</h4><span class="date">Jun 2019 – Jun 2021</span></div>
+        <p class="loc">Boston · Center of Excellence</p>
+        <ul>
+          <li>Freed <strong>$75M of excess inventory</strong> and 35 days of stock with tighter launch and EOL planning.</li>
+          <li>Owned the planning systems (SAP APO, Kinaxis, Power BI) for a <strong>$3B portfolio</strong>.</li>
+          <li>Ran monthly S&amp;OP with the C-suite; set global rules for safety stock, lead times, forecasts.</li>
+          <li>Presented the quarterly insight deck at the global all-hands (~9,000 people).</li>
+        </ul>
+      </div>
+      <div class="step">
+        <div class="top"><h4>Global Network Planner</h4><span class="date">Jun 2018 – Jun 2019</span></div>
+        <p class="loc">Boston</p>
+        <ul>
+          <li>Planned supply and channels in <strong>11 countries, about $400M of sales</strong>.</li>
+          <li>Ran allocation, launch phasing and replenishment for retailers in NA, EMEA and APAC.</li>
+          <li>Built forecasts and supply plans for <strong>~600 SKUs</strong> made in China, Malaysia and Mexico.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="job">
+    <div class="top"><h3><img class="logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAY1BMVEX///8AAAAIqIOo18gApH3U1NQQEBD6+vrBwcHo6Oh/f3/09PTs7OylpaWvr6/f39/JyclEREQ5OTmcnJwWFhYcHBxgYGAqKioiIiJwcHAyMjJoaGi5ublaWloICAiOjo5OTk6VQ9gXAAADp0lEQVR4nO2a6ZLaMBCEURLj+zY+Afv9nzI2mCtoBkuthKqUvn9buzBtS5rpGe1uZ7FYLJb/FTeM0jQ7JnFZjjNB4v7FSJE/4xzjsRtOU170bXs4VPv9/iwelKbjRqlzeb6xOxWt+MghMxbZdZIxqKe8bw7nz4Fv5HhYJ8vmd5xvj/lCgAo4nhUeV4KDCpig8KJFz0B4wATAK5Bg8YWHCgiw+EUKxk8LTMCAvoAMiy9iVEAHCohQAWD8Bo2PrgBciMAzAKfBCEyDE7oFMqwMiBGMvyux+OcjGD8Es1AfggJ8LL44gfHhMwAXIg0T1BTN/v4DugJOpS6gdcOZaHaPdd+hXkTrDDylHtgLDToCYAf0INWJjzuQB89mrN7+NtDk82DNQod88MKw3ixgMNUKhsu3VV2ZLV/obI4vhG9IQCzOXeavj6NijEw1o97TblLaj7ALkjCqCMAz8BtpLw0UNHIBBlPBSix/1Q5RrXtzqWBlL41z2p3+0Roc5WFGslgUhgUQSSijDwfcjryQyVdAMK07bEZfIM7g7LdcqkJMqBV5JiJsyVJ05MdjtsMmtyExoaiWs+YRAkRgcDhJHPZ6ecv09MDcGlAPeS05pE2A5wJ3CGu+rjJp3OHx5A2iDIjmusjkJqjg8eAKNSSr199TAoylAqLgiWT9PTmthjvzK6QVu+1y2ikYSQUhZcWao3chowXUn7+exM+SMhiWCwhqQHHe3yAFCP1chE6mVvTNKTgXuaE9JHU33MNs4ax7V6PXE0rQXQN0LnKn1atILjiZekIvFXjMyVJELxWodUEsrU6DEOlez8nQcQUqjfhHThrbEL2heEXDFYDj6T9Q71OJNkwbZQHGstCK6sjKN3kGFlQrEmky5bT5qRvjhGrTxTJEUBOwaQWqZhqC2EtT34/CxXZw17vJx5jPuFvi928f4xxMr2SMNnmh957D4c6u0hrcOy2uIHVvH2MvmN//nMa/tEHFUCbcdd27z2AHub1Cg3CspiCbN9YuIhqyCxKnxe5dhW14Lx3saZQ8EVvCdS5O2OG8RAA1KbmiMb3mvq6QlFj+9Kj3qewK1JI3GrE27qAsgN1T0ufh/9VGtUHg78ylm5q/ZVd1BfydubTA8j4qVzSnbG9YSd8nfwxUKxLbmfTS3P7Byk5KAvg7c/kU9tM9u9K8hu9M5A9DzXNvKG3D1OGQ7yeX/Qz1KYvFYrFYvs3PL7P79WV2P76MFWAFWAFWgBVgBVgBVsBvYS5IRVJPzaIAAAAASUVORK5CYII=" alt="">Arburg</h3><span class="date">Aug 2016 – Jun 2018</span></div>
+    <p class="co">Irvine, CA / Hartford, CT</p>
+    <div class="roles">
+      <div class="step">
+        <div class="top"><h4>Production Planning Manager</h4></div>
+        <ul>
+          <li>Ran planning and operations for a <strong>$30M machine site</strong>, with 10 people over two shifts.</li>
+          <li>Cut order lead time <strong>from 6 weeks to 3</strong> with Excel planning tools and daily readiness checks.</li>
+          <li>Kept engineering releases, BOM changes and build plans in sync between HQ and the US.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <h2>Early career: AI and research</h2>
+  <ul class="rows">
+    <li><b class="lg"><span class="logo sm mono" aria-hidden="true">i</span>i.am.plus</b><span class="date">2015 – 16</span><span class="d">Ran ML dataset training projects for a voice assistant on AI hardware.</span></li>
+    <li><b class="lg"><img class="logo sm" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAt1BMVEVHcEz9/v7w8PHz8/T29/f29vf19fb8+/vr7O38/f329/f19fX29vf6+vr+/v755uX////x8vI5iBT///85qldGiPX7wBQ8rFpJivTrUELrTUDsUUTrSz7rT0I+hPTu8vIvqFBMjPWUtvj8vgbN3fz5y8fuZFXT69lVtGrrQzTzmpG84MVzwYaUzqPxfXD2rqn83IN+qff+7L38zkZpnfb2nCY9npTMuyqWtD4zgPRCkc5/tdRHcEwgFdBcAAAAPXRSTlMA8C0eiU6g/g3jdcBiO9H9qdH///////////////////////////////////////////////////////8AWkw1vQAAB9FJREFUeJztW+l2okgYHVkscOeoEAWExKiIolk6nXTP+7/XVAFGKL5aQJIfc3LTSTrniPf67VUU//zzg2YwVGU4HOop8H8U1fhG7qE+6HX7I7PTQVMM1OmYo363N9CH36BCGWiTUWcKojOaaAPlK9nVHpO8IKKnfhG9PjEF7LkGc6J/Ab1mIhn2DMjstctu9Gqw5xp67UWk0pMyPY1OS8GgDkZN6AlGgxYk6JOm9AQ3h6OqmbfwT6emdpMRhv3b6An6w+b8gxs/fgZz0JDe6NbOPQa0RhmptmD+C/oNAkFpnHwQRrV71LAV919h1lSgt8yPFdSqCO3zYy/UUDCU8H+w2ZzPcYrzebMJJBRIFwRh/KFNfNput+7C87y95/ku/uN03oiyti8ZB6L828SEekng+376Gwvxlu423vCvnEhlo8HtPkHs7j1MvCDwLwJyEfu9e+aaoStTkXrs69E49vYZ94X/KiDX4J/HHA0Sg9KQffn4vPUW7oItIJOwPY+Zb9ERBqLBTEB0PmE/u0IBGCd2PJoiJzADYBy7hL7Azxawd2OmEbp8/gFL+uaErQ8IWEIClt7+xEwIbj0yWBUAe991KQGAAXIBaSSwFIx4TtAYF8WuX+HnC8AKGF5AGpuf0QJQnJtf0gNZGDB9YDIzgVGCgvhifnkDcPg55Qg2ACrwywpgR0BqAkYcGl3w5eelNP9Sip9pAngI2rgLiJ8ISPn2ad7V4mdEgQGmwHjLMADOdW97OuFx4LTFXcgrlCERP2NMVqEVKDrBAYBZ4s14HKQYjzcn0iOXsvzTDtSXB9Arzy7A7xMSVKyZCM8o231mAF78fwJYq4BFcLz1K/z+cnECawyu1rL8UDlUgJeheAnwM8s8Om+5+V9EdTqDcnDzGYGf5l/67EZHjCDJDzRFIASvJejK7/FnLunVZEfGAy/2iTShYvJ5Z1kGEWgfQJPg03r95vpF/n1r/JXpEBjFg1fbtt9c7ypgH7e1YMeLBGEIoJc1FmCvt97FCB6cfs1ABYFe/WjoNRVAjJApWEqUOHmgcksE+kBgX/C2JQsR3+cnQF2UByNgFHlZFxQs/HYdgDEpCajWYfR0FWDjbFgu4lb5p6MivwqMAnYRWEGrETCllijALILWJQX2G8MAzw9iPEO7B6WpZFDNwhdKgP0EC/gzn6+yLxh/yPcjcGGn2JKB3fgnWsALLGB1n+OugPndPEP2GxZQrIWaWMArzP8p4O6urCD/kQpYPQAJXFqgAGXgtZ4Amn6ea8gEgEFQFAAMA5SANSMEcgF3FQOkCuY8AV2+ACoCagmYfzohF/BLJAAohLUE3FUsUDTAfA4KmPAFUCGwZiRBKqDKXzIAwwICATUsQPNTISgjAApCaQFV/osMvgsEQSidBRL84jQEChEt4JUh4E9TAUggoFKKGdMIU8C8IACshMVSXL01iirNiJEGLAFzkYBSM9Jv6IZQC5yXBcDNqDgUKsJ5YP1xhH3wCOF5XsIKElC6iQMsjVEpCtcfTnSATQAgeF6VBNxDAsoLZKv6gmsUru115DhhIi3g8b5sAbAMWEV+qBAUguDdmTlODRM8lA0AxiC1PgaWhsjOVka2/eGkmB0lbgwR0B4AYxCVF4cKsDLKffD+MXNySJrgofz54RBA1PIYmMtTH6zfo09+J9rJ8Ae/KA/AQ3GZHwqC4DU1/5XfcWScgKgIwCEAvYzeIoH2yJ7W7x9OCSGjGBT5yymAx/VfkAcqtw0M4J1f3iOHwkyogE5B7AHoElTZJoN26ZIZLQDHAd8Lj1QA4ioEesCi+UEf7I6QAl4u0P4n0xBos+pOpQFtkx2q/LPZLNnBfkC7f2l6lgE6wGYxtFEYQCZwwugASAh2iRP+Lo0B+B/DANC9M2CXZjoFTECMEEZJWUOwOyRRiK3z+2/ZAGAVpPdnMqhAQ8JxGEISnFnoHJPkcNhhHA6H5BiFhL6oYJWlAPSmUwu8iw3fMzzCCogZZk6UYXZhzyRc3bC6B3MGwQd7FNAEQQSFQaaBRGQalmUQBausCIEOmFqMgwTwmb1dCCuo8Bbw91KEwXdErHvosAlwIAIKePSZghWLn2kAlgmmh4oXBPQ4PogbwC7IMQD78AalQEifKvjL4OceqwLG84oCGXosIEwY/B3u7XP43iXpCiEU7w34BQcIgAVChiAJxbRX/tmB1bZNwUka5gkG3JikJYQRo10xa5CEE0hnCqUkcMwvPMFBABeDFLujMAxC3CQ4o2t1DqmCe5DvcMSFn0cf8eglD/UBG8dFCcnRgV1BPnzCHdw7cqdLDcFB6iDrvkUV5K/omBz482Ige9rbADZMSkBk/jgeIydlxmPiEZPvRGsGJH+2VZU5TxsEu08EgfgCJHWS7WID6RO18vex+vXO9rZ4pjcTSt+oFKK1U80Zv0QBoqE1eqgARsA5PcVGr7WjtU0f+NCtVtyArMYPGShtBALq3vDokdGT3BZi00uXP5YR+jdJCGTPEnOMMOCdkhV8/PGgjWd9DE2i0EL0QbMHGwAo3TqPWeX05i3BV5WgjVANDQiNtBuebQEx1PqyZkBmv3V6AlXXLHE0oMDS9K964M9QdK3P6f0oCPqarnzpc5eGquhda1xRgbkDq6t/07OnhqHqvW7fstITjWPL6nd7ump843OvP/jBD/5P+A/yWoK0uPJ8MwAAAABJRU5ErkJggg==" alt="">Google</b><span class="date">2015</span><span class="d">Localized Ads recommender systems for the DACH Search team.</span></li>
+    <li><b class="lg"><img class="logo sm" src="data:image/png;base64,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" alt="">Apple</b><span class="date">2015</span><span class="d">Localized Siri for the Apple Music launch in DACH.</span></li>
+    <li><b class="lg"><span class="logo sm mono" aria-hidden="true">DF</span>German Research Center for AI</b><span class="date">2013 – 14</span><span class="d">Built a semiconductor sensor that tracks resin flow, making manufacturing simulations more accurate. With MT Aerospace and Fraunhofer.</span></li>
+    <li><b class="lg"><img class="logo sm" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAdVBMVEUFFyku+tkv/90BAB8EEiYAABYFFSgfp5gw/98YgXkDCyMDCCIt8tMeoZMn1bwlybMJMDsNQ0wTZ2QUbGkIKDQOTVEAABsjv6sr6cwVcW0p38QGHC4hsaAbk4cQVFYNRksXeXMai4EHITACACMMPEYRXl0FEyuhK17jAAADzUlEQVR4nO2Y2ZqiMBBGgYQICYsLgiINjY3z/o842UCWELDnYm7qfH0jhakDhj+hHQcAAAAAAAAAAAAAAAAAAAAAgBkEmyFkcZZtBOvoZKUqz3gejWQEMTI6K+OYR8APUXtYatnTIsDuiZkirn9Qr5C34lBnuk6aVbyU1tRUe4pakp7WbhAHhYFnIuCHkwvR3/QPAT9yMjTBuPD4qdGZGWqZrLkhstwBFHruGp4bO7gX4B8NAtiJA3GqSQCjSo79ZZ0DqwLqcJtbBQj6UmcbBAiVNS9enaEjgfh0nXGOE14I3IZaBMigvxTo3Spk7a8FQp/OQKgTBt6BrQuQ/B65awL5WRwPiqNpdi4FDNME1TfeNDniNQGSXyJvTYDJmpeSjf4WAfJMedebfL6MAuh6Ez2SwiDA7cU3ksbwcOwVcFglBF5rAuwqf6PbKV4KsK4UtfK6df0bAp5FgB5Ff173lwL0pNyu+WZ/20/wSD0+SGMWoI9C9HAvjC0EKErFoNG3LYC2BfgU4x0KuSgtBETIyR4+WQjwmgyn+47rfz+GbAbKm0Q0PUu1uQBGB1eH3EIAY13LbQE4E4ibWQ7Vl0pO8UqtRzOBPuS+KHbmAvhHBVCf4vsEDEks73CVGdeCXIcc49WZAKGt/Lqs/YuAHCX9o3/GqYD/EitFkEq7qQDxZTh6abb9AE4EluuxDNLkhZYC7K5C7kd+nAqwl5h/XrG7vxa4JeWUpIw8+SjXi0mY1yoAdchNBFCtAui4GYAzgVZtncZ091Jci9oGjQToSYdc/6OPBFAjakFZ7wmAiUCYLzalND/KOInRRKAPuVf/kI8EaKdrH/S3RTG6iiRKHDISwIuQewvQpwigwL1/0t8m4Pgy7Tr6FsBZNQ+5QYDvDsVJ0feuANwn8CWuqGaDAPqzDLleAGG5OwxauisAdwnkrRAQYawFcrUDnezyBoFYBWC+M4D2CPiiX/Aa7kAXGkJOC7x07fFhf5sA8cWE85p+DrixKeS0QCXDqXjuDqAdAqgWT0EprkkJeKaQUwKqln7ef1iO0ZzcrxMx6AH1j6Hsswg5LSCDu/m8vxY4nC8z7qG6qeV7UyqD8Tq/V4NAcOs+CoCJgGElDORD5X6jYUf0XhpMAh8G4KaAGjRqRxsS/tGwy+oFogv7LAAGAfPbsViQb1Xz3g/wF2ZjyBEmay7fHf6mv8POqZni0NakTzUUFpzQ+JpLZa0lv+vvEDJ/K9QwhN6hSrDcqRp72Gr7DBxH/Tlk8jf9H5FthN+2BgAAAAAAAAAAAAAAAAAAAID/w19ArEXhTdbA9gAAAABJRU5ErkJggg==" alt="">BorgWarner</b><span class="date">2013</span><span class="d">Manufacturing quality assurance.</span></li>
+  </ul>
+
+  <h2>Education</h2>
+  <ul class="rows">
+    <li><b>Boston University</b><span class="date">2024</span><span class="d">M.Sc. Supply Chain Management</span></li>
+    <li><b>Cal State Long Beach</b><span class="date">2014 – 16</span><span class="d">M.Sc. coursework, credits moved to BU</span></li>
+    <li><b>TU Kaiserslautern</b><span class="date">2009 – 14</span><span class="d">B.Sc. Mechanical Engineering &amp; Business</span></li>
+  </ul>
+
+  <h2>Certificates</h2>
+  <ul class="rows">
+    <li><b>Lean Six Sigma Green Belt</b><span class="date">2024</span><span class="d">CSSC</span></li>
+    <li><b>Business Analytics</b><span class="date">2018</span><span class="d">Harvard Business School</span></li>
+  </ul>
+
+  <h2>Skills</h2>
+  <div class="skills">
+    <p><b>Strong at</b> Capacity planning, network launches, S&amp;OP, instock and replenishment, last mile, middle mile, carrier and 3PL management, inventory policy, launch allocation, procurement.</p>
+    <p><b>Tools</b> SQL, QuickSight, Tableau, Power BI, Excel, SAP APO, Kinaxis, Smartsheet, Claude Code, Solidworks / NX.</p>
+    <p><b>Amazon systems</b> FMC, AFT Transship, Optimus, RTCT, TNT, YMS, Rodeo, ROAM, FMN, Stowmap, SCOT, Procurement Portal, WOMBAT, FAB, CORGI, F3AST, Selection Central, Hubble, Datanet, MEGA.</p>
+    <p><b>Languages</b> English (C2), German (C2).</p>
+  </div>
+
+  <div class="end"><a class="btn" href="https://lunarked.github.io/library/">See my tools and data stories →</a></div>
+
+  <p class="mail">Contact: <a href="mailto:j.reusenmann@gmail.com">j.reusenmann@gmail.com</a></p>
+
+  <footer>Jevgeni Reusenmann · Resume · November 2026</footer>
+</div>
+
+</body>
+</html>
