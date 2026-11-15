@@ -9,11 +9,11 @@
   },
   {
     "slug": "delta-united-crowdstrike",
-    "title": "Same outage. United recovered in 3 days. Delta needed 5.",
-    "description": "In July 2024 a bad software update grounded US airlines. United recovered in 3 days and Delta took 5. Shows why, and when Delta should have reset its crew schedule.",
+    "title": "How Delta, United and American recovered from the CrowdStrike outage",
+    "description": "In July 2024 a faulty software update crashed Windows computers and grounded US airlines. Follows the week day by day: what Delta, United and American did, and why Delta needed five days to fly normally again.",
     "kicker": "Decision story · CrowdStrike outage, 2024",
-    "hero": "3 vs 5",
-    "caption": "days to recover from the same outage: United vs Delta"
+    "hero": "5 days",
+    "caption": "for Delta to fly normally again, when United took 3 and American 1"
   },
   {
     "slug": "tesla-grunheide-outage",

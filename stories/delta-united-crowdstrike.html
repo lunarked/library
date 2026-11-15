@@ -7,17 +7,17 @@
 
 <!-- share:start -->
 <title>Story: Delta vs United, CrowdStrike (2024)</title>
-<meta name="description" content="In July 2024 a bad software update grounded US airlines. United recovered in 3 days and Delta took 5. Shows why, and when Delta should have reset its crew schedule.">
+<meta name="description" content="In July 2024 a faulty software update crashed Windows computers and grounded US airlines. Follows the week day by day: what Delta, United and American did, and why Delta needed five days to fly normally again.">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="JR">
-<meta property="og:title" content="Same outage. United recovered in 3 days. Delta needed 5.">
-<meta property="og:description" content="In July 2024 a bad software update grounded US airlines. United recovered in 3 days and Delta took 5. Shows why, and when Delta should have reset its crew schedule.">
+<meta property="og:title" content="How Delta, United and American recovered from the CrowdStrike outage">
+<meta property="og:description" content="In July 2024 a faulty software update crashed Windows computers and grounded US airlines. Follows the week day by day: what Delta, United and American did, and why Delta needed five days to fly normally again.">
 <meta property="og:url" content="https://lunarked.github.io/library/stories/delta-united-crowdstrike.html">
 <meta property="og:image" content="https://lunarked.github.io/library/og/delta-united-crowdstrike.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
-<meta property="og:image:alt" content="3 vs 5 days to recover from the same outage: United vs Delta">
+<meta property="og:image:alt" content="5 days for Delta to fly normally again, when United took 3 and American 1">
 <meta name="twitter:card" content="summary_large_image">
 <!-- share:end -->
 </head>
@@ -27,145 +27,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
-/* Layout: long-form scroll story, same series look as the Tesla and Suez stories. Night-airport opener with a departures-board feel, prose chapters, sticky visuals that change as text cards scroll past, one "you decide" tool, full-screen question moment, my call, sources. */
+/* Layout follows the supply allocation story: dark opener, one sticky operations board (three airline lanes x six days) that fills in as day cards scroll past, then playbook, side-by-side, scorecard and lessons. */
 :root{
   --bg:#F3F3F1; --paper:#FFFFFF; --ink:#141A22; --muted:#5A6370; --line:#D3D6DA; --soft:#E5E7EA;
-  --amber:#B86E00; --ambersoft:#F6E6CC; --sky:#2F5C8F; --skysoft:#DCE5F0;
+  --amber:#B86E00; --ambersoft:#F6E6CC;
   --bad:#C2372D; --badsoft:#F8DEDA; --good:#1F7D47; --goodsoft:#DDF0E4;
+  --dl:#D4581F; --ua:#2A78D6; --aa:#8C929B;
+  --daybg:#141A22; --dayink:#E9ECEF;
   --night:#0B0F16; --nightink:#E9ECEF; --nightmuted:#939CA8; --board:#FFB020;
+  --dln:#E0652F; --uan:#4A92EC; --aan:#9AA1AB;
   --f-head:"Archivo","Arial Narrow",Arial,sans-serif;
   --f-text:"Newsreader",Georgia,"Times New Roman",serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
-  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
-  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}}
+  --amber:#F2A93B; --ambersoft:#2C2416;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F;
+  --dl:#D95926; --ua:#3987E5; --aa:#858C96;
+  --daybg:#222C39; --dayink:#E9ECEF; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0D1117; --paper:#151C25; --ink:#E7EBEF; --muted:#97A1AD; --line:#2A333E; --soft:#1D2530;
-  --amber:#F2A93B; --ambersoft:#2C2416; --sky:#7EA9DA; --skysoft:#16243A;
-  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F; color-scheme:dark}
+  --amber:#F2A93B; --ambersoft:#2C2416;
+  --bad:#F07A6F; --badsoft:#3B1D1A; --good:#6FD49B; --goodsoft:#16301F;
+  --dl:#D95926; --ua:#3987E5; --aa:#858C96;
+  --daybg:#222C39; --dayink:#E9ECEF; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-text);font-size:19px;line-height:1.6;overflow-x:hidden}
 .g{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .in{max-width:1240px;margin:0 auto}
-.col{max-width:680px;margin:0 auto}
-h1,h2,h3{font-family:var(--f-head);text-wrap:balance;margin:0}
+.col{max-width:720px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--f-head);text-wrap:balance;margin:0}
 .kick{font:600 12.5px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--amber)}
-sup{font:600 .6em var(--f-mono);color:var(--muted)}
 p{margin:0 0 1em}
 b,strong{font-weight:600}
 .est{font:600 10.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:2px;white-space:nowrap}
 
 /* Opener */
-.open{background:var(--night);color:var(--nightink);padding-block:60px 50px;position:relative;overflow:hidden}
+.open{background:var(--night);color:var(--nightink);padding-block:60px 50px}
 .open .kick{color:var(--board)}
-.open h1{font-weight:900;font-size:clamp(38px,7vw,88px);line-height:.98;letter-spacing:-.015em;margin:16px 0 22px;max-width:15ch}
-.open h1 .u{color:#6FD49B}.open h1 .d{color:#FF7B6E}
+.open h1{font-weight:900;font-size:clamp(32px,5vw,62px);line-height:1.04;letter-spacing:-.01em;margin:16px 0 22px;max-width:22ch}
+.open h1 .u{color:#FFB020}
 .dek{font-size:clamp(20px,2.3vw,25px);line-height:1.45;max-width:36em;color:#C4CAD1;margin:0}
-.by{margin-top:26px;font:500 13px var(--f-mono);color:var(--nightmuted);letter-spacing:.04em}
 .cue{margin-top:34px;font:600 13px var(--f-mono);color:var(--board);letter-spacing:.08em;text-transform:uppercase}
 .cue::after{content:" ↓"}
-.boardrow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:34px;max-width:960px}
-@media (max-width:700px){.boardrow{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.boardrow div{background:#151B24;border:1px solid #232C38;border-radius:4px;padding:10px 12px}
-.boardrow b{display:block;font:600 clamp(24px,3.4vw,36px)/1.05 var(--f-mono);color:var(--board);font-variant-numeric:tabular-nums}
-.boardrow b.g2{color:#6FD49B}
-.boardrow span{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
-
-/* Prose chapter */
-.chap{padding-block:64px 24px}
-.chap h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 22px;letter-spacing:-.01em}
-.chap .lead::first-letter{font:900 3.3em/0.8 var(--f-head);float:left;margin:6px 10px 0 0;color:var(--amber)}
-.pull{font:800 clamp(24px,3.3vw,34px)/1.2 var(--f-head);border-left:5px solid var(--amber);padding:4px 0 4px 18px;margin:30px 0}
-
-/* Scrolly */
-.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;position:relative}
-.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8vh);height:84vh;display:flex;flex-direction:column;justify-content:center;gap:10px;margin:0}
-.fig svg{width:100%;height:auto;max-height:58vh;display:block}
-.figcap{font:600 13px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);min-height:1.4em}
-.steps{padding-block:20vh 30vh}
-.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:55vh;font-size:18px;opacity:.45;transition:opacity .3s}
-.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
-.step:last-child{margin-bottom:10vh}
-.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
-.step p:last-child{margin:0}
-@media (max-width:860px){
-  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
-  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:10px 8px;background:var(--bg);z-index:2}
-  .fig svg{max-height:34vh}
-  .steps{padding-block:4vh 10vh;position:relative;z-index:3}
-  .step{margin-bottom:45vh;opacity:1;font-size:17px}
+.dstrip{max-width:620px;margin:4px 0 28px}
+.dh,.dr{display:grid;grid-template-columns:100px repeat(6,minmax(0,1fr)) 78px;gap:5px;align-items:center}
+.dh span{font:600 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted);text-align:center}
+.dr{margin-top:7px}
+.dr .nm{font:800 17px var(--f-head);color:var(--nightink)}
+.dr i{display:block;height:24px;border-radius:3px;box-shadow:inset 0 0 0 1.5px #2A3340}
+.dr i.dl{background:var(--dln);box-shadow:none} .dr i.ua{background:var(--uan);box-shadow:none} .dr i.aa{background:var(--aan);box-shadow:none}
+.dr b{font:900 20px var(--f-head);color:var(--nightink);text-align:right;white-space:nowrap}
+.dnote{margin:10px 0 0;font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--nightmuted)}
+@media (max-width:520px){
+  .dh,.dr{grid-template-columns:74px repeat(6,minmax(0,1fr)) 54px;gap:3px}
+  .dr .nm{font-size:14px} .dr b{font-size:15px} .dr i{height:20px} .dh span{font-size:9.5px;letter-spacing:.02em}
 }
 
-/* Charts */
-.axis{stroke:var(--line);stroke-width:1}
-.tick{font:600 13px var(--f-mono);fill:var(--muted)}
-.lbl{font:600 12.5px var(--f-mono);fill:var(--muted)}
-.lblb{font:800 17px var(--f-head);fill:var(--ink)}
-.ln{fill:none;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
-.ln.dl{stroke:var(--bad)} .ln.ua{stroke:var(--good)}
-.pt{transition:opacity .35s}
-.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:600 12px var(--f-mono);color:var(--muted)}
-.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:3px}
-.counters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.ctr .n{font:900 clamp(24px,3.8vw,42px)/1 var(--f-head);font-variant-numeric:tabular-nums;color:var(--ink)}
-.ctr .n.bad{color:var(--bad)} .ctr .n.good{color:var(--good)}
-.ctr .k{font:600 11.5px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-
-/* Crew diagram */
-.hub{fill:var(--paper);stroke:var(--line);stroke-width:1.5}
-.crew{transition:transform .7s ease,fill .4s}
-.crew.ok{fill:var(--good)} .crew.off{fill:var(--bad)} .crew.time{fill:var(--amber)}
-.tool{transition:opacity .4s}
-
-/* Tool */
-.calc{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:22px;margin-top:10px}
-.ml{font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.seg{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.seg button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
-.exp{font-size:17px;margin:14px 0}
-.exp b{font-family:var(--f-head)}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-@media (max-width:700px){.cards{grid-template-columns:minmax(0,1fr)}}
-.card{border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--bg)}
-.card.best{border-top-color:var(--good);box-shadow:0 0 0 2px var(--good) inset}
-.chip{align-self:flex-start;font:700 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--badsoft);color:var(--bad)}
-.best .chip{background:var(--goodsoft);color:var(--good)}
-.card h3{font-size:18px}
-.big{font:900 clamp(30px,4vw,44px)/1 var(--f-head);font-variant-numeric:tabular-nums}
-.big small{font:600 13px var(--f-mono);color:var(--muted);letter-spacing:.04em}
-.kv{display:grid;grid-template-columns:1fr auto;gap:1px 8px;margin:0;font:500 12.5px var(--f-mono)}
-.kv dt{color:var(--muted)} .kv dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
-.pay{font:600 12.5px var(--f-mono);border-top:1px dashed var(--line);padding-top:7px;margin-top:auto;color:var(--muted)}
-.note{font-size:16px;color:var(--muted);margin:14px 0 0}
-
-/* Decision */
-.verdict{background:var(--ink);color:var(--bg);border-radius:8px;padding:26px 24px;margin:10px 0 14px}
-.verdict .kick{color:var(--amber)}
-.verdict h3{font-weight:900;font-size:clamp(22px,3.1vw,32px);line-height:1.15;margin-top:8px}
-.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:26px}
-@media (max-width:860px){.trio{grid-template-columns:minmax(0,1fr)}}
-.trio div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
-.trio b{display:block;font:800 18px var(--f-head);margin-bottom:4px}
-.paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
-@media (max-width:860px){.paths{grid-template-columns:minmax(0,1fr)}}
-.paths div{padding:16px 18px;font-size:16.5px;line-height:1.5;border-right:1px solid var(--line)}
-.paths div:last-child{border-right:0}
-@media (max-width:860px){.paths div{border-right:0;border-bottom:1px solid var(--line)}.paths div:last-child{border-bottom:0}}
-.paths .ml{display:block;margin-bottom:4px;color:var(--amber)}
-.paths h3{font-size:18px;margin-bottom:4px}
-
-/* Two recoveries */
-.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:8px 0 10px}
-@media (max-width:700px){.vs{grid-template-columns:minmax(0,1fr)}}
-.vs div{background:var(--paper);border:1px solid var(--line);border-top:6px solid var(--bad);border-radius:6px;padding:16px;font-size:16.5px;line-height:1.5}
-.vs div.w{border-top-color:var(--good)}
-.vs h3{font-size:19px;margin:6px 0 4px}
-
-/* Question reveal */
+/* Question screen */
 .reveal{height:200vh;background:var(--night);position:relative}
 .rv-pin{position:sticky;top:0;height:100vh;display:flex;align-items:center;padding-block:env(safe-area-inset-top,0px) env(safe-area-inset-bottom,0px)}
 .rv-in{width:100%}
@@ -175,333 +95,616 @@ button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var
 .rv-l.on,.rv-q.on{opacity:1;transform:none}
 .rv-l.on{color:var(--board)}
 
-/* Sources */
+/* Scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:44px;position:relative}
+.fig{position:sticky;top:calc(env(safe-area-inset-top,0px) + 5vh);height:90vh;display:flex;flex-direction:column;justify-content:center;gap:12px;margin:0;min-width:0}
+.steps{padding-block:24vh 40vh;min-width:0}
+.step{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:20px 22px;margin-bottom:60vh;font-size:18px;opacity:.45;transition:opacity .3s}
+.step.on{opacity:1;box-shadow:0 6px 24px rgba(0,0,0,.07)}
+.step:last-child{margin-bottom:10vh}
+.step .t{font:600 12.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px}
+.step .t.prob{color:var(--bad)} .step .t.fix{color:var(--good)}
+.step h3{font-size:22px;margin-bottom:8px;line-height:1.2}
+.step p:last-child{margin:0}
+.step.day{background:var(--daybg);color:var(--dayink);border-color:var(--daybg)}
+.step.day .t{color:var(--board)}
+.step.day .big{display:block;font:900 58px/.9 var(--f-head);color:var(--board);margin-bottom:8px;letter-spacing:-.01em}
+.step.day h3{font-size:28px}
+.atag{display:inline-flex;align-items:center;gap:7px;background:var(--ink);color:var(--bg);font:800 15px/1.2 var(--f-head);padding:5px 10px;border-radius:5px;margin-bottom:10px}
+.atag i{width:11px;height:11px;border-radius:2px;flex:none}
+.atag.out{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.pc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:4px}
+.pc h4{font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;color:var(--good)}
+.pc div+div h4{color:var(--bad)}
+.pc ul{margin:0;padding:0;list-style:none;font-size:15.5px;line-height:1.35;display:flex;flex-direction:column;gap:5px}
+.pc li{padding-left:18px;position:relative}
+.pc li::before{position:absolute;left:0;font:800 15px var(--f-head)}
+.pc div:first-child li::before{content:"✓";color:var(--good)}
+.pc div+div li::before{content:"✗";color:var(--bad)}
+.pc.n h4,.pc.n div+div h4{color:var(--ink)}
+.pc.n div:first-child li::before,.pc.n div+div li::before{content:"•";color:var(--muted)}
+.diff{margin-top:12px;font-size:16px;line-height:1.4;border-left:5px solid var(--amber);padding:2px 0 2px 12px}
+.diff b{font-family:var(--f-head)}
+
+/* Operations board */
+.bh{min-height:0}
+.bh .lab{font:600 12px var(--f-mono);letter-spacing:.07em;text-transform:uppercase;min-height:1.3em;display:block}
+.bh .lab.prob{color:var(--bad)} .bh .lab.fix{color:var(--good)} .bh .lab.set{color:var(--muted)}
+.bh h3{font-weight:900;font-size:clamp(24px,2.7vw,34px);line-height:1.08;margin:2px 0 0;min-height:2.16em}
+.board{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px 12px 12px;display:flex;flex-direction:column;gap:6px}
+.brow{display:grid;grid-template-columns:154px repeat(6,minmax(0,1fr));gap:5px;align-items:stretch}
+.bhd span{font:600 11px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;text-align:center;padding:4px 0;border-radius:3px;background:var(--soft);color:var(--muted);transition:background .3s,color .3s;line-height:1.25}
+.bhd span:first-child{background:none;text-align:left;padding-left:2px}
+.bhd span small{display:block;font-size:10px;letter-spacing:0;text-transform:none}
+.bhd span.done{background:var(--line);color:var(--ink)} .bhd span.cur{background:var(--amber);color:var(--bg)}
+.lane{transition:opacity .35s}
+.lane.dim{opacity:.3}
+.who{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0}
+.who b{font:800 18px/1.1 var(--f-head);display:flex;align-items:center;gap:7px}
+.who b i{width:12px;height:12px;border-radius:2px;flex:none}
+.st{display:flex;align-items:flex-start;gap:6px;font:700 11.5px/1.25 var(--f-mono);letter-spacing:.02em;color:var(--muted)}
+.st .lt{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none;margin-top:2px;transition:background .3s}
+.st em{font-style:normal}
+.st[data-sev="r"]{color:var(--bad)} .st[data-sev="r"] .lt{background:var(--bad)}
+.st[data-sev="a"]{color:var(--amber)} .st[data-sev="a"] .lt{background:var(--amber)}
+.st[data-sev="g"]{color:var(--good)} .st[data-sev="g"] .lt{background:var(--good)}
+.cell{position:relative;height:clamp(84px,11vh,104px);border-radius:4px;border:1px dashed var(--line);transition:background-color .4s,border-color .4s}
+.cell.rv{border-color:transparent}
+.cell[data-sev="r"]{background:var(--badsoft)} .cell[data-sev="a"]{background:var(--ambersoft)} .cell[data-sev="g"]{background:var(--goodsoft)}
+.cell.cur{box-shadow:inset 0 0 0 1.5px var(--muted)}
+.cell .bar{position:absolute;left:26%;right:26%;bottom:0;height:calc(var(--h,0) * (100% - 20px));border-radius:3px 3px 0 0;transition:height .6s cubic-bezier(.2,.7,.2,1)}
+.cell .v{position:absolute;left:0;right:0;text-align:center;bottom:calc(var(--h,0) * (100% - 20px) + 3px);font:600 11.5px/1 var(--f-mono);color:var(--ink);font-variant-numeric:tabular-nums;transition:bottom .6s cubic-bezier(.2,.7,.2,1);white-space:nowrap}
+.cell .v.nz{color:var(--muted);font-size:10.5px}
+.score{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.score>div{background:var(--paper);border:1px solid var(--line);border-top:5px solid var(--line);border-radius:6px;padding:8px 12px;transition:border-color .4s}
+.score>div.hi{border-top-color:var(--good)} .score>div.mid{border-top-color:var(--amber)} .score>div.lo{border-top-color:var(--bad)}
+.score span{font:600 11.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);display:block}
+.score b{font:900 26px/1.1 var(--f-head);font-variant-numeric:tabular-nums}
+.score small{font:600 11.5px var(--f-mono);color:var(--muted);display:block}
+.bkey{display:flex;flex-wrap:wrap;gap:4px 14px;font:600 12px var(--f-mono);color:var(--muted)}
+.bkey i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+/* After the scroll */
+.sec{padding-block:64px 10px}
+.sec h2{font-weight:900;font-size:clamp(30px,4.6vw,50px);line-height:1.04;margin:10px 0 12px;letter-spacing:-.01em}
+.sec .intro{font-size:19px;color:var(--muted);max-width:36em}
+.play{display:flex;flex-direction:column;gap:10px;margin-top:18px}
+.play .r{display:grid;grid-template-columns:70px minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.play .d{font:900 18px var(--f-head);color:var(--amber)}
+.play .p{font-size:16.5px;line-height:1.35;border-left:4px solid var(--bad);padding-left:10px}
+.play .f{font:800 16.5px/1.3 var(--f-head);border-left:4px solid var(--good);padding-left:10px}
+.play .f small{display:block;font:500 12px var(--f-mono);color:var(--muted);margin-top:2px}
+@media (max-width:700px){.play .r{grid-template-columns:minmax(0,1fr);gap:6px}}
+.sub2{font:800 clamp(20px,2.4vw,26px)/1.2 var(--f-head);margin-top:6px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.trt{border-collapse:collapse;width:100%;font:500 14px/1.3 var(--f-mono)}
+.trt th,.trt td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.trt th{font:800 15px var(--f-head)}
+.trt tr:last-child td{border-bottom:0}
+.trt td:first-child,.trt th:first-child{color:var(--muted);white-space:nowrap}
+.trt th i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:0}
+.trt td.hi{color:var(--good);font-weight:700;background:var(--goodsoft)} .trt td.lo{color:var(--bad);font-weight:700;background:var(--badsoft)} .trt td.mid{color:var(--amber);font-weight:700;background:var(--ambersoft)}
+.trt td.na{color:var(--muted)}
+@media (max-width:560px){.trt{font-size:12px}.trt th{font-size:13px}.trt th,.trt td{padding:6px 5px}.trt td:first-child{white-space:normal}}
+.lbh{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) 92px 64px;gap:12px;font:600 11.5px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:18px}
+.lbh span:nth-child(3),.lbh span:nth-child(4){text-align:center}
+.lb{display:flex;flex-direction:column;gap:12px;margin-top:10px}
+.lb .r{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) 92px 64px;gap:12px;align-items:center}
+.lb .nm{font:800 17px/1.2 var(--f-head);display:flex;align-items:center;gap:8px}
+.lb .nm i{width:12px;height:12px;border-radius:2px;flex:none}
+.lb .nm small{display:block;font:500 11.5px var(--f-mono);color:var(--muted)}
+.sb{display:flex;height:26px;border-radius:3px;overflow:hidden;background:var(--soft)}
+.sb i{display:flex;align-items:center;justify-content:center;font:700 10.5px var(--f-mono);font-style:normal;color:#fff;overflow:hidden;border-right:2px solid var(--bg);white-space:nowrap}
+.sb i:last-child{border-right:0}
+.sb.aa i{color:#141A22}
+.pillv{font:800 15px var(--f-head);text-align:center;padding:4px 6px;border-radius:4px;font-variant-numeric:tabular-nums}
+.pillv.hi{background:var(--goodsoft);color:var(--good)} .pillv.mid{background:var(--ambersoft);color:var(--amber)} .pillv.lo{background:var(--badsoft);color:var(--bad)}
+@media (max-width:700px){
+  .lb .r,.lbh{grid-template-columns:minmax(0,1fr) 74px 50px;gap:6px}
+  .lb .r .sb{grid-column:1 / -1;grid-row:2;height:20px}
+  .lbh span:nth-child(2){display:none}
+  .lb .nm{font-size:15px} .pillv{font-size:13px;padding:3px 4px}
+}
+.whyl{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:16.5px;line-height:1.45;color:var(--muted);max-width:52em}
+.whyl b{color:var(--ink);font-family:var(--f-head)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font:600 12px var(--f-mono);color:var(--muted);margin-top:12px}
+.pick{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 16px}
+.pick button{font:600 15px var(--f-head);border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:8px 13px;border-radius:5px;cursor:pointer}
+.pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+button:focus-visible,a:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+table.gr{border-collapse:collapse;width:100%;font-size:15px}
+.gr th,.gr td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:center}
+.gr tr:last-child td{border-bottom:0}
+.gr th{font:600 11.5px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);vertical-align:bottom}
+.gr th:first-child,.gr td:first-child{text-align:left;padding-left:12px}
+.gr td:first-child{font:800 15px/1.2 var(--f-head)}
+.gr td:first-child small{display:block;font:500 11.5px var(--f-mono);color:var(--muted);margin-top:2px}
+.dot{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font:800 14px var(--f-head)}
+.dot.y{background:var(--goodsoft);color:var(--good)} .dot.m{background:var(--ambersoft);color:var(--amber)} .dot.n{background:var(--badsoft);color:var(--bad)}
+.gr tr{transition:opacity .3s}
+.gr.f tr.dim{opacity:.25}
+.gr th.sel,.gr td.sel{background:var(--soft)}
+.gkey2{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px;font:600 12.5px var(--f-mono);color:var(--muted)}
+.gkey2 .dot{width:18px;height:18px;font-size:11px}
+@media (max-width:560px){
+  .gr th{writing-mode:vertical-rl;transform:rotate(180deg);text-align:left;padding:8px 2px;height:120px}
+  .gr th:first-child{writing-mode:horizontal-tb;transform:none;height:auto}
+  .gr td{padding:7px 2px} .dot{width:22px;height:22px;font-size:12px}
+  .gr td:first-child{font-size:14px}
+}
+.mix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+@media (max-width:760px){.mix{grid-template-columns:minmax(0,1fr)}}
+.mix div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;font-size:16.5px;line-height:1.45}
+.mix .ml{display:block;font:600 12px var(--f-mono);text-transform:uppercase;letter-spacing:.07em;color:var(--amber);margin-bottom:4px}
+.mix h3{font-size:18px;margin-bottom:4px}
 .src{padding-block:40px 60px;font-size:15px;color:var(--muted)}
 .src ol{padding-left:20px;margin:8px 0 14px}
+.src li{margin-bottom:4px}
 .src a{color:var(--ink)}
-details summary{cursor:pointer;font:600 15px var(--f-head);color:var(--ink)}
-details p{margin-top:8px}
-hr{border:0;border-top:1px solid var(--line);margin:0}
+hr{border:0;border-top:1px solid var(--line);margin:40px 0 0}
+
+@media (max-width:860px){
+  .scrolly{grid-template-columns:minmax(0,1fr);gap:0}
+  .fig{top:env(safe-area-inset-top,0px);height:auto;padding-block:8px 8px;background:var(--bg);z-index:4;gap:6px;box-shadow:0 1px 0 var(--line)}
+  .steps{padding-block:6vh 45vh;position:relative;z-index:3}
+  .step{margin-bottom:40vh;opacity:1;font-size:17px}
+  .step h3{font-size:20px}
+  .step.day .big{font-size:44px} .step.day h3{font-size:24px}
+  .pc{gap:8px} .pc ul{font-size:14px}
+  .bh .lab{font-size:10.5px} .bh h3{font-size:17.5px}
+  .board{padding:6px 7px 7px;gap:4px}
+  .brow{grid-template-columns:94px repeat(6,minmax(0,1fr));gap:3px}
+  .bhd span{font-size:9.5px;padding:2px 0;letter-spacing:.02em} .bhd span small{font-size:8.5px}
+  .who{gap:3px} .who b{font-size:14.5px;gap:5px} .who b i{width:9px;height:9px}
+  .st{font-size:9.5px;gap:4px} .st .lt{width:7px;height:7px;margin-top:2px}
+  .cell{height:50px}
+  .cell .bar{height:calc(var(--h,0) * (100% - 15px))}
+  .cell .v{font-size:9.5px;bottom:calc(var(--h,0) * (100% - 15px) + 2px)} .cell .v.nz{font-size:8.5px}
+  .score{gap:6px} .score>div{padding:3px 8px 4px;border-top-width:4px} .score b{font-size:17px} .score span,.score small{font-size:9.5px}
+  .bkey{display:none}
+}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}.rv-l,.rv-q{opacity:1;transform:none}}
 </style>
 
 <header class="open g">
   <div class="in">
-    <div class="kick">Decision story · IT outage, airline operations</div>
-    <h1>Same outage. <span class="u">United</span> recovered in 3 days. <span class="d">Delta</span> needed 5.</h1>
-    <p class="dek">On 19 July 2024 a bad software update crashed Windows computers around the world. Every big US airline was hit. United was back to normal by Monday. Delta kept cancelling for five days, because its crew-scheduling system lost track of its pilots and flight attendants. Here is what happened, why, and when Delta should have stopped patching the schedule and reset it.</p>
-    <div class="boardrow">
-      <div><b>7,000</b><span>Delta flights cancelled</span></div>
-      <div><b>1.3M</b><span>Delta customers hit</span></div>
-      <div><b>$550M</b><span>cost to Delta</span></div>
-      <div><b class="g2">~1,400</b><span>United flights cancelled</span></div>
+    <div class="kick">Decision story · Airline IT outage, July 2024</div>
+    <h1>How Delta, United and American recovered from the <span class="u">CrowdStrike outage</span></h1>
+    <p class="dek" style="margin-bottom:24px">On 19 July 2024, a faulty software update crashed Windows computers around the world. Delta, United and American all had to stop their flights. Each needed a different number of days to fly normally again.</p>
+    <div class="dstrip" role="img" aria-label="Days before each airline was flying normally again: American 1, United 3, Delta 5">
+      <div class="dh"><span></span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span></span></div>
+      <div class="dr"><span class="nm">American</span><i class="aa"></i><i></i><i></i><i></i><i></i><i></i><b>1 day</b></div>
+      <div class="dr"><span class="nm">United</span><i class="ua"></i><i class="ua"></i><i class="ua"></i><i></i><i></i><i></i><b>3 days</b></div>
+      <div class="dr"><span class="nm">Delta</span><i class="dl"></i><i class="dl"></i><i class="dl"></i><i class="dl"></i><i class="dl"></i><i></i><b>5 days</b></div>
+      <p class="dnote">Days before it was flying normally again</p>
     </div>
-    <div class="by">A supply chain case study · Sources at the end</div>
-    <div class="cue">Scroll to start</div>
+    <p class="dek">Follow the week day by day: what went wrong, what each airline did, and how many flights it cancelled.</p>
+    <div class="cue">Scroll to start the week</div>
   </div>
 </header>
-
-<!-- Chapter 1 -->
-<section class="chap g">
-  <div class="col">
-    <div class="kick">Chapter 1 · The race</div>
-    <h2>Friday, 19 July, just after midnight</h2>
-    <p class="lead">CrowdStrike, a security company, sent a faulty update to its software on Windows computers. It crashed about 8.5 million of them. CrowdStrike pulled the update 78 minutes later, but every crashed machine had to be fixed by hand. Airports, banks and hospitals went dark. It was the start of the busiest travel weekend of the summer.</p>
-    <p>Delta and United fly schedules of about the same size. Watch how each one climbs out.</p>
-  </div>
-</section>
-
-<section class="g">
-  <div class="in scrolly" data-chart="race">
-    <figure class="fig">
-      <div class="figcap" id="raceCap">Flights cancelled per day</div>
-      <svg viewBox="0 0 600 330" id="raceSvg" role="img" aria-label="Line chart of cancelled flights per day, Delta versus United, 19 to 24 July 2024"></svg>
-      <div class="legend"><span><i style="background:var(--bad)"></i>Delta</span><span><i style="background:var(--good)"></i>United</span><span>Main fleet flights, per day</span></div>
-      <div class="counters">
-        <div class="ctr"><div class="n" id="cDay">Fri 19</div><div class="k">day</div></div>
-        <div class="ctr"><div class="n bad" id="cD">0</div><div class="k">Delta cancelled so far</div></div>
-        <div class="ctr"><div class="n good" id="cU">0</div><div class="k">United cancelled so far</div></div>
-      </div>
-    </figure>
-    <div class="steps">
-      <div class="step" data-s="0"><span class="t">Fri 19 Jul · day 1</span><p>Everyone gets hit. Delta cancels about <strong>32%</strong> of its flights, United <strong>22%</strong>, American 11%. So far, a bad day for all of them.</p></div>
-      <div class="step" data-s="1"><span class="t">Sat 20 Jul · day 2</span><p>The lines split. United drops to 15%. Delta gets <strong>worse</strong>: 36%, about 1,200 flights. American is down to 1%.</p></div>
-      <div class="step" data-s="2"><span class="t">Sun 21 Jul · day 3</span><p>United cancels 262 flights, about 9%. Delta still cancels over 1,000, more than a quarter of its schedule. CEO Ed Bastian apologises: the crew-tracking tool "was unable to effectively process the unprecedented number of changes."</p></div>
-      <div class="step" data-s="3"><span class="t">Mon 22 Jul · day 4</span><p>United is back: 69 cancellations, 2%. Its CEO writes that "our systems, tools and schedules have been stable" for 24 hours. Delta cancels <strong>1,159</strong>.</p></div>
-      <div class="step" data-s="4"><span class="t">Tue 23 Jul · day 5</span><p>Delta still cancels about 480 flights (13%) and delays 41% more. The US Department of Transportation opens an investigation.</p></div>
-      <div class="step" data-s="5"><span class="t">Wed 24 Jul · day 6</span><p>Delta is finally back to normal: 48 cancellations, all from the morning start. Final count: about <strong>7,000 Delta flights</strong> including its regional partners, against about 1,400 at United.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- Chapter 2 -->
-<section class="chap g">
-  <div class="col">
-    <div class="kick">Chapter 2 · Why Delta stalled</div>
-    <h2>The planes were fine. The crews were lost.</h2>
-    <p>A flight needs a plane, pilots and flight attendants, all in the same city, all with enough legal working hours left. An airline's crew-tracking system holds that puzzle together. When it breaks, the airline can't see who is where.</p>
-  </div>
-</section>
-
-<section class="g">
-  <div class="in scrolly" data-chart="crew">
-    <figure class="fig">
-      <div class="figcap" id="crewCap">Normal day</div>
-      <svg viewBox="0 0 600 330" id="crewSvg" role="img" aria-label="Diagram of crews at four hub airports, showing crews out of position as the disruption grows"></svg>
-      <div class="legend"><span><i style="background:var(--good)"></i>In the right place</span><span><i style="background:var(--bad)"></i>In the wrong city</span><span><i style="background:var(--amber)"></i>Out of legal hours</span></div>
-      <div class="counters">
-        <div class="ctr"><div class="n" id="kDay">Normal</div><div class="k">day</div></div>
-        <div class="ctr"><div class="n" id="kOff">0%</div><div class="k">crews not usable <span class="est">model</span></div></div>
-        <div class="ctr"><div class="n" id="kTool">OK</div><div class="k">crew tool</div></div>
-      </div>
-    </figure>
-    <div class="steps">
-      <div class="step" data-c="0"><span class="t">Normal day</span><p>The system knows where every pilot and flight attendant is, how many hours they have left, and what trip they fly next. When a flight is cancelled, it finds a new crew in minutes.</p></div>
-      <div class="step" data-c="1"><span class="t">Fri · morning</span><p>Delta says about 60% of its key systems run on Windows, and about <strong>40,000 servers</strong> had to be reset by hand. The crew tool comes back around 11 a.m., but it is buried under a backlog of changes.</p></div>
-      <div class="step" data-c="2"><span class="t">Fri to Sat</span><p>Every cancelled flight leaves a crew in the wrong city. Every one of those is a new change for a tool that is already behind. The tool can no longer say where crews are. Crews call in by phone to be reassigned.</p></div>
-      <div class="step" data-c="3"><span class="t">Sat to Sun</span><p>Here is the trap. A plane waits at the gate for its missing crew. The crew members who are there run out of legal working hours before the rest arrive. The flight is cancelled, and now <strong>they</strong> are out of position too. It got worse every day. Delta offered crews double pay to pick up trips.</p></div>
-      <div class="step" data-c="4"><span class="t">Mon to Tue</span><p>Delta said its crews were "fully staffed and ready," and that the crew system was "deeply complex" and needed "the most time and manual support to synchronize." The people were there. The plan didn't know where.</p></div>
-      <div class="step" data-c="5"><span class="t">Wed</span><p>The tool catches up, crews are back where the schedule expects them, and flights run normally again.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- Chapter 3 -->
-<section class="chap g">
-  <div class="col">
-    <div class="kick">Chapter 3 · Two ways out</div>
-    <h2>Patch the schedule, or start it over</h2>
-    <p>When a schedule breaks, an airline has two choices. It can <strong>patch</strong>: try to fly each flight, fix crews one by one, and cancel only when it has to. Or it can <strong>reset</strong>: cancel a big block of flights on purpose, publish a smaller schedule that matches where crews really are, and build back up from there.</p>
-  </div>
-  <div class="in">
-    <div class="vs">
-      <div><span class="chip">✗ Patched for 5 days</span><h3>Delta</h3>Kept trying to fly as much as it could. Each late cancellation stranded more crews and more customers, and fed the crew tool more changes.</div>
-      <div class="w"><span class="chip" style="background:var(--goodsoft);color:var(--good)">✓ Stable by day 4</span><h3>United</h3>Fixed more than 26,000 computers by hand at 365 airports and had its crew and schedule tools stable by Sunday night.</div>
-    </div>
-    <p class="note">The warning was already out there. In December 2022, Southwest's crew system collapsed in a winter storm. It cancelled most of its flights to reset the network. 16,700 flights in total, and a $140 million fine.</p>
-  </div>
-</section>
 
 <section class="reveal" id="reveal" aria-label="The supply chain question">
   <div class="rv-pin g">
     <div class="in rv-in">
       <p class="rv-l" data-at="0">So for supply chain, the question is:</p>
-      <h2 class="rv-q" data-at="1">When the plan no longer matches reality, when do you <em>stop patching</em> and reset it?</h2>
+      <h2 class="rv-q" data-at="1">When your systems go down, how fast can you see <em>where everything is</em> again?</h2>
     </div>
   </div>
 </section>
 
-<!-- Chapter 4 -->
-<section class="chap g">
-  <div class="col">
-    <div class="kick">Chapter 4 · You decide</div>
-    <h2>When would you have reset?</h2>
-    <p>You run Delta's operations. A reset means one hard day: about 1,500 flights cancelled on purpose, announced the night before so customers rebook before they reach the airport. Then the schedule rebuilds around where crews really are. Pick your day.</p>
-  </div>
-  <div class="in calc">
-    <div class="ml">Reset the schedule on…</div>
-    <div class="seg" id="rSeg" role="group" aria-label="Reset day"></div>
-    <p class="exp" id="rExp"></p>
-    <svg viewBox="0 0 520 250" id="rSvg" role="img" aria-label="Cancellations per day: what Delta did versus your plan" style="width:100%;max-width:820px;height:auto;display:block"></svg>
-    <div class="legend" style="margin:6px 0 14px"><span><i style="background:var(--muted)"></i>What Delta did</span><span><i style="background:var(--ink)"></i>Your plan</span><span><i style="background:var(--good)"></i>United</span><span class="est">simple model</span></div>
-    <div class="cards" id="rCards"></div>
-    <p class="note">The trick: a reset only pays if it comes early. Reset on Monday and you take the hard day on top of three bad ones.</p>
+<section class="g" style="padding-top:30px">
+  <div class="in scrolly" id="story">
+    <figure class="fig">
+      <div class="bh"><span class="lab set" id="bl"></span><h3 id="bn"></h3></div>
+      <div class="board" id="board" role="img" aria-label="Operations board: flights each airline cancelled per day, Friday 19 to Wednesday 24 July 2024">
+        <div class="brow bhd"><span></span><span data-j="0">Fri<small>19</small></span><span data-j="1">Sat<small>20</small></span><span data-j="2">Sun<small>21</small></span><span data-j="3">Mon<small>22</small></span><span data-j="4">Tue<small>23</small></span><span data-j="5">Wed<small>24</small></span></div>
+      </div>
+      <div class="score">
+        <div id="t1"><span>Flying normally</span><b id="t1v">3 of 3</b><small id="t1s">before the outage</small></div>
+        <div id="t2"><span>Delta cancelled so far</span><b id="t2v">–</b><small id="t2s">mainline</small></div>
+      </div>
+      <div class="bkey"><span><i style="background:var(--badsoft);box-shadow:inset 0 0 0 1px var(--bad)"></i>15%+ of flights cancelled</span><span><i style="background:var(--ambersoft);box-shadow:inset 0 0 0 1px var(--amber)"></i>3 to 15%</span><span><i style="background:var(--goodsoft);box-shadow:inset 0 0 0 1px var(--good)"></i>under 3%</span><span>Bar: flights cancelled that day</span></div>
+    </figure>
+
+    <div class="steps">
+      <!-- SETUP -->
+      <div class="step" data-d="-1" data-rv="0,0,0" data-lab="Thursday 18 July" data-h="A normal summer week">
+        <span class="t">The setup</span>
+        <h3>Three big airlines, one security software</h3>
+        <p>Delta, United and American each fly thousands of flights a day. All three used CrowdStrike's security software on their Windows computers.</p>
+        <p>On the board, each row is an airline and each column is a day. A bar shows how many flights the airline cancelled that day. The tint shows the share of its schedule: red for 15% or more, amber for some, green for close to normal.</p>
+      </div>
+      <div class="step" data-d="-1" data-rv="0,0,0" data-lab="Thursday 18 July" data-h="A normal summer week">
+        <span class="t">How an airline recovers</span>
+        <h3>Fix the computers, find the crews, rebuild the schedule</h3>
+        <p>Every flight needs a plane and a crew at the same airport, and the crew needs enough legal working hours left. After a big disruption, an airline first restarts its systems. Then it finds out where every plane, pilot and flight attendant is. Then it builds a new schedule that matches them.</p>
+        <p>Each cancelled flight leaves a plane and a crew in the wrong place. The longer the second step takes, the harder it gets.</p>
+      </div>
+
+      <!-- FRIDAY -->
+      <div class="step day" data-d="0" data-rv="0,0,0" data-st="Systems down" data-lab="Friday 19 July · 00:09 Eastern" data-h="A faulty update crashes Windows computers" data-lt="prob">
+        <span class="t">Friday 19 July</span><span class="big">Fri</span>
+        <h3>The outage</h3>
+        <p>Just after midnight Eastern time, CrowdStrike sends an update to its software on Windows computers. The update has a defect and crashes about 8.5 million of them. CrowdStrike pulls it 78 minutes later, but every crashed computer has to be fixed by hand.</p>
+      </div>
+      <div class="step" data-d="0" data-rv="0,0,0" data-st="Ground stop" data-lab="Friday 19 July · early morning" data-h="All three airlines stop their departures" data-lt="prob">
+        <span class="t prob">Friday · the problem</span>
+        <h3>All three airlines stop their departures</h3>
+        <p>Early on Friday morning, Delta, United and American all grounded their flights because key systems were down. It was the start of the busiest travel weekend of the summer.</p>
+      </div>
+      <div class="step" data-d="0" data-rv="0,0,1" data-st="Ground stop" data-f="aa" data-lab="Friday 19 July" data-h="American puts one team on the problem">
+        <span class="t">Friday · what American did</span>
+        <h3>Formed one recovery team within an hour</h3>
+        <p>American's chief operating officer said that within an hour of the outage, its operations teams and IT experts were working together to restore systems. Early on Friday it said it was back up and running.</p>
+        <p>It still cancelled more than 400 flights that day, about 11% of its schedule.</p>
+      </div>
+      <div class="step" data-d="0" data-rv="0,1,1" data-st="Ground stop" data-f="ua" data-lab="Friday 19 July" data-h="United restarts 26,000+ devices">
+        <span class="t">Friday · what United did</span>
+        <h3>Sent technicians to restart its devices</h3>
+        <p>United sent technicians to restart more than 26,000 computers and devices at 365 airports. Staff drove out to sites to keep work going, and some brought their children along.</p>
+        <p>United cancelled 694 flights, about 22% of its schedule.</p>
+      </div>
+      <div class="step" data-d="0" data-rv="1,1,1" data-f="dl" data-lab="Friday 19 July" data-h="Delta restarts about 40,000 servers">
+        <span class="t">Friday · what Delta did</span>
+        <h3>Restarted about 40,000 servers by hand</h3>
+        <p>About 60% of Delta's most important systems, including backups, ran on Windows. Its IT teams had most of them working for the first Atlanta departure at about 7:30 a.m. The app that manages gates took a few more hours.</p>
+        <p>The crew-tracking tool came back around 11 a.m., but with a backlog of changes. Delta cancelled about 1,200 mainline flights, 32% of its schedule.</p>
+      </div>
+
+      <!-- SATURDAY -->
+      <div class="step day" data-d="1" data-rv="1,1,1" data-lab="Saturday 20 July" data-h="Systems are back, crews are out of place">
+        <span class="t">Saturday 20 July</span><span class="big">Sat</span>
+        <h3>Systems are back, but crews are out of place</h3>
+        <p>Most computers work again. But Friday's cancellations left planes and crews in the wrong cities. Now each airline has to find out where everyone is and match them again.</p>
+      </div>
+      <div class="step" data-d="1" data-rv="1,1,2" data-f="aa" data-lab="Saturday 20 July" data-h="American is flying normally" data-lt="fix">
+        <span class="t fix">Saturday · American</span>
+        <h3>Close to normal: 44 flights cancelled</h3>
+        <p>American cancelled about 1% of its flights. Its crew-tracking systems kept it aware of where its planes and crews were. Its CEO said keeping track of them was key, so it would not lose the view it needed to recover.</p>
+        <p>American also had devices to reach staff working out at the airports. Its CEO said its experience with weather disruptions helped too.</p>
+      </div>
+      <div class="step pcs" data-d="1" data-rv="1,1,2" data-f="aa" data-lab="Saturday 20 July" data-h="American is flying normally" data-lt="fix">
+        <span class="t">American · looking back</span>
+        <div class="pc"><div><h4>What helped</h4><ul><li>Ops and IT in one team within an hour</li><li>Kept track of planes and crews</li><li>Devices to reach staff in the field</li><li>Invested in operations tech after Southwest's 2022 failure</li></ul></div><div><h4>What held it back</h4><ul><li>Ground stop on Friday morning</li><li>More than 400 flights cancelled on Friday</li></ul></div></div>
+        <div class="diff"><b>What made the difference:</b> its systems kept track of where its planes and crews were, so it could rebuild its schedule within a day.</div>
+      </div>
+      <div class="step" data-d="1" data-rv="1,2,2" data-f="ua" data-lab="Saturday 20 July" data-h="United cancels fewer flights">
+        <span class="t">Saturday · United</span>
+        <h3>Fewer cancellations than on Friday</h3>
+        <p>United cancelled about 450 flights, 15% of its schedule, down from 22% on Friday.</p>
+      </div>
+      <div class="step" data-d="1" data-rv="2,2,2" data-f="dl" data-lab="Saturday 20 July" data-h="Delta's crew tracker falls behind" data-lt="prob">
+        <span class="t prob">Saturday · the problem at Delta</span>
+        <h3>The crew tracker cannot keep up</h3>
+        <p>Every cancelled flight changes where a crew is and how many legal hours it has left. Delta's crew-tracking tool could not process that many changes at once.</p>
+        <p>Delta cancelled about 1,200 flights again, 36% of its schedule. That was a bigger share than on Friday.</p>
+      </div>
+      <div class="step" data-d="1" data-rv="2,2,2" data-f="dl" data-lab="Saturday 20 July" data-h="Delta's crew tracker falls behind" data-lt="prob">
+        <span class="t">Saturday · what Delta did</span>
+        <h3>Built extra copies of the crew system</h3>
+        <p>To clear the backlog, Delta's IT teams built additional versions of the crew system and used them to work through the changes.</p>
+      </div>
+
+      <!-- SUNDAY -->
+      <div class="step day" data-d="2" data-rv="2,2,3" data-lab="Sunday 21 July" data-h="At Delta, one cancellation leads to the next" data-lt="prob">
+        <span class="t">Sunday 21 July</span><span class="big">Sun</span>
+        <h3>At Delta, one cancellation leads to the next</h3>
+        <p>Crews reached the gate and waited, sometimes for hours, for colleagues who had not arrived. Some ran out of legal working hours. The flight was cancelled, and those crews were now out of place too.</p>
+      </div>
+      <div class="step" data-d="2" data-rv="3,2,3" data-f="dl" data-lab="Sunday 21 July" data-h="Delta asks its crews where they are">
+        <span class="t">Sunday · what Delta did</span>
+        <h3>Asked crews where they were and offered extra pay</h3>
+        <p>Over the weekend, crew members who logged in were asked to “describe your current location”. Delta offered premium pay to crews who picked up trips, and promised they would get home.</p>
+        <p>CEO Ed Bastian wrote to customers that a crew-tracking tool was “unable to effectively process the unprecedented number of changes”. Delta cancelled more than 1,000 flights, over 25% of its schedule.</p>
+      </div>
+      <div class="step" data-d="2" data-rv="3,3,3" data-f="ua" data-lab="Sunday 21 July" data-h="United's systems are stable">
+        <span class="t">Sunday · United</span>
+        <h3>Down to 262 cancellations</h3>
+        <p>United cancelled 262 flights, about 9% of its schedule. Its CEO said the next day that its systems, tools and schedules had been stable for the last 24 hours.</p>
+      </div>
+      <div class="step" data-d="2" data-rv="3,3,3" data-f="dl" data-lab="Sunday 21 July" data-h="Few empty seats to rebook passengers" data-lt="prob">
+        <span class="t prob">Sunday · another problem at Delta</span>
+        <h3>Few empty seats to move passengers to</h3>
+        <p>Bastian said Delta's flights were more than 90% booked that weekend. Passengers on a cancelled flight found few open seats on later flights, so some waited days for a new one.</p>
+      </div>
+
+      <!-- MONDAY -->
+      <div class="step day" data-d="3" data-rv="3,3,4" data-lab="Monday 22 July" data-h="Most airlines are back to normal">
+        <span class="t">Monday 22 July</span><span class="big">Mon</span>
+        <h3>Most airlines are back to normal, Delta is not</h3>
+        <p>Other US airlines cancelled 2% of their flights or fewer. Delta's cancellations were just over half of all airline cancellations in the world that day.</p>
+      </div>
+      <div class="step" data-d="3" data-rv="3,4,4" data-f="ua" data-lab="Monday 22 July" data-h="United is back to normal" data-lt="fix">
+        <span class="t fix">Monday · United</span>
+        <h3>“Our operation is back to normal”</h3>
+        <p>CEO Scott Kirby wrote: “Today, our operation is back to normal and for the last 24 hours our systems, tools and schedules have been stable.” He added that the recovery was “quick given the circumstances but not immediate”. United cancelled 69 flights, about 2%.</p>
+      </div>
+      <div class="step pcs" data-d="3" data-rv="3,4,4" data-f="ua" data-lab="Monday 22 July" data-h="United is back to normal" data-lt="fix">
+        <span class="t">United · looking back</span>
+        <div class="pc"><div><h4>What helped</h4><ul><li>Fixed 26,000+ devices on site</li><li>Teams worked from the same data</li><li>Mobile devices for staff in the field</li><li>Recovery process improved before the outage</li></ul></div><div><h4>What held it back</h4><ul><li>Thousands of devices to fix by hand</li><li>Three days of cancellations</li></ul></div></div>
+        <div class="diff"><b>What made the difference:</b> “We all have the same data and we're all looking at the same screen,” said United's IT chief.</div>
+      </div>
+      <div class="step" data-d="3" data-rv="4,4,4" data-f="dl" data-lab="Monday 22 July" data-h="Delta's crew tracker is still catching up" data-lt="prob">
+        <span class="t">Monday · Delta</span>
+        <h3>1,159 cancellations and a queue of 2,000+ items</h3>
+        <p>Delta cancelled 1,159 mainline flights. Its IT chief said the crew-tracking tool had more than 2,000 items waiting to be fixed in its queue. Delta called crew scheduling “deeply complex” and said it needed the most time and manual support to get back in sync.</p>
+      </div>
+
+      <!-- TUESDAY -->
+      <div class="step day" data-d="4" data-rv="4,5,5" data-lab="Tuesday 23 July" data-h="The government opens an investigation">
+        <span class="t">Tuesday 23 July</span><span class="big">Tue</span>
+        <h3>The government opens an investigation</h3>
+        <p>The Department of Transportation opened an investigation into how Delta treated its customers, citing continued widespread disruptions. Passengers had filed more than 5,000 complaints.</p>
+      </div>
+      <div class="step" data-d="4" data-rv="5,5,5" data-f="dl" data-lab="Tuesday 23 July" data-h="Delta's cancellations fall">
+        <span class="t">Tuesday · Delta</span>
+        <h3>Cancellations fall to about 480</h3>
+        <p>Delta cancelled about 480 mainline flights, 13% of its schedule, and 41% of its flights were delayed. Delta said its “crews are fully staffed and ready”. By its own account it had enough crews, but matching them to the right planes took time.</p>
+      </div>
+      <div class="step" data-d="4" data-rv="5,5,5" data-f="dl" data-lab="Tuesday 23 July" data-h="Delta looks after stranded customers">
+        <span class="t">Tuesday · for customers</span>
+        <h3>Refunds, hotels, meals and miles</h3>
+        <p>Delta offered meal vouchers, hotel rooms and transport where available, plus SkyMiles and travel vouchers as an apology. Transportation Secretary Pete Buttigieg pressed it to give prompt refunds and free rebooking.</p>
+      </div>
+
+      <!-- WEDNESDAY -->
+      <div class="step day" data-d="5" data-rv="6,6,6" data-lab="Wednesday 24 July" data-h="All three airlines fly normally" data-lt="fix">
+        <span class="t">Wednesday 24 July</span><span class="big">Wed</span>
+        <h3>Delta is back to normal</h3>
+        <p>Delta cancelled 48 flights, all during the morning start-up, and none later in the day. Phone wait times for reservations fell below two minutes.</p>
+      </div>
+      <div class="step pcs" data-d="5" data-rv="6,6,6" data-f="dl" data-lab="Wednesday 24 July" data-h="All three airlines fly normally" data-lt="fix">
+        <span class="t">Delta · looking back</span>
+        <div class="pc"><div><h4>What helped</h4><ul><li>40,000 servers restored by hand</li><li>Extra copies of the crew system</li><li>Extra pay for crews to pick up trips</li><li>Hotels, meals and miles for customers</li></ul></div><div><h4>What held it back</h4><ul><li>About 60% of key systems on Windows</li><li>Crew tracker swamped by changes</li><li>Flights over 90% booked</li></ul></div></div>
+        <div class="diff"><b>What made the difference:</b> for several days Delta could not see where all its crews were, so each cancellation created more work.</div>
+      </div>
+
+      <!-- AFTER -->
+      <div class="step day" data-d="6" data-rv="6,6,6" data-lab="After the outage" data-h="Adding up the cost">
+        <span class="t">The months after</span><span class="big">After</span>
+        <h3>The cost, and a dispute about the cause</h3>
+        <p>Once flights were back to normal, the airlines added up what the week had cost. Delta and its software suppliers disagreed about why Delta took so much longer.</p>
+      </div>
+      <div class="step" data-d="6" data-rv="6,6,6" data-lab="After the outage" data-h="Adding up the cost">
+        <span class="t">After · what it cost</span>
+        <h3>About $550 million for Delta, $114 million for United</h3>
+        <p>Delta said the five days cost about $380 million in lost revenue, mostly refunds and compensation in cash and miles, and $170 million in extra costs. About 7,000 of its flights, including its regional partners, and 1.3 million customers were affected.</p>
+        <p>United later put its own losses at more than $113.6 million, including $20.4 million in compensation for passengers.</p>
+      </div>
+      <div class="step" data-d="6" data-rv="6,6,6" data-f="dl" data-nochip="1" data-lab="After the outage" data-h="Two explanations">
+        <span class="t">After · two explanations</span>
+        <h3>Delta and its suppliers disagree on the cause</h3>
+        <div class="pc n"><div><h4>Delta said</h4><ul><li>It used CrowdStrike and Microsoft more than other airlines did</li><li>It has spent billions on IT since 2016</li><li>“You can't come into a mission-critical 24/7 operation and tell us we have a bug”</li></ul></div><div><h4>CrowdStrike and Microsoft said</h4><ul><li>Delta, unlike its rivals, had not modernized its IT</li><li>Its crew system was run by IBM and others, not Microsoft</li><li>Delta turned down their offers of help</li></ul></div></div>
+      </div>
+      <div class="step" data-d="6" data-rv="6,6,6" data-lab="After the outage" data-h="Courts and regulators">
+        <span class="t">After · courts and regulators</span>
+        <h3>A lawsuit, a closed investigation and an insurance claim</h3>
+        <p>In October 2024 Delta sued CrowdStrike for about $550 million. CrowdStrike said its contract caps what it owes at a single-digit million figure. In May 2025 a Georgia judge let Delta's gross negligence claim go ahead.</p>
+        <p>In June 2026 the Department of Transportation closed its investigation without a fine. It found that refunds had been prompt and told Delta to give customers timely notice of their refund rights. In July 2026 United sued one of its insurers over its own losses.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Chapter 5 -->
-<section class="chap g" style="padding-bottom:60px">
-  <div class="col">
-    <div class="kick">Chapter 5 · The decision</div>
-    <h2>What I would have done</h2>
+<section class="g sec"><div class="in">
+  <div class="kick">The recovery playbook</div>
+  <h2>Seven problems from the week, and what helped</h2>
+  <p class="intro">Each move below was used by one of the three airlines. Start from the problem you have.</p>
+  <div class="play">
+    <div class="r"><span class="d">Fri</span><div class="p">Thousands of computers crash at the same time</div><div class="f">Send people to fix them on site<small>United: 26,000+ devices at 365 airports</small></div></div>
+    <div class="r"><span class="d">Fri</span><div class="p">Nobody has the full picture in the first hours</div><div class="f">Put operations and IT in one team within an hour<small>American</small></div></div>
+    <div class="r"><span class="d">Sat</span><div class="p">Planes and crews end up in the wrong places</div><div class="f">Keep track of where every plane and crew is<small>American</small></div></div>
+    <div class="r"><span class="d">Sat</span><div class="p">The crew system falls behind on changes</div><div class="f">Add capacity to clear the backlog<small>Delta: extra copies of the crew system</small></div></div>
+    <div class="r"><span class="d">Sun</span><div class="p">Crews wait at gates and run out of legal hours</div><div class="f">Ask crews where they are and pay them to pick up trips<small>Delta</small></div></div>
+    <div class="r"><span class="d">Mon</span><div class="p">Teams work from different information</div><div class="f">Give every team the same live data<small>United: “the same screen”</small></div></div>
+    <div class="r"><span class="d">Tue</span><div class="p">Customers are stranded and regulators ask questions</div><div class="f">Refunds, hotels, meals and clear notice of refund rights<small>Delta: refunds later found to be prompt</small></div></div>
   </div>
-  <div class="in">
-    <div class="verdict">
-      <div class="kick">My call</div>
-      <h3>Reset on Saturday. If the crew tool's backlog is still growing 24 hours after the outage, stop patching. Cut the schedule hard for one day and rebuild it from where crews actually are.</h3>
-    </div>
-    <div class="trio">
-      <div><b>The crews were there</b>Delta had the people. It lost the data about where they were. When the data breaks, a plan built on it stops working, however hard people push.</div>
-      <div><b>Every patch makes more work</b>Each late cancellation strands a crew and adds a change to a system that is already behind. Patching fed the problem it was trying to fix.</div>
-      <div><b>A late reset is the worst choice</b>Reset early and you trade one hard day for three better ones. Reset late and you get both. Set the trigger before the crisis, not during it.</div>
-    </div>
-    <div class="pull" style="font-size:clamp(20px,2.6vw,26px)">In supply chain it is the same call: when supplier dates break, do you keep expediting line by line, or freeze and re-plan the build from what you actually have?</div>
-    <div class="ml" style="margin-bottom:8px">The decisions that could have been made</div>
-    <div class="paths">
-      <div><span class="ml">Before</span><h3>Test the bad day</h3>Stress-test the crew system for a day with thousands of changes. Keep a simple backup for crews to report where they are. Agree in advance what triggers a reset. Southwest 2022 was the warning.</div>
-      <div><span class="ml">During · 19 to 24 Jul</span><h3>Call it by Saturday</h3>Watch one number: is the crew backlog shrinking? If not, reset. Protect the big hubs first, pay crews to reposition, and tell customers early so they rebook from home.</div>
-      <div><span class="ml">After · 2024 on</span><h3>Fix the weak link</h3>Delta sued CrowdStrike for about $500M; a judge let the main claims go ahead in May 2025. CrowdStrike blamed Delta's old IT. The DOT closed its probe in June 2026 with no fine.</div>
-    </div>
-    <p class="note">Delta's cost: about $380M in lost revenue (refunds, cash and miles to customers) plus $170M in extra costs (customer expenses, crew), partly offset by $50M of fuel not burned.</p>
+</div></section>
+
+<section class="g sec"><div class="in">
+  <div class="kick">Side by side</div>
+  <h2>How the three airlines compared</h2>
+  <p class="intro">What each airline had going for it, and how many flights it cancelled.</p>
+  <h3 class="sub2" style="margin-top:22px">What each airline had going for it</h3>
+  <p class="intro" style="margin-top:6px">Green helped the recovery, red slowed it down. A dash means it was not reported.</p>
+  <div class="tw" style="margin:12px 0 34px"><table class="trt">
+    <thead><tr><th></th><th><i style="background:var(--dl)"></i>Delta</th><th><i style="background:var(--ua)"></i>United</th><th><i style="background:var(--aa)"></i>American</th></tr></thead>
+    <tbody>
+      <tr><td>First response</td><td>40,000 servers fixed by hand</td><td>26,000+ devices fixed on site</td><td class="hi">One team within an hour</td></tr>
+      <tr><td>Crew tracking</td><td class="lo">Swamped by changes</td><td class="na">–</td><td class="hi">Knew where crews were</td></tr>
+      <tr><td>Shared view</td><td class="lo">Asked crews where they were</td><td class="hi">Same data, same screen</td><td class="hi">Devices for field staff</td></tr>
+      <tr><td>Tech before</td><td class="mid">Disputed</td><td class="hi">Cloud and real-time data</td><td class="hi">Ops tech since 2023</td></tr>
+      <tr><td>Empty seats</td><td class="lo">Over 90% booked</td><td class="na">–</td><td class="na">–</td></tr>
+    </tbody></table></div>
+
+  <h3 class="sub2">How many flights each one cancelled</h3>
+  <div class="lbh"><span>Airline</span><span>Mainline flights cancelled, Friday to Wednesday</span><span>Total</span><span>Days</span></div>
+  <div class="lb">
+    <div class="r"><div class="nm"><i style="background:var(--dl)"></i><span>Delta<small>normal again Wed</small></span></div><div class="sb"><i style="width:23.6%;background:var(--dl)">Fri</i><i style="width:23.6%;background:var(--dl)">Sat</i><i style="width:19.6%;background:var(--dl)">Sun</i><i style="width:22.8%;background:var(--dl)">Mon</i><i style="width:9.4%;background:var(--dl)">Tue</i><i style="width:.9%;background:var(--dl)"></i></div><div class="pillv lo">~5,090</div><div class="pillv lo">5</div></div>
+    <div class="r"><div class="nm"><i style="background:var(--ua)"></i><span>United<small>normal again Mon</small></span></div><div class="sb"><i style="width:13.6%;background:var(--ua)">Fri</i><i style="width:8.9%;background:var(--ua)">Sat</i><i style="width:5.1%;background:var(--ua)"></i><i style="width:1.4%;background:var(--ua)"></i><i style="width:.9%;background:var(--ua)"></i></div><div class="pillv mid">~1,520</div><div class="pillv mid">3</div></div>
+    <div class="r"><div class="nm"><i style="background:var(--aa)"></i><span>American<small>normal again Sat</small></span></div><div class="sb aa"><i style="width:7.9%;background:var(--aa)">Fri</i><i style="width:.9%;background:var(--aa)"></i></div><div class="pillv hi">440+</div><div class="pillv hi">1</div></div>
   </div>
-</section>
+  <div class="legend"><span>Each block is one day, Friday first. Days: how many days before it flew normally again.</span></div>
+
+  <h3 class="sub2" style="margin-top:34px">Why each week looked this way</h3>
+  <ul class="whyl">
+    <li><b>American:</b> its crew-tracking systems kept it aware of where planes and crews were, so it rebuilt its schedule within a day.</li>
+    <li><b>United:</b> technicians fixed more than 26,000 devices on site, and its teams worked from the same live data. It was back to normal on Monday.</li>
+    <li><b>Delta:</b> most systems were back on Friday, but its crew tracker fell behind on changes. Crews and planes stayed out of place until Wednesday.</li>
+  </ul>
+</div></section>
+
+<section class="g sec"><div class="in">
+  <div class="kick">Scorecard</div>
+  <h2>Which moves helped with what</h2>
+  <p class="intro">Pick what matters most. Moves that do well on it stay bright.</p>
+  <div class="pick" role="group" aria-label="What matters most">
+    <button type="button" data-c="-1" aria-pressed="true">Show all</button>
+    <button type="button" data-c="0" aria-pressed="false">Works in hours</button>
+    <button type="button" data-c="1" aria-pressed="false">Finds the crews</button>
+    <button type="button" data-c="2" aria-pressed="false">Shortens recovery</button>
+    <button type="button" data-c="3" aria-pressed="false">Helps customers</button>
+    <button type="button" data-c="4" aria-pressed="false">Low cost</button>
+  </div>
+  <div class="tw"><table class="gr" id="grid">
+    <thead><tr><th>Move</th><th>In hours</th><th>Finds crews</th><th>Shortens recovery</th><th>Customers</th><th>Low cost</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+  <div class="gkey2"><span><span class="dot y">✓</span> strong</span><span><span class="dot m">~</span> mixed</span><span><span class="dot n">✗</span> weak</span></div>
+</div></section>
+
+<section class="g sec"><div class="in">
+  <div class="kick">For supply chain</div>
+  <h2>What a supply chain can take from this</h2>
+  <p class="intro">Stock, trucks and people go out of place in the same way when the system that tracks them goes down.</p>
+  <div class="mix">
+    <div><span class="ml">Before an outage</span><h3>Keep a view that does not need the main system</h3>Know where stock, trucks and staff are even when the planning system is down, for example from a daily export or a second tool.</div>
+    <div><span class="ml">In the first hour</span><h3>Put operations and IT together</h3>Put operations and IT together, and have everyone work from the same live data, as American and United did.</div>
+    <div><span class="ml">In the first days</span><h3>Fix the tracker first</h3>Restore the system that shows where things are before the ones that plan, and add capacity to clear its backlog of changes.</div>
+  </div>
+</div></section>
 
 <hr>
 <footer class="src g">
   <div class="col">
     <strong style="color:var(--ink);font-family:var(--f-head)">Sources</strong>
     <ol>
-      <li><a href="https://en.wikipedia.org/wiki/2024_Delta_Air_Lines_disruption" target="_blank" rel="noopener">Wikipedia, 2024 Delta Air Lines disruption</a>: 8.5M machines, update pulled after 78 min, crew tool back ~11 a.m. with backlog, 60% of systems on Windows, 40,000 servers, duty limits compounding, DOT probe 23 Jul, United ~3 days and 1,400+ cancellations, 1.3M customers (SEC filing), CrowdStrike's response</li>
-      <li><a href="https://nbcboston.com/news/business/money-report/flight-cancellations-ease-after-it-outage-but-some-disruptions-linger" target="_blank" rel="noopener">CNBC via NBC Boston, 20 Jul 2024</a>: FlightAware share cancelled, Fri (Delta 32%, United 22%, American 11%) and Sat (36%, 15%, 1%)</li>
-      <li><a href="https://thepointsguy.com/news/sunday-flight-cancellations-it-outage" target="_blank" rel="noopener">The Points Guy, 21 Jul 2024</a>: Delta 1,200 on Sat, over 1,000 on Sun (25%+); United 262 on Sun (~9%)</li>
-      <li><a href="https://cbsnews.com/amp/news/delta-crowdstrike-outage-flight-status" target="_blank" rel="noopener">CBS News, 22 Jul 2024</a>: Bastian letter, crew-tracking tool unable to process the changes</li>
-      <li><a href="https://www.travelweekly.com/Travel-News/Airline-News/Delta-operational-troubles-extend-fifth-day" target="_blank" rel="noopener">Travel Weekly, 23 Jul 2024</a>: 1,159 mainline cancellations Mon, ~480 (13%) Tue, 41% delayed; "deeply complex", "fully staffed and ready"</li>
-      <li><a href="https://news.delta.com/update/july-2024-operation/deltas-wednesday-operation-returns-normal" target="_blank" rel="noopener">Delta News Hub, 24 Jul 2024</a>: 48 mainline cancellations Wed, operation back to normal</li>
-      <li><a href="https://www.ciodive.com/news/united-airlines-tech-operations-recovery-crowdstrike-outage/722197/" target="_blank" rel="noopener">CIO Dive, Jul 2024</a>: United 694 Fri, 713 over the weekend, 69 Mon (2%), 47 Tue; 26,000+ devices at 365 airports; Kirby letter</li>
-      <li><a href="https://www-ak-ms.foxbusiness.com/lifestyle/delta-estimates-crowdstrike-outage-cost-airline-380m-revenue" target="_blank" rel="noopener">Fox Business, Aug 2024 (Delta SEC filing)</a>: $380M revenue, $170M costs, $50M lower fuel, ~7,000 flights in five days</li>
-      <li><a href="https://www.cnbc.com/2024/07/21/delta-offers-crews-double-pay-to-staff-flights-after-it-outage.html" target="_blank" rel="noopener">CNBC, 21 Jul 2024</a>: Delta offers crews double pay to staff flights</li>
-      <li><a href="https://www.theregister.com/2025/05/21/judge_allows_deltas_lawsuit_against/" target="_blank" rel="noopener">The Register, 21 May 2025</a>: judge lets Delta's suit against CrowdStrike proceed</li>
-      <li><a href="https://www.thestar.com.my/tech/tech-news/2026/06/16/us-closes-probe-into-2024-delta-air-lines-meltdown-sparked-by-crowdstrike-outage" target="_blank" rel="noopener">Reuters via The Star, 16 Jun 2026</a>: DOT closes its probe without penalties</li>
-      <li><a href="https://www.spokesman.com/stories/2023/dec/18/us-fines-southwest-airlines-140-million-after-2022" target="_blank" rel="noopener">AP via Spokesman-Review, 18 Dec 2023</a>: Southwest 2022, 16,700 cancellations, reset of its network, $140M fine</li>
+      <li><a href="https://www.crowdstrike.com/en-us/blog/falcon-content-update-preliminary-post-incident-report/">CrowdStrike, preliminary post incident review, Jul 2024</a>: update released 04:09 UTC (00:09 US Eastern) and pulled 05:27 UTC on 19 Jul</li>
+      <li><a href="https://en.wikipedia.org/wiki/2024_Delta_Air_Lines_disruption">Wikipedia, 2024 Delta Air Lines disruption</a>: about 8.5 million devices, Delta's crew tool back around 11 a.m. with a backlog, about 40,000 servers, 60% of key systems on Windows, crews timing out, investigation opened 23 Jul, 5,000+ complaints, 1.3 million customers, lawsuit filed Oct 2024, May 2025 ruling</li>
+      <li><a href="https://www.axios.com/local/chicago/2024/07/19/flights-ohare-midway-airports-canceled-delayed">Axios, 19 Jul 2024</a>: United, American, Delta and Allegiant grounded flights early Friday</li>
+      <li><a href="https://abc7.com/post/socal-flights-delta-united-american-airlines-temporarily-grounded/15071177/">ABC7, 19 Jul 2024</a>: airlines asked for a ground stop; American said early Friday it was back up and running</li>
+      <li><a href="https://nbcboston.com/news/business/money-report/flight-cancellations-ease-after-it-outage-but-some-disruptions-linger">CNBC via NBC Boston, 20 Jul 2024</a>: share of flights cancelled on Friday (Delta 32%, United 22%, American 11%) and Saturday (36%, 15%, 1% or 44 flights), FlightAware data</li>
+      <li><a href="https://thepointsguy.com/news/sunday-flight-cancellations-it-outage">The Points Guy, 21 Jul 2024</a>: Delta 1,200 cancellations on Saturday and over 1,000 (over 25%) on Sunday; United 262 (about 9%) on Sunday; more than 3,400 Delta cancellations since Friday</li>
+      <li><a href="https://www.ciodive.com/news/united-airlines-tech-operations-recovery-crowdstrike-outage/722197/">CIO Dive, Jul 2024</a>: United cancelled 694 flights on Friday, 713 over the weekend, 69 on Monday and 47 on Tuesday; 26,000+ devices at 365 airports; Scott Kirby's letter; recovery processes improved before the outage</li>
+      <li><a href="https://www.ciodive.com/news/united-airlines-crowdstrike-real-time-data-operations/728745/">CIO Dive, 3 Oct 2024</a>: United's CIO on shared data, “we're all looking at the same screen”; field staff driving to sites; cloud since 2021; real-time data and mobile devices</li>
+      <li><a href="https://ciodive.com/news/american-airlines-crowdstrike-outage-operatioins-recovery/722428">CIO Dive, Jul 2024</a>: American cancelled 400+ flights in the first 24 hours and 50 the next day; teams formed within an hour; crew and aircraft tracking; field devices; experience with weather disruptions; operations technology investment after Southwest's 2022 failure</li>
+      <li><a href="https://ajc.com/news/business/heres-why-delta-melted-down-after-tech-outage-while-others-recovered/MKXZDWXVFVCPVP752SJ2ITYLTU">Atlanta Journal-Constitution, Jul 2024</a>: first Atlanta flight about 7:30 a.m., gate app delay, more than 2,000 items in the crew tracker's queue, extra versions of the crew system, crews timing out at the gate</li>
+      <li><a href="https://wtop.com/business-finance/2024/07/why-delta-is-still-canceling-flights-as-other-airlines-return-to-normal/">CNN via WTOP, 22 Jul 2024</a>: crews asked to describe their current location, premium pay for crews, bookings above 90%, Monday's share of world cancellations, other US airlines at 2% or fewer, meals, hotels and SkyMiles</li>
+      <li><a href="https://cbsnews.com/amp/news/delta-crowdstrike-outage-flight-status">CBS News, 22 Jul 2024</a>: Ed Bastian's letter, crew tool “unable to effectively process the unprecedented number of changes”</li>
+      <li><a href="https://www.travelweekly.com/Travel-News/Airline-News/Delta-operational-troubles-extend-fifth-day">Travel Weekly, 23 Jul 2024</a>: Delta cancelled 1,159 mainline flights on Monday and about 480 (13%) on Tuesday, 41% delayed; crew tracking “deeply complex”; “crews are fully staffed and ready”</li>
+      <li><a href="https://news.delta.com/update/july-2024-operation/deltas-wednesday-operation-returns-normal">Delta News Hub, 24 Jul 2024</a>: 48 cancellations on Wednesday, all at the morning start-up; reservation wait times under two minutes</li>
+      <li><a href="https://thepointsguy.com/news/crowdstrike-delta-meltdown-blame">The Points Guy, Aug 2024</a>: CrowdStrike says Delta declined on-site help; Bastian says Delta used CrowdStrike and Microsoft more than rivals, and the “24/7 operation” quote</li>
+      <li><a href="https://www.ciodive.com/news/microsoft-delta-crowdstrike-letter-IT/723507/">CIO Dive, Aug 2024</a>: Microsoft's letter (Delta “has not modernized”, crew system run by IBM and others, offers of help declined); CrowdStrike's liability cap; Delta's reply on IT spending since 2016</li>
+      <li><a href="https://www-ak-ms.foxbusiness.com/lifestyle/delta-estimates-crowdstrike-outage-cost-airline-380m-revenue">Fox Business, Aug 2024 (Delta SEC filing)</a>: about $380M lost revenue and $170M extra costs, about 7,000 flights cancelled over five days</li>
+      <li><a href="https://careers.ch-aviation.com/news/169991-united-airlines-sues-cyber-firm-for-5mn-over-it-crash">ch-aviation, Jul 2026</a>: United's claim against its insurer, more than 1,600 flights cancelled and more than $113.6M in losses, including $20.4M in passenger compensation</li>
+      <li><a href="https://www.thestar.com.my/tech/tech-news/2026/06/16/us-closes-probe-into-2024-delta-air-lines-meltdown-sparked-by-crowdstrike-outage">Reuters via The Star, 16 Jun 2026</a>: US Department of Transportation closes its Delta investigation without penalties, finds refunds were prompt</li>
     </ol>
+    <p style="margin:0">Daily counts are mainline flights unless noted. Running totals are rounded.</p>
   </div>
 </footer>
 
 <script>
 (function(){
-  var NS='http://www.w3.org/2000/svg';
-  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
-  function bind(sel,attr,fn){
-    var steps=document.querySelectorAll(sel+' .step');
-    if(!('IntersectionObserver' in window)){steps.forEach(function(s){s.classList.add('on');});return;}
-    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});fn(+e.target.getAttribute(attr));}});},{rootMargin:'-40% 0px -45% 0px'});
-    steps.forEach(function(s){io.observe(s);});
-    if(steps[0])steps[0].classList.add('on');
-  }
-  function fmt(n){return Math.round(n).toLocaleString('en-US');}
+  var K=['dl','ua','aa'];
+  var AIR={
+    dl:{n:'Delta',c:'var(--dl)',v:[1200,1200,1000,1159,480,48],l:['1,200','1,200','1,000+','1,159','~480','48'],s:['r','r','r','r','a','g']},
+    ua:{n:'United',c:'var(--ua)',v:[694,451,262,69,47,0],l:['694','~450','262','69','47','normal'],s:['r','r','a','g','g','g']},
+    aa:{n:'American',c:'var(--aa)',v:[400,44,0,0,0,0],l:['400+','44','normal','normal','normal','normal'],s:['a','g','g','g','g','g']}
+  };
+  var MAX=1250, WORD={r:'Heavy cancellations',a:'Some cancellations',g:'Flying normally'};
+  var DLT=['~1,200','~2,400','~3,400','~4,560','~5,040','~5,090'], UAT=['694','~1,150','~1,410','~1,480','~1,520','~1,520'];
 
-  // ---- Chapter 1: race chart ----
-  var DAYS=['Fri 19','Sat 20','Sun 21','Mon 22','Tue 23','Wed 24'];
-  var D=[1200,1200,1000,1159,480,48], U=[694,451,262,69,47,null];
-  var svg=document.getElementById('raceSvg'), X0=56, W=500, Y0=280, H=240, MAX=1400;
-  function xx(i){return X0+i*(W/5);} function yy(v){return Y0-v/MAX*H;}
-  [0,500,1000].forEach(function(v){el('line',{x1:X0,y1:yy(v),x2:X0+W,y2:yy(v),class:'axis','stroke-dasharray':v?'2 4':''},svg);var t=el('text',{x:X0-8,y:yy(v)+4,class:'tick','text-anchor':'end'},svg);t.textContent=fmt(v);});
-  DAYS.forEach(function(d,i){var t=el('text',{x:xx(i),y:Y0+20,class:'tick','text-anchor':'middle'},svg);t.textContent=d;});
-  var normal=el('g',{class:'pt',opacity:0},svg);
-  el('rect',{x:X0,y:yy(100),width:W,height:yy(0)-yy(100),fill:'var(--goodsoft)'},normal);
-  var nt=el('text',{x:X0+W,y:yy(100)-6,class:'tick','text-anchor':'end'},normal);nt.textContent='normal day';
-  svg.insertBefore(normal,svg.firstChild);
-  var pD=el('path',{class:'ln dl'},svg), pU=el('path',{class:'ln ua'},svg);
-  var dotsD=D.map(function(v,i){return el('circle',{cx:xx(i),cy:yy(v),r:6,fill:'var(--bad)',class:'pt',opacity:0},svg);});
-  var dotsU=U.map(function(v,i){return v===null?null:el('circle',{cx:xx(i),cy:yy(v),r:6,fill:'var(--good)',class:'pt',opacity:0},svg);});
-  var tD=el('text',{class:'lblb',style:'fill:var(--bad)'},svg), tU=el('text',{class:'lblb',style:'fill:var(--good)'},svg);
-  var gapG=el('g',{class:'pt',opacity:0},svg);
-  var gl=el('line',{x1:xx(3),x2:xx(3),y1:yy(D[3])+8,y2:yy(U[3])-8,stroke:'var(--ink)','stroke-width':1.5,'stroke-dasharray':'4 3'},gapG);
-  var gt=el('text',{x:xx(3)+8,y:(yy(D[3])+yy(U[3]))/2+4,class:'lbl',style:'fill:var(--ink)'},gapG);gt.textContent='17× more';
-  function path(arr,n){var d='';for(var i=0;i<=n&&i<arr.length;i++){if(arr[i]===null)break;d+=(d?'L':'M')+xx(i)+' '+yy(arr[i]);}return d;}
-  var cDay=document.getElementById('cDay'),cD=document.getElementById('cD'),cU=document.getElementById('cU'),raceCap=document.getElementById('raceCap');
-  var CAP=['Day 1: everyone is hit','Day 2: the lines split','Day 3: United climbs out','Day 4: United is back to normal','Day 5: Delta still cancelling','Day 6: Delta back to normal'];
-  function setRace(s){
-    pD.setAttribute('d',path(D,s)); pU.setAttribute('d',path(U,s));
-    dotsD.forEach(function(c,i){c.setAttribute('opacity',i<=s?1:0);});
-    dotsU.forEach(function(c,i){if(c)c.setAttribute('opacity',i<=s?1:0);});
-    var lu=Math.min(s,4);
-    tD.setAttribute('x',xx(s)+(s>=4?-10:10)); tD.setAttribute('y',yy(D[s])-12); tD.setAttribute('text-anchor',s>=4?'end':'start'); tD.textContent='Delta '+fmt(D[s]);
-    tU.setAttribute('x',xx(lu)+10); tU.setAttribute('y',yy(U[lu])+(s>=3?-12:22)); tU.setAttribute('text-anchor','start'); tU.textContent='United '+fmt(U[lu]);
-    if(s>=4){tU.setAttribute('x',xx(lu)-10);tU.setAttribute('text-anchor','end');tU.setAttribute('y',yy(U[lu])-12);}
-    if(s===5){tU.textContent='United';}
-    normal.setAttribute('opacity',s>=3?1:0); gapG.setAttribute('opacity',s===3?1:0);
-    var sd=0,su=0;for(var i=0;i<=s;i++){sd+=D[i];su+=U[i]||0;}
-    cDay.textContent=DAYS[s]; cD.textContent=fmt(sd); cU.textContent=fmt(su);
-    raceCap.textContent=CAP[s];
-  }
-  setRace(0);
-  bind('[data-chart="race"]','data-s',setRace);
+  // Build the board lanes
+  var board=document.getElementById('board'), L={};
+  K.forEach(function(k){
+    var a=AIR[k], row=document.createElement('div'); row.className='brow lane';
+    var who=document.createElement('div'); who.className='who';
+    who.innerHTML='<b><i style="background:'+a.c+'"></i>'+a.n+'</b><span class="st"><i class="lt"></i><em></em></span>';
+    row.appendChild(who);
+    var cells=[];
+    for(var j=0;j<6;j++){
+      var c=document.createElement('div'); c.className='cell';
+      c.innerHTML='<span class="bar" style="background:'+a.c+'"></span><span class="v"></span>';
+      row.appendChild(c); cells.push(c);
+    }
+    board.appendChild(row);
+    L[k]={row:row,st:who.querySelector('.st'),word:who.querySelector('em'),cells:cells};
+  });
+  var hd=board.querySelectorAll('.bhd span[data-j]');
 
-  // ---- Chapter 2: crew diagram (illustration) ----
-  var csvg=document.getElementById('crewSvg');
-  var HUBS=[['Atlanta',20,18],['Minneapolis',310,18],['Detroit',20,174],['Salt Lake City',310,174]];
-  HUBS.forEach(function(h){el('rect',{x:h[1],y:h[2],width:270,height:140,rx:6,class:'hub'},csvg);var t=el('text',{x:h[1]+12,y:h[2]+22,class:'lblb'},csvg);t.textContent=h[0];});
-  // 15 crews per hub: 5 x 3 grid
-  var crews=[];
-  for(var h=0;h<4;h++)for(var k=0;k<15;k++){crews.push({h:h,k:k,el:el('circle',{cx:0,cy:0,r:9,class:'crew ok'},csvg)});}
-  function slot(h,k){var hb=HUBS[h];return [hb[1]+40+(k%5)*48, hb[2]+46+Math.floor(k/5)*24];}
-  function vslot(h,i){var hb=HUBS[h];return [hb[1]+40+i*32, hb[2]+122];}
-  // states per step: number of crews per hub in wrong city / out of hours
-  var CS=[
-    {off:0,time:0,day:'Normal',tool:'OK',cap:'Normal day · every crew is where the plan says'},
-    {off:2,time:0,day:'Fri',tool:'Backlog',cap:'Fri · systems down, then a backlog'},
-    {off:4,time:1,day:'Fri–Sat',tool:'Lost',cap:'Fri–Sat · cancellations strand crews'},
-    {off:6,time:3,day:'Sat–Sun',tool:'Lost',cap:'Sat–Sun · the trap: crews time out at the gate'},
-    {off:5,time:2,day:'Mon–Tue',tool:'Syncing',cap:'Mon–Tue · still syncing, slowly'},
-    {off:0,time:0,day:'Wed',tool:'OK',cap:'Wed · plan and reality match again'}
-  ];
-  var kDay=document.getElementById('kDay'),kOff=document.getElementById('kOff'),kTool=document.getElementById('kTool'),crewCap=document.getElementById('crewCap');
-  function setCrew(s){
-    var c=CS[s];
-    // counters of wrong-city crews arriving at each hub, to place them in the free slots from the end
-    var arrive=[0,0,0,0];
-    crews.forEach(function(cr){
-      var home=slot(cr.h,cr.k), cls='ok', p=home;
-      if(cr.k<c.off){ // moved to another hub, red, placed in that hub's back slots
-        var dest=(cr.h+1+(cr.k%3))%4; p=vslot(dest,arrive[dest]); arrive[dest]++; cls='off';
-      } else if(cr.k>=c.off&&cr.k<c.off+c.time){cls='time';}
-      cr.el.style.transform='translate('+p[0]+'px,'+p[1]+'px)';
-      cr.el.setAttribute('class','crew '+cls);
+  function setState(s){
+    var d=+s.dataset.d, rv=(s.dataset.rv||'0,0,0').split(',').map(Number), f=s.dataset.f||'', ov=s.dataset.st;
+    hd.forEach(function(h,j){h.className=d>=6||j<d?'done':j===d?'cur':'';});
+    var normal=[];
+    K.forEach(function(k,ki){
+      var a=AIR[k], n=rv[ki], ln=L[k];
+      ln.cells.forEach(function(c,j){
+        var on=j<n;
+        c.classList.toggle('rv',on);
+        if(on)c.setAttribute('data-sev',a.s[j]); else c.removeAttribute('data-sev');
+        c.classList.toggle('cur',j===d);
+        c.style.setProperty('--h',on?(a.v[j]/MAX).toFixed(3):'0');
+        var v=c.querySelector('.v'); v.textContent=on?a.l[j]:''; v.classList.toggle('nz',on&&!a.v[j]);
+      });
+      var sev,word;
+      if(d<0){sev='g';word='Normal schedule';}
+      else if(n===0){sev='r';word=ov||'Ground stop';}
+      else {sev=a.s[n-1];word=WORD[sev];}
+      ln.st.setAttribute('data-sev',sev); ln.word.textContent=word;
+      if(sev==='g')normal.push(a.n);
+      ln.row.classList.toggle('dim',!!f&&f!==k);
     });
-    // home slots taken by visitors: shift so no overlap (visitors use back slots; home crews that are 'off' have left)
-    var n=Math.round((c.off+c.time)/15*100);
-    kDay.textContent=c.day; kOff.textContent=n+'%'; kOff.className='n'+(n>0?' bad':'');
-    kTool.textContent=c.tool; kTool.className='n'+(c.tool==='OK'?' good':' bad');
-    crewCap.textContent=c.cap;
+    var nn=normal.length, t1=document.getElementById('t1');
+    document.getElementById('t1v').textContent=nn+' of 3';
+    document.getElementById('t1s').textContent=d<0?'before the outage':nn===0?'none yet':nn===3?'all three':normal.join(' and ');
+    t1.className=nn===3?'hi':nn===0?'lo':'mid';
+    document.getElementById('t2v').textContent=rv[0]?DLT[rv[0]-1]:'–';
+    document.getElementById('t2s').textContent='United: '+(rv[1]?UAT[rv[1]-1]:'–')+' · mainline';
+    var bl=document.getElementById('bl'); bl.textContent=s.dataset.lab||''; bl.className='lab '+(s.dataset.lt||'set');
+    document.getElementById('bn').textContent=s.dataset.h||'';
   }
-  setCrew(0);
-  bind('[data-chart="crew"]','data-c',setCrew);
 
-  // ---- Question reveal ----
+  // Airline chips on cards
+  var CH={dl:['Delta','var(--dl)'],ua:['United','var(--ua)'],aa:['American','var(--aa)']};
+  var steps=document.querySelectorAll('#story .step');
+  steps.forEach(function(s){
+    var f=s.dataset.f; if(!f||s.classList.contains('day')||s.dataset.nochip)return;
+    var t=s.querySelector('.t'), d=document.createElement('div');
+    d.className='atag'+(s.classList.contains('pcs')?' out':'');
+    d.innerHTML='<i style="background:'+CH[f][1]+'"></i>'+CH[f][0];
+    t.insertAdjacentElement('afterend',d);
+  });
+
+  setState(steps[0]); steps[0].classList.add('on');
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){steps.forEach(function(s){s.classList.toggle('on',s===e.target);});setState(e.target);}});},{rootMargin:(innerWidth<=860?'-64% 0px -16% 0px':'-40% 0px -45% 0px')});
+    steps.forEach(function(s){io.observe(s);});
+  } else steps.forEach(function(s){s.classList.add('on');});
+
+  // Question screen
   var rv=document.getElementById('reveal'), rvEls=rv.querySelectorAll('[data-at]');
   function rvTick(){
-    var r=rv.getBoundingClientRect(), span=r.height-innerHeight;
-    var p=span>0?Math.min(1,Math.max(0,-r.top/span)):1;
+    var rr=rv.getBoundingClientRect(), span=rr.height-innerHeight;
+    var p=span>0?Math.min(1,Math.max(0,-rr.top/span)):1;
     var n=Math.floor(p*2.6);
     rvEls.forEach(function(e){e.classList.toggle('on',+e.getAttribute('data-at')<n||p>=1);});
   }
   addEventListener('scroll',rvTick,{passive:true}); addEventListener('resize',rvTick); rvTick();
 
-  // ---- Chapter 4: reset tool (simple model) ----
-  var OPTS=[{l:'Saturday (day 2)',d:1},{l:'Sunday (day 3)',d:2},{l:'Monday (day 4)',d:3},{l:'Never (what Delta did)',d:-1}];
-  var AFTER=[1500,350,80,48,48,48];
-  function plan(d){if(d<0)return D.slice();var a=[];for(var i=0;i<6;i++)a.push(i<d?D[i]:AFTER[i-d]);return a;}
-  function normalDay(a){for(var i=0;i<6;i++){var ok=true;for(var j=i;j<6;j++)if(a[j]>100)ok=false;if(ok)return i;}return 6;}
-  var PER_CUST=185, PER_COST=0.108; // estimates
-  var st={o:0};
-  var seg=document.getElementById('rSeg');
-  OPTS.forEach(function(o,i){var b=document.createElement('button');b.type='button';b.id='rOpt'+i;b.textContent=o.l;b.addEventListener('click',function(){st.o=i;draw();});seg.appendChild(b);});
-  var rs=document.getElementById('rSvg'), RX0=50, RW=440, RY0=212, RH=180, RMAX=1600;
-  function rx(i){return RX0+i*(RW/5);} function ry(v){return RY0-v/RMAX*RH;}
-  [0,500,1000,1500].forEach(function(v){el('line',{x1:RX0,y1:ry(v),x2:RX0+RW,y2:ry(v),class:'axis','stroke-dasharray':v?'2 4':''},rs);var t=el('text',{x:RX0-8,y:ry(v)+4,class:'tick','text-anchor':'end'},rs);t.textContent=fmt(v);});
-  DAYS.forEach(function(d,i){var t=el('text',{x:rx(i),y:RY0+20,class:'tick','text-anchor':'middle'},rs);t.textContent=d;});
-  function lp(a){var s='';a.forEach(function(v,i){if(v===null)return;s+=(s?'L':'M')+rx(i)+' '+ry(v);});return s;}
-  el('path',{d:lp(U),class:'ln',stroke:'var(--good)','stroke-width':2.5,fill:'none'},rs);
-  el('path',{d:lp(D),class:'ln',stroke:'var(--muted)','stroke-width':3,'stroke-dasharray':'7 6',fill:'none'},rs);
-  var mine=el('path',{class:'ln',stroke:'var(--ink)','stroke-width':4,fill:'none'},rs);
-  var mineDots=D.map(function(v,i){return el('circle',{r:5,fill:'var(--ink)',cx:rx(i),cy:ry(v)},rs);});
-  var rmark=el('g',{},rs); var rml=el('line',{y1:ry(1600),y2:RY0,stroke:'var(--amber)','stroke-width':2},rmark); var rmt=el('text',{y:ry(1600)+14,class:'lbl',style:'fill:var(--amber)'},rmark); rmt.textContent='reset';
-  function draw(){
-    Array.prototype.forEach.call(seg.children,function(b,j){b.setAttribute('aria-pressed',j===st.o?'true':'false');});
-    var o=OPTS[st.o], a=plan(o.d);
-    mine.setAttribute('d',lp(a)); mineDots.forEach(function(c,i){c.setAttribute('cy',ry(a[i]));});
-    if(o.d<0){rmark.setAttribute('opacity',0);}else{rmark.setAttribute('opacity',1);rml.setAttribute('x1',rx(o.d));rml.setAttribute('x2',rx(o.d));rmt.setAttribute('x',rx(o.d)+6);}
-    var sumA=a.reduce(function(s,v){return s+v;},0), sumD=D.reduce(function(s,v){return s+v;},0);
-    var nd=normalDay(a), ndD=normalDay(D);
-    var diff=sumD-sumA;
-    document.getElementById('rExp').innerHTML=o.d<0?'Delta patched all week: about <b>'+fmt(sumD)+' main fleet flights</b> cancelled, back to normal on Wednesday.':(diff>0?'Resetting on '+o.l.split(' ')[0]+' cancels about <b>'+fmt(diff)+' fewer flights</b> than Delta did, and you are back to normal on '+DAYS[nd].split(' ')[0]+'.':'Resetting on Monday is <b>worse</b> than patching: about '+fmt(-diff)+' more flights cancelled. You pay for the hard day after three bad ones.')+' <span class="est">estimate</span>';
-    var cards=[
-      {n:'What Delta did: patch',a:sumD,nd:ndD,win:o.d>=0?diff<0:false},
-      {n:o.d<0?'Your plan: same as Delta':'Your plan: reset on '+o.l.split(' ')[0],a:sumA,nd:nd,win:o.d>=0?diff>0:false}
-    ];
-    var box=document.getElementById('rCards'); box.innerHTML='';
-    cards.forEach(function(k,i){
-      var dd=document.createElement('div'); dd.className='card'+(k.win?' best':'');
-      var chip=k.win?'✓ Fewer cancellations':(o.d<0?'✗ 5 bad days':'✗ More cancellations');
-      dd.innerHTML='<span class="chip">'+chip+'</span><h3>'+k.n+'</h3><div class="big">'+fmt(k.a)+'<small> flights cancelled</small></div><dl class="kv"><dt>Customers hit <span class="est">est.</span></dt><dd>'+fmt(k.a*PER_CUST/1000)+'k</dd><dt>Cost <span class="est">est.</span></dt><dd>$'+fmt(k.a*PER_COST)+'M</dd><dt>Back to normal</dt><dd>'+DAYS[k.nd].split(' ')[0]+' (day '+(k.nd+1)+')</dd></dl>';
-      box.appendChild(dd);
-    });
-  }
-  draw();
+  // Scorecard
+  var G=[
+    ['Fix devices on site','United, Delta','ynmnm'],
+    ['Ops and IT in one team within an hour','American','ymymy'],
+    ['Tracking that keeps planes and crews in view','American','yyymn'],
+    ['The same live data for every team','United','yyymn'],
+    ['Devices to reach staff in the field','American, United','yymmm'],
+    ['Extra copies of the crew system','Delta','mmmnm'],
+    ['Ask crews where they are','Delta','ymmny'],
+    ['Extra pay to pick up trips','Delta','ynmmn'],
+    ['Refunds, hotels, meals and miles','Delta','ynnyn']
+  ];
+  var SYM={y:'✓',m:'~',n:'✗'}, LBL={y:'strong',m:'mixed',n:'weak'};
+  document.querySelector('#grid tbody').innerHTML=G.map(function(r){return '<tr data-r="'+r[2]+'"><td>'+r[0]+'<small>'+r[1]+'</small></td>'+r[2].split('').map(function(c){return '<td><span class="dot '+c+'" role="img" aria-label="'+LBL[c]+'">'+SYM[c]+'</span></td>';}).join('')+'</tr>';}).join('');
+  var grid=document.getElementById('grid'), btns=document.querySelectorAll('.pick button');
+  btns.forEach(function(b){b.addEventListener('click',function(){
+    var c=+b.dataset.c;
+    btns.forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+    grid.classList.toggle('f',c>=0);
+    grid.querySelectorAll('th,td').forEach(function(cell){cell.classList.toggle('sel',c>=0&&cell.cellIndex===c+1);});
+    grid.querySelectorAll('tbody tr').forEach(function(tr){tr.classList.toggle('dim',c>=0&&tr.dataset.r[c]!=='y');});
+  });});
 })();
 </script>
-
 
 <a class="pf-back" href="../index.html" aria-label="Back to all work">&larr; All work</a>
 <style>.pf-back{position:fixed;z-index:9999;left:calc(12px + env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));font:600 13px/1 "Archivo",Arial,sans-serif;letter-spacing:.02em;text-decoration:none;color:#fff;background:rgba(21,24,28,.86);padding:10px 14px;border-radius:999px;box-shadow:0 2px 10px rgba(0,0,0,.25)}.pf-back:hover,.pf-back:focus-visible{background:#15181C;outline:2px solid #E5A000;outline-offset:2px}</style>
